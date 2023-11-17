@@ -1,6 +1,6 @@
-use std::collections::HashMap;
-
+use owo_colors::OwoColorize;
 use serde_json::Value;
+use std::collections::HashMap;
 
 #[derive(serde::Serialize, serde::Deserialize, Clone, Debug)]
 #[serde(rename_all = "camelCase")]
@@ -46,4 +46,24 @@ pub fn serialize_package_json_env(data: &Value) -> HashMap<String, String> {
     let mut ret: HashMap<String, String> = HashMap::new();
     serialize_into(data, "npm_package", &mut ret);
     ret
+}
+
+#[must_use]
+pub fn make_package_prefix(package: &PackageJson) -> String {
+    let mut prefix = String::new();
+
+    if let Some(name) = &package.name {
+        prefix.push_str(&name.magenta().to_string());
+
+        if let Some(version) = &package.version {
+            let mut version_str = String::new();
+            version_str.push('@');
+            version_str.push_str(version);
+            prefix.push_str(&version_str.magenta().dimmed().to_string());
+        }
+
+        prefix.push('\n');
+    }
+
+    prefix
 }

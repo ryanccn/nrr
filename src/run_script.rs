@@ -6,34 +6,17 @@ use which::which;
 
 use anyhow::Result;
 use owo_colors::OwoColorize;
-use std::{env, ffi::OsStr, path::Path};
+use std::{
+    env,
+    ffi::OsString,
+    path::{Path, PathBuf},
+};
 use tokio::{fs, process::Command, signal::ctrl_c};
 
 use crate::{
     package_json::{serialize_package_json_env, PackageJson},
     CompatMode,
 };
-
-#[must_use]
-fn make_package_prefix(package: &PackageJson) -> String {
-    let mut prefix = String::new();
-
-    if let Some(name) = &package.name {
-        prefix.push_str(&name.magenta().to_string());
-
-        if let Some(version) = &package.version {
-            let mut version_str = String::new();
-            version_str.push('@');
-            version_str.push_str(version);
-            prefix.push_str(&version_str.magenta().dimmed().to_string());
-        }
-
-        prefix.push('\n');
-    }
-
-    prefix.push_str(&'$'.cyan().dimmed().to_string());
-    prefix
-}
 
 #[cfg(unix)]
 #[allow(clippy::unnecessary_wraps)]
@@ -51,6 +34,23 @@ fn make_shell_cmd() -> Result<Command> {
     Ok(cmd)
 }
 
+fn make_patched_path(package_path: &Path) -> Result<OsString> {
+    let mut nm_bin_folders: Vec<PathBuf> = vec![];
+
+    for search_dir in package_path.ancestors() {
+        let this_nm = search_dir.join("node_modules");
+        if this_nm.exists() && this_nm.is_dir() {
+            nm_bin_folders.push(this_nm.join(".bin"));
+        }
+    }
+
+    if let Ok(existing_path) = env::var("PATH") {
+        nm_bin_folders.extend(env::split_paths(&existing_path));
+    }
+
+    Ok(env::join_paths(nm_bin_folders)?)
+}
+
 #[allow(clippy::too_many_lines)]
 pub async fn run_script(
     package_path: &Path,
@@ -58,7 +58,6 @@ pub async fn run_script(
     script_name: &str,
     script_cmd: &str,
     extra_args: Option<&Vec<String>>,
-    patched_path: &OsStr,
     compat_mode: Option<CompatMode>,
 ) -> Result<()> {
     let package_folder = package_path.parent().unwrap();
@@ -77,16 +76,21 @@ pub async fn run_script(
         }
     }
 
-    eprintln!(
-        "{} {}",
-        make_package_prefix(package_data),
-        full_cmd.dimmed()
-    );
+    let cmd_prefix = if script_name.starts_with("pre") {
+        "pre$"
+    } else if script_name.starts_with("post") {
+        "post$"
+    } else {
+        "$"
+    };
+
+    eprintln!("{} {}", cmd_prefix.cyan().dimmed(), full_cmd.dimmed());
 
     let mut subproc = make_shell_cmd()?;
     subproc.current_dir(package_folder).arg(&full_cmd);
 
     let self_exe = env::current_exe()?;
+    let patched_path = make_patched_path(package_path)?;
 
     subproc
         .env("PATH", patched_path)
@@ -147,25 +151,20 @@ pub async fn run_script(
     #[allow(clippy::cast_possible_wrap)]
     let pid = child.id().map(|v| Pid::from_raw(v as i32));
 
-    tokio::try_join! {
-        async {
-            if let Ok(status) = child.wait().await {
-                std::process::exit(status.code().unwrap_or(1));
+    let task = tokio::task::spawn(async move {
+        if ctrl_c().await.is_ok() {
+            if let Some(pid) = pid {
+                kill(pid, Signal::SIGINT).ok();
             }
+        }
+    });
 
-            anyhow::Ok(())
-        },
-
-        async {
-            if ctrl_c().await.is_ok() {
-                if let Some(pid) = pid {
-                    kill(pid, Signal::SIGINT)?;
-                }
-            }
-
-            anyhow::Ok(())
-        },
-    }?;
+    if let Ok(status) = child.wait().await {
+        task.abort();
+        if !status.success() {
+            std::process::exit(status.code().unwrap_or(1));
+        }
+    }
 
     Ok(())
 }

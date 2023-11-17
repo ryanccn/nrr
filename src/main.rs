@@ -10,7 +10,7 @@ use tokio::fs;
 
 mod package_json;
 mod run_script;
-use package_json::PackageJson;
+use package_json::{make_package_prefix, PackageJson};
 use run_script::run_script;
 
 #[derive(ValueEnum, PartialEq, Eq, Debug, Clone, Copy)]
@@ -40,54 +40,63 @@ async fn execute(
     extra_args: Option<&Vec<String>>,
     compat_mode: Option<CompatMode>,
 ) -> Result<()> {
-    let mut node_modules: Vec<PathBuf> = vec![];
-    let mut packages: Vec<PathBuf> = vec![];
+    let mut executed_script = false;
+    let mut searched_dirs: Vec<PathBuf> = vec![];
 
     for search_dir in env::current_dir()?.ancestors() {
-        let this_nm = search_dir.join("node_modules");
-        if this_nm.exists() && this_nm.is_dir() {
-            node_modules.push(this_nm);
-        }
-
         let this_pkg = search_dir.join("package.json");
+
         if this_pkg.exists() && this_pkg.is_file() {
-            packages.push(this_pkg);
-        }
-    }
+            if let Ok(Ok(package_data)) = fs::read_to_string(&this_pkg)
+                .await
+                .map(|raw| serde_json::from_str::<PackageJson>(&raw))
+            {
+                if let Some(script_cmd) = package_data.scripts.get(script_name) {
+                    let pre_script_name = "pre".to_owned() + script_name;
+                    let post_script_name = "post".to_owned() + script_name;
 
-    let mut patched_path_vec = node_modules
-        .iter()
-        .map(|p| p.join(".bin"))
-        .collect::<Vec<_>>();
+                    eprint!("{}", make_package_prefix(&package_data));
 
-    if let Ok(existing_path) = env::var("PATH") {
-        patched_path_vec.extend(env::split_paths(&existing_path));
-    }
+                    if let Some(pre_script_cmd) = package_data.scripts.get(&pre_script_name) {
+                        run_script(
+                            &this_pkg,
+                            &package_data,
+                            &pre_script_name,
+                            pre_script_cmd,
+                            None,
+                            compat_mode,
+                        )
+                        .await?;
+                    }
 
-    let patched_path = env::join_paths(patched_path_vec)?;
+                    run_script(
+                        &this_pkg,
+                        &package_data,
+                        script_name,
+                        script_cmd,
+                        extra_args,
+                        compat_mode,
+                    )
+                    .await?;
 
-    let mut executed_script = false;
+                    if let Some(post_script_cmd) = package_data.scripts.get(&post_script_name) {
+                        run_script(
+                            &this_pkg,
+                            &package_data,
+                            &post_script_name,
+                            post_script_cmd,
+                            None,
+                            compat_mode,
+                        )
+                        .await?;
+                    }
 
-    for package in &packages {
-        if let Ok(Ok(package_data)) = fs::read_to_string(&package)
-            .await
-            .map(|raw| serde_json::from_str::<PackageJson>(&raw))
-        {
-            if let Some(script_cmd) = package_data.scripts.get(script_name) {
-                run_script(
-                    package,
-                    &package_data,
-                    script_name,
-                    script_cmd,
-                    extra_args,
-                    &patched_path,
-                    compat_mode,
-                )
-                .await?;
-
-                executed_script = true;
-                break;
+                    executed_script = true;
+                    break;
+                }
             }
+
+            searched_dirs.push(this_pkg);
         }
     }
 
@@ -102,10 +111,10 @@ async fn execute(
         eprintln!(
             "{} {}",
             "Searched:".dimmed(),
-            if packages.is_empty() {
+            if searched_dirs.is_empty() {
                 "<no packages found>".to_owned()
             } else {
-                packages
+                searched_dirs
                     .iter()
                     .map(|p| p.to_string_lossy())
                     .collect::<Vec<_>>()
@@ -119,7 +128,6 @@ async fn execute(
     Ok(())
 }
 
-#[allow(clippy::too_many_lines)]
 #[tokio::main]
 async fn main() -> Result<()> {
     let raw_args: Vec<String> = env::args().collect();
@@ -130,10 +138,10 @@ async fn main() -> Result<()> {
         let mut processed_args = raw_args.clone();
         processed_args.remove(1);
 
-            Cli::parse_from(&processed_args)
-        } else {
-            Cli::parse_from(&raw_args)
-        };
+        Cli::parse_from(&processed_args)
+    } else {
+        Cli::parse_from(&raw_args)
+    };
 
     execute(&cli.script, cli.extra_args.as_ref(), cli.compat).await?;
 
