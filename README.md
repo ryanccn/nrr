@@ -32,6 +32,12 @@ Add the overlay or package from the `github:ryanccn/nrr` flake to your own syste
 $ nix profile install 'github:ryanccn/nrr#nrr'
 ```
 
+### Cargo
+
+```console
+$ cargo install --git https://github.com/ryanccn/nrr.git
+```
+
 ### Build from source
 
 ```console
