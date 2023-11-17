@@ -1,6 +1,6 @@
 # `nrr`
 
-Minimal, blazing fast Node.js script runner.
+Minimal, blazing fast Node.js script runner :rocket: :rocket: :crab:
 
 ## Why?
 
