@@ -42,7 +42,7 @@ struct Cli {
 impl Cli {
     async fn execute(&self) -> Result<()> {
         let mut executed_script = false;
-        let mut searched_dirs: Vec<PathBuf> = vec![];
+        let mut searched_pkgs: Vec<PathBuf> = vec![];
 
         for search_dir in env::current_dir()?.ancestors() {
             let this_pkg = search_dir.join("package.json");
@@ -103,7 +103,7 @@ impl Cli {
                     }
                 }
 
-                searched_dirs.push(this_pkg);
+                searched_pkgs.push(this_pkg);
             }
         }
 
@@ -118,10 +118,10 @@ impl Cli {
             eprintln!(
                 "{} {}",
                 "Searched:".dimmed(),
-                if searched_dirs.is_empty() {
+                if searched_pkgs.is_empty() {
                     "<no packages found>".to_owned()
                 } else {
-                    searched_dirs
+                    searched_pkgs
                         .iter()
                         .map(|p| p.to_string_lossy())
                         .collect::<Vec<_>>()
