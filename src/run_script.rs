@@ -159,11 +159,10 @@ pub async fn run_script(
         }
     });
 
-    if let Ok(status) = child.wait().await {
-        task.abort();
-        if !status.success() {
-            std::process::exit(status.code().unwrap_or(1));
-        }
+    let status = child.wait().await?;
+    task.abort();
+    if !status.success() {
+        std::process::exit(status.code().unwrap_or(1));
     }
 
     Ok(())
