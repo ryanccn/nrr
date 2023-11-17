@@ -124,10 +124,11 @@ async fn execute(
 async fn main() -> Result<()> {
     let raw_args: Vec<String> = env::args().collect();
 
-    let cli =
-        if env::var_os("NRR_COMPAT_MODE").is_some() && raw_args.get(1) == Some(&"run".to_owned()) {
-            let mut processed_args = raw_args.clone();
-            processed_args.remove(1);
+    let cli = if env::var_os("NRR_COMPAT_MODE").is_some_and(|v| !v.is_empty())
+        && raw_args.get(1) == Some(&"run".to_owned())
+    {
+        let mut processed_args = raw_args.clone();
+        processed_args.remove(1);
 
             Cli::parse_from(&processed_args)
         } else {
