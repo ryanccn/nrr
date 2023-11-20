@@ -142,7 +142,9 @@ async fn main() -> Result<()> {
 
     let cli = Cli::parse_from(
         if env::var_os("NRR_COMPAT_MODE").is_some_and(|v| !v.is_empty())
-            && raw_args.get(1) == Some(&"run".to_owned())
+            && raw_args
+                .get(1)
+                .is_some_and(|v| v == "run" || v == "run-script")
         {
             let mut processed_args = raw_args.clone();
             processed_args.remove(1);
