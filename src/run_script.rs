@@ -12,7 +12,10 @@ use std::{
     ffi::OsString,
     path::{Path, PathBuf},
 };
-use tokio::{fs, process::Command, signal::ctrl_c};
+use tokio::{fs, process::Command};
+
+#[cfg(unix)]
+use tokio::signal::ctrl_c;
 
 use crate::{
     package_json::{serialize_package_json_env, PackageJson},
