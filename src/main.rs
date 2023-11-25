@@ -144,9 +144,13 @@ impl Cli {
                         .map(|raw| serde_json::from_str::<PackageJson>(&raw))
                     {
                         eprint!("{}", make_package_prefix(&package_data));
-                        for (script_name, script_content) in &package_data.scripts {
+
+                        let mut all_scripts = package_data.scripts.iter().collect::<Vec<_>>();
+                        all_scripts.sort_by_key(|s| s.0);
+
+                        for (script_name, script_content) in &all_scripts {
                             println!("{}", script_name.cyan());
-                            println!("  {}", script_content.dimmed());
+                            println!("  {script_content}");
                         }
                     }
                 }
