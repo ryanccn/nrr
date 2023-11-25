@@ -1,3 +1,4 @@
+#[cfg(unix)]
 use nix::{
     sys::signal::{kill, Signal},
     unistd::Pid,
@@ -148,9 +149,12 @@ pub async fn run_script(
     }
 
     let mut child = subproc.spawn()?;
+
     #[allow(clippy::cast_possible_wrap)]
+    #[cfg(unix)]
     let pid = child.id().map(|v| Pid::from_raw(v as i32));
 
+    #[cfg(unix)]
     let task = tokio::task::spawn(async move {
         if ctrl_c().await.is_ok() {
             if let Some(pid) = pid {
@@ -160,7 +164,10 @@ pub async fn run_script(
     });
 
     let status = child.wait().await?;
+
+    #[cfg(unix)]
     task.abort();
+
     if !status.success() {
         std::process::exit(status.code().unwrap_or(1));
     }
