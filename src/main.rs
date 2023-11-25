@@ -26,7 +26,7 @@ pub enum CompatMode {
 /// Minimal, blazing fast Node.js script runner
 struct Cli {
     /// The name of the script
-    script: String,
+    script: Option<String>,
     /// Extra arguments to pass to the script
     extra_args: Option<Vec<String>>,
 
@@ -40,97 +40,118 @@ struct Cli {
 }
 
 impl Cli {
+    #[allow(clippy::too_many_lines)]
     async fn execute(&self) -> Result<()> {
-        let mut executed_script = false;
-        let mut searched_pkgs: Vec<PathBuf> = vec![];
+        if let Some(self_script) = &self.script {
+            let mut executed_script = false;
+            let mut searched_pkgs: Vec<PathBuf> = vec![];
 
-        for search_dir in env::current_dir()?.ancestors() {
-            let this_pkg = search_dir.join("package.json");
+            for search_dir in env::current_dir()?.ancestors() {
+                let this_pkg = search_dir.join("package.json");
 
-            if this_pkg.exists() && this_pkg.is_file() {
-                if let Ok(Ok(package_data)) = fs::read_to_string(&this_pkg)
-                    .await
-                    .map(|raw| serde_json::from_str::<PackageJson>(&raw))
-                {
-                    if let Some(script_cmd) = package_data.scripts.get(&self.script) {
+                if this_pkg.is_file() {
+                    if let Ok(Ok(package_data)) = fs::read_to_string(&this_pkg)
+                        .await
+                        .map(|raw| serde_json::from_str::<PackageJson>(&raw))
+                    {
+                        if let Some(script_cmd) = package_data.scripts.get(self_script) {
+                            eprint!("{}", make_package_prefix(&package_data));
+
+                            if self.pre_post {
+                                let pre_script_name = "pre".to_owned() + self_script;
+                                if let Some(pre_script_cmd) =
+                                    package_data.scripts.get(&pre_script_name)
+                                {
+                                    run_script(
+                                        &this_pkg,
+                                        &package_data,
+                                        &pre_script_name,
+                                        pre_script_cmd,
+                                        None,
+                                        self.compat,
+                                    )
+                                    .await?;
+                                }
+                            }
+
+                            run_script(
+                                &this_pkg,
+                                &package_data,
+                                self_script,
+                                script_cmd,
+                                self.extra_args.as_ref(),
+                                self.compat,
+                            )
+                            .await?;
+
+                            if self.pre_post {
+                                let post_script_name = "post".to_owned() + self_script;
+                                if let Some(post_script_cmd) =
+                                    package_data.scripts.get(&post_script_name)
+                                {
+                                    run_script(
+                                        &this_pkg,
+                                        &package_data,
+                                        &post_script_name,
+                                        post_script_cmd,
+                                        None,
+                                        self.compat,
+                                    )
+                                    .await?;
+                                }
+                            }
+
+                            executed_script = true;
+                            break;
+                        }
+                    }
+
+                    searched_pkgs.push(this_pkg);
+                }
+            }
+
+            if !executed_script {
+                eprintln!(
+                    "{}{}{}",
+                    "No script found with name ".red(),
+                    self_script.red().bold(),
+                    "!".red()
+                );
+
+                eprintln!(
+                    "{} {}",
+                    "Searched:".dimmed(),
+                    if searched_pkgs.is_empty() {
+                        "<no packages found>".to_owned()
+                    } else {
+                        searched_pkgs
+                            .iter()
+                            .map(|p| p.to_string_lossy())
+                            .collect::<Vec<_>>()
+                            .join(", ")
+                            .dimmed()
+                            .to_string()
+                    }
+                );
+            }
+        } else {
+            for search_dir in env::current_dir()?.ancestors() {
+                let this_pkg = search_dir.join("package.json");
+
+                if this_pkg.is_file() {
+                    if let Ok(Ok(package_data)) = fs::read_to_string(&this_pkg)
+                        .await
+                        .map(|raw| serde_json::from_str::<PackageJson>(&raw))
+                    {
                         eprint!("{}", make_package_prefix(&package_data));
-
-                        if self.pre_post {
-                            let pre_script_name = "pre".to_owned() + &self.script;
-                            if let Some(pre_script_cmd) = package_data.scripts.get(&pre_script_name)
-                            {
-                                run_script(
-                                    &this_pkg,
-                                    &package_data,
-                                    &pre_script_name,
-                                    pre_script_cmd,
-                                    None,
-                                    self.compat,
-                                )
-                                .await?;
-                            }
+                        for (script_name, script_content) in &package_data.scripts {
+                            println!("{}", script_name.cyan());
+                            println!("  {}", script_content.dimmed());
                         }
-
-                        run_script(
-                            &this_pkg,
-                            &package_data,
-                            &self.script,
-                            script_cmd,
-                            self.extra_args.as_ref(),
-                            self.compat,
-                        )
-                        .await?;
-
-                        if self.pre_post {
-                            let post_script_name = "post".to_owned() + &self.script;
-                            if let Some(post_script_cmd) =
-                                package_data.scripts.get(&post_script_name)
-                            {
-                                run_script(
-                                    &this_pkg,
-                                    &package_data,
-                                    &post_script_name,
-                                    post_script_cmd,
-                                    None,
-                                    self.compat,
-                                )
-                                .await?;
-                            }
-                        }
-
-                        executed_script = true;
-                        break;
                     }
                 }
-
-                searched_pkgs.push(this_pkg);
             }
-        }
-
-        if !executed_script {
-            eprintln!(
-                "{}{}{}",
-                "No script found with name ".red(),
-                &self.script.red().bold(),
-                "!".red()
-            );
-
-            eprintln!(
-                "{} {}",
-                "Searched:".dimmed(),
-                if searched_pkgs.is_empty() {
-                    "<no packages found>".to_owned()
-                } else {
-                    searched_pkgs
-                        .iter()
-                        .map(|p| p.to_string_lossy())
-                        .collect::<Vec<_>>()
-                        .join(", ")
-                        .dimmed()
-                        .to_string()
-                }
-            );
-        }
+        };
 
         Ok(())
     }
