@@ -1,13 +1,12 @@
 [package]
 name = "nrr"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 
 description = "Minimal, blazing fast Node.js script runner"
 authors = ["Ryan Cao <hello@ryanccn.dev>"]
 license = "GPL-3.0-only"
 repository = "https://github.com/ryanccn/nrr.git"
-publish = false
 
 [dependencies]
 anyhow = "1.0.75"
