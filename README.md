@@ -35,15 +35,13 @@ $ nix profile install 'github:ryanccn/nrr#nrr'
 ### Cargo
 
 ```console
-$ cargo install --git https://github.com/ryanccn/nrr.git
+$ cargo install nrr
 ```
 
 ### Build from source
 
 ```console
-$ git clone https://github.com/ryanccn/nrr.git
-$ cd nrr
-$ cargo install --path .
+$ cargo install --git https://github.com/ryanccn/nrr.git
 ```
 
 ## Compatibility modes
