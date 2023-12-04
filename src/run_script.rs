@@ -5,7 +5,7 @@ use nix::{
 };
 use which::which;
 
-use anyhow::Result;
+use color_eyre::Result;
 use owo_colors::OwoColorize;
 use std::{
     env,

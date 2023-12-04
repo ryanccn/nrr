@@ -4,7 +4,7 @@
 use clap::{Parser, ValueEnum};
 use owo_colors::OwoColorize;
 
-use anyhow::Result;
+use color_eyre::Result;
 use std::{env, path::PathBuf};
 use tokio::fs;
 
@@ -163,6 +163,8 @@ impl Cli {
 
 #[tokio::main]
 async fn main() -> Result<()> {
+    color_eyre::install()?;
+
     let raw_args: Vec<String> = env::args().collect();
 
     let cli = Cli::parse_from(
