@@ -13,6 +13,8 @@ mod run_script;
 use package_json::{make_package_prefix, PackageJson};
 use run_script::run_script;
 
+use crate::run_script::ScriptType;
+
 #[derive(ValueEnum, PartialEq, Eq, Debug, Clone, Copy)]
 pub enum CompatMode {
     Npm,
@@ -67,6 +69,7 @@ impl Cli {
                                         &package_data,
                                         &pre_script_name,
                                         pre_script_cmd,
+                                        ScriptType::Pre,
                                         None,
                                         self.compat,
                                     )
@@ -79,6 +82,7 @@ impl Cli {
                                 &package_data,
                                 self_script,
                                 script_cmd,
+                                ScriptType::Normal,
                                 self.extra_args.as_ref(),
                                 self.compat,
                             )
@@ -94,6 +98,7 @@ impl Cli {
                                         &package_data,
                                         &post_script_name,
                                         post_script_cmd,
+                                        ScriptType::Post,
                                         None,
                                         self.compat,
                                     )

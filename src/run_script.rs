@@ -55,12 +55,20 @@ fn make_patched_path(package_path: &Path) -> Result<OsString> {
     Ok(env::join_paths(nm_bin_folders)?)
 }
 
+#[derive(Copy, Clone, PartialEq)]
+pub enum ScriptType {
+    Pre,
+    Post,
+    Normal,
+}
+
 #[allow(clippy::too_many_lines)]
 pub async fn run_script(
     package_path: &Path,
     package_data: &PackageJson,
     script_name: &str,
     script_cmd: &str,
+    script_type: ScriptType,
     extra_args: Option<&Vec<String>>,
     compat_mode: Option<CompatMode>,
 ) -> Result<()> {
@@ -80,12 +88,10 @@ pub async fn run_script(
         }
     }
 
-    let cmd_prefix = if script_name.starts_with("pre") {
-        "pre$"
-    } else if script_name.starts_with("post") {
-        "post$"
-    } else {
-        "$"
+    let cmd_prefix = match script_type {
+        ScriptType::Normal => "$",
+        ScriptType::Pre => "pre$",
+        ScriptType::Post => "post$",
     };
 
     eprintln!("{} {}", cmd_prefix.cyan().dimmed(), full_cmd.dimmed());
