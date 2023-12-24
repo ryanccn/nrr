@@ -7,11 +7,7 @@ use which::which;
 
 use color_eyre::Result;
 use owo_colors::OwoColorize;
-use std::{
-    env,
-    ffi::OsString,
-    path::{Path, PathBuf},
-};
+use std::{env, ffi::OsString, path::Path};
 use tokio::{fs, process::Command};
 
 #[cfg(unix)]
@@ -39,14 +35,11 @@ fn make_shell_cmd() -> Result<Command> {
 }
 
 fn make_patched_path(package_path: &Path) -> Result<OsString> {
-    let mut nm_bin_folders: Vec<PathBuf> = vec![];
-
-    for search_dir in package_path.ancestors() {
-        let this_nm = search_dir.join("node_modules");
-        if this_nm.exists() && this_nm.is_dir() {
-            nm_bin_folders.push(this_nm.join(".bin"));
-        }
-    }
+    let mut nm_bin_folders = package_path
+        .ancestors()
+        .map(|p| p.join("node_modules").join(".bin"))
+        .filter(|p| p.is_dir())
+        .collect::<Vec<_>>();
 
     if let Ok(existing_path) = env::var("PATH") {
         nm_bin_folders.extend(env::split_paths(&existing_path));
