@@ -1,11 +1,11 @@
 #![warn(clippy::all, clippy::pedantic, clippy::perf)]
 #![forbid(unsafe_code)]
 
-use clap::{Parser, ValueEnum};
+use clap::{CommandFactory, Parser, ValueEnum};
 use owo_colors::OwoColorize;
 
 use color_eyre::Result;
-use std::{env, path::PathBuf};
+use std::{env, path::Path};
 use tokio::fs;
 
 mod package_json;
@@ -44,75 +44,78 @@ struct Cli {
 impl Cli {
     #[allow(clippy::too_many_lines)]
     async fn execute(&self) -> Result<()> {
+        let packages = env::current_dir()?
+            .ancestors()
+            .map(|p| p.join("package.json"))
+            .filter(|p| p.is_file())
+            .collect::<Vec<_>>();
+
         if let Some(self_script) = &self.script {
             let mut executed_script = false;
-            let mut searched_pkgs: Vec<PathBuf> = vec![];
+            let mut searched_pkgs: Vec<&Path> = vec![];
 
-            for search_dir in env::current_dir()?.ancestors() {
-                let this_pkg = search_dir.join("package.json");
+            for package in &packages {
+                if let Ok(Ok(package_data)) = fs::read_to_string(package)
+                    .await
+                    .map(|raw| serde_json::from_str::<PackageJson>(&raw))
+                {
+                    if let Some(script_cmd) = package_data.scripts.get(self_script) {
+                        eprint!("{}", make_package_prefix(&package_data));
 
-                if this_pkg.is_file() {
-                    if let Ok(Ok(package_data)) = fs::read_to_string(&this_pkg)
-                        .await
-                        .map(|raw| serde_json::from_str::<PackageJson>(&raw))
-                    {
-                        if let Some(script_cmd) = package_data.scripts.get(self_script) {
-                            eprint!("{}", make_package_prefix(&package_data));
+                        if self.pre_post {
+                            let pre_script_name = "pre".to_owned() + self_script;
 
-                            if self.pre_post {
-                                let pre_script_name = "pre".to_owned() + self_script;
-                                if let Some(pre_script_cmd) =
-                                    package_data.scripts.get(&pre_script_name)
-                                {
-                                    run_script(
-                                        &this_pkg,
-                                        &package_data,
-                                        &pre_script_name,
-                                        pre_script_cmd,
-                                        ScriptType::Pre,
-                                        None,
-                                        self.compat,
-                                    )
-                                    .await?;
-                                }
+                            if let Some(pre_script_cmd) = package_data.scripts.get(&pre_script_name)
+                            {
+                                run_script(
+                                    package,
+                                    &package_data,
+                                    &pre_script_name,
+                                    pre_script_cmd,
+                                    ScriptType::Pre,
+                                    None,
+                                    self.compat,
+                                )
+                                .await?;
                             }
-
-                            run_script(
-                                &this_pkg,
-                                &package_data,
-                                self_script,
-                                script_cmd,
-                                ScriptType::Normal,
-                                self.extra_args.as_ref(),
-                                self.compat,
-                            )
-                            .await?;
-
-                            if self.pre_post {
-                                let post_script_name = "post".to_owned() + self_script;
-                                if let Some(post_script_cmd) =
-                                    package_data.scripts.get(&post_script_name)
-                                {
-                                    run_script(
-                                        &this_pkg,
-                                        &package_data,
-                                        &post_script_name,
-                                        post_script_cmd,
-                                        ScriptType::Post,
-                                        None,
-                                        self.compat,
-                                    )
-                                    .await?;
-                                }
-                            }
-
-                            executed_script = true;
-                            break;
                         }
-                    }
 
-                    searched_pkgs.push(this_pkg);
+                        run_script(
+                            package,
+                            &package_data,
+                            self_script,
+                            script_cmd,
+                            ScriptType::Normal,
+                            self.extra_args.as_ref(),
+                            self.compat,
+                        )
+                        .await?;
+
+                        if self.pre_post {
+                            let post_script_name = "post".to_owned() + self_script;
+
+                            if let Some(post_script_cmd) =
+                                package_data.scripts.get(&post_script_name)
+                            {
+                                run_script(
+                                    package,
+                                    &package_data,
+                                    &post_script_name,
+                                    post_script_cmd,
+                                    ScriptType::Post,
+                                    None,
+                                    self.compat,
+                                )
+                                .await?;
+                            }
+                        }
+
+                        executed_script = true;
+                        break;
+                    }
                 }
+
+                searched_pkgs.push(package);
             }
 
             if !executed_script {
@@ -140,25 +143,29 @@ impl Cli {
                 );
             }
         } else {
-            for search_dir in env::current_dir()?.ancestors() {
-                let this_pkg = search_dir.join("package.json");
+            let mut found_package = false;
 
-                if this_pkg.is_file() {
-                    if let Ok(Ok(package_data)) = fs::read_to_string(&this_pkg)
-                        .await
-                        .map(|raw| serde_json::from_str::<PackageJson>(&raw))
-                    {
-                        eprint!("{}", make_package_prefix(&package_data));
+            for package in packages {
+                if let Ok(Ok(package_data)) = fs::read_to_string(package)
+                    .await
+                    .map(|raw| serde_json::from_str::<PackageJson>(&raw))
+                {
+                    eprint!("{}", make_package_prefix(&package_data));
 
-                        let mut all_scripts = package_data.scripts.iter().collect::<Vec<_>>();
-                        all_scripts.sort_by_key(|s| s.0);
+                    found_package = true;
 
-                        for (script_name, script_content) in &all_scripts {
-                            println!("{}", script_name.cyan());
-                            println!("  {script_content}");
-                        }
+                    let mut all_scripts = package_data.scripts.iter().collect::<Vec<_>>();
+                    all_scripts.sort_by_key(|s| s.0);
+
+                    for (script_name, script_content) in &all_scripts {
+                        println!("{}", script_name.cyan());
+                        println!("  {script_content}");
                     }
                 }
+            }
+
+            if !found_package {
+                Cli::command().print_help()?;
             }
         };
 
@@ -170,22 +177,17 @@ impl Cli {
 async fn main() -> Result<()> {
     color_eyre::install()?;
 
-    let raw_args: Vec<String> = env::args().collect();
+    let mut raw_args: Vec<String> = env::args().collect();
 
-    let cli = Cli::parse_from(
-        if env::var_os("NRR_COMPAT_MODE").is_some_and(|v| !v.is_empty())
-            && raw_args
-                .get(1)
-                .is_some_and(|v| v == "run" || v == "run-script")
-        {
-            let mut processed_args = raw_args.clone();
-            processed_args.remove(1);
+    if env::var_os("NRR_COMPAT_MODE").is_some_and(|v| !v.is_empty())
+        && raw_args
+            .get(1)
+            .is_some_and(|v| v == "run" || v == "run-script")
+    {
+        raw_args.remove(1);
+    }
 
-            processed_args
-        } else {
-            raw_args
-        },
-    );
+    let cli = Cli::parse_from(raw_args);
 
     cli.execute().await?;
 
