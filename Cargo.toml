@@ -9,7 +9,7 @@ license = "GPL-3.0-only"
 repository = "https://github.com/ryanccn/nrr.git"
 
 [dependencies]
-clap = { version = "4.4.8", features = ["derive"] }
+clap = { version = "4.4.12", features = ["derive"] }
 color-eyre = "0.6.2"
 nix = { version = "0.27.1", features = ["signal"] }
 owo-colors = { version = "4.0.0", features = ["supports-color"] }
