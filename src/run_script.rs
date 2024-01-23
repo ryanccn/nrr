@@ -82,10 +82,10 @@ pub async fn run_script(
     }
 
     let cmd_prefix = match script_type {
-        ScriptType::Normal => "$",
-        ScriptType::Pre => "pre$",
-        ScriptType::Post => "post$",
-    };
+        ScriptType::Normal => String::new(),
+        ScriptType::Pre => "pre".to_owned(),
+        ScriptType::Post => "post".to_owned(),
+    } + &"$".repeat(crate::get_level());
 
     eprintln!("{} {}", cmd_prefix.cyan().dimmed(), full_cmd.dimmed());
 
@@ -97,9 +97,12 @@ pub async fn run_script(
 
     subproc
         .env("PATH", patched_path)
-        .env("NRR_COMPAT_MODE", "1")
         .env("npm_execpath", &self_exe)
         .env("npm_lifecycle_event", script_name);
+
+    subproc
+        .env("NRR_COMPAT_MODE", "1")
+        .env("NRR_LEVEL", format!("{}", crate::get_level() + 1));
 
     if let Ok(node_path) = which(match compat_mode {
         Some(CompatMode::Bun) => "bun",

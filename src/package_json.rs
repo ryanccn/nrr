@@ -11,6 +11,7 @@ pub struct PackageJson {
     pub scripts: HashMap<String, String>,
 }
 
+#[must_use]
 fn normalize_ser_path(path: &str) -> String {
     path.replace(|ch: char| !ch.is_alphanumeric(), "_")
 }
@@ -42,6 +43,7 @@ fn serialize_into(data: &Value, path: &str, to: &mut HashMap<String, String>) {
     }
 }
 
+#[must_use]
 pub fn serialize_package_json_env(data: &Value) -> HashMap<String, String> {
     let mut ret: HashMap<String, String> = HashMap::new();
     serialize_into(data, "npm_package", &mut ret);
@@ -49,7 +51,7 @@ pub fn serialize_package_json_env(data: &Value) -> HashMap<String, String> {
 }
 
 #[must_use]
-pub fn make_package_prefix(package: &PackageJson) -> String {
+pub fn make_package_prefix(package: &PackageJson, script_name: Option<&str>) -> String {
     let mut prefix = String::new();
 
     if let Some(name) = &package.name {
@@ -60,6 +62,11 @@ pub fn make_package_prefix(package: &PackageJson) -> String {
             version_str.push('@');
             version_str.push_str(version);
             prefix.push_str(&version_str.magenta().dimmed().to_string());
+        }
+
+        if let Some(script_name) = script_name {
+            prefix.push(' ');
+            prefix.push_str(&script_name.cyan().to_string());
         }
 
         prefix.push('\n');

@@ -41,6 +41,14 @@ struct Cli {
     pre_post: bool,
 }
 
+#[must_use]
+pub fn get_level() -> usize {
+    std::env::var("NRR_LEVEL")
+        .ok()
+        .and_then(|s| s.parse::<usize>().ok())
+        .unwrap_or(1)
+}
+
 impl Cli {
     #[allow(clippy::too_many_lines)]
     async fn execute(&self) -> Result<()> {
@@ -60,7 +68,16 @@ impl Cli {
                     .map(|raw| serde_json::from_str::<PackageJson>(&raw))
                 {
                     if let Some(script_cmd) = package_data.scripts.get(self_script) {
-                        eprint!("{}", make_package_prefix(&package_data));
+                        eprint!(
+                            "{}",
+                            make_package_prefix(
+                                &package_data,
+                                match get_level() {
+                                    1 => None,
+                                    _ => Some(self_script),
+                                }
+                            )
+                        );
 
                         if self.pre_post {
                             let pre_script_name = "pre".to_owned() + self_script;
@@ -150,7 +167,7 @@ impl Cli {
                     .await
                     .map(|raw| serde_json::from_str::<PackageJson>(&raw))
                 {
-                    eprint!("{}", make_package_prefix(&package_data));
+                    eprint!("{}", make_package_prefix(&package_data, None));
 
                     found_package = true;
 
