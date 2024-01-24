@@ -5,10 +5,11 @@ use nix::{
 };
 use which::which;
 
+use std::{env, ffi::OsString, path::Path};
+use tokio::process::Command;
+
 use color_eyre::Result;
 use owo_colors::OwoColorize;
-use std::{env, ffi::OsString, path::Path};
-use tokio::{fs, process::Command};
 
 #[cfg(unix)]
 use tokio::signal::ctrl_c;
@@ -137,17 +138,12 @@ pub async fn run_script(
     }
 
     if let Some(CompatMode::Yarn | CompatMode::Pnpm) = compat_mode {
-        if let Ok(Ok(package_data_raw)) = fs::read_to_string(package_path)
-            .await
-            .map(|txt| serde_json::from_str::<serde_json::Value>(&txt))
-        {
-            subproc.envs(serialize_package_json_env(&package_data_raw));
-        }
+        let package_value = serde_json::to_value(package_data)?;
+        subproc.envs(serialize_package_json_env(&package_value));
     } else {
         if let Some(p_name) = &package_data.name {
             subproc.env("npm_package_name", p_name);
         }
-
         if let Some(p_version) = &package_data.version {
             subproc.env("npm_package_version", p_version);
         }
