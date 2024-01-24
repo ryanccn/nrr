@@ -170,7 +170,15 @@ pub async fn run_script(
     task.abort();
 
     if !status.success() {
-        std::process::exit(status.code().unwrap_or(1));
+        let code = status.code().unwrap_or(1);
+
+        eprintln!(
+            "{} {}{}",
+            "Exited with status".red(),
+            code.to_string().red().bold(),
+            "!".red()
+        );
+        std::process::exit(code);
     }
 
     Ok(())
