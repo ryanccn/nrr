@@ -45,10 +45,10 @@ $ cargo install --git https://github.com/ryanccn/nrr.git
 ## Usage
 
 ```
-nrr dev
+$ nrr dev
 ```
 
-```console
+```
 sveltekit-project@0.0.1
 $ vite dev
 
@@ -65,7 +65,7 @@ $ vite dev
 
 In addition, when running nested scripts with `nrr` (i.e. running scripts with `nrr` through using tools like `npm-run-all2`), `nrr` has specialized behavior that prints extra information while staying minimal and performant:
 
-```console
+```
 sveltekit-project@0.0.1
 $ run-s lint format:check
 sveltekit-project@0.0.1 lint
