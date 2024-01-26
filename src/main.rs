@@ -32,10 +32,6 @@ struct Cli {
     /// Extra arguments to pass to the script
     extra_args: Option<Vec<String>>,
 
-    /// Apply additional behaviors to emulate a specific package manager
-    #[arg(short, long)]
-    compat: Option<CompatMode>,
-
     /// Run pre- and post- scripts
     #[arg(short, long)]
     pre_post: bool,
@@ -91,7 +87,6 @@ impl Cli {
                                     pre_script_cmd,
                                     ScriptType::Pre,
                                     None,
-                                    self.compat,
                                 )
                                 .await?;
                             }
@@ -104,7 +99,6 @@ impl Cli {
                             script_cmd,
                             ScriptType::Normal,
                             self.extra_args.as_ref(),
-                            self.compat,
                         )
                         .await?;
 
@@ -121,7 +115,6 @@ impl Cli {
                                     post_script_cmd,
                                     ScriptType::Post,
                                     None,
-                                    self.compat,
                                 )
                                 .await?;
                             }

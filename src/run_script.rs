@@ -3,7 +3,6 @@ use nix::{
     sys::signal::{kill, Signal},
     unistd::Pid,
 };
-use which::which;
 
 use std::{env, ffi::OsString, path::Path};
 use tokio::process::Command;
@@ -14,10 +13,7 @@ use owo_colors::OwoColorize;
 #[cfg(unix)]
 use tokio::signal::ctrl_c;
 
-use crate::{
-    package_json::{serialize_package_json_env, PackageJson},
-    CompatMode,
-};
+use crate::package_json::PackageJson;
 
 #[cfg(unix)]
 #[allow(clippy::unnecessary_wraps)]
@@ -64,7 +60,6 @@ pub async fn run_script(
     script_cmd: &str,
     script_type: ScriptType,
     extra_args: Option<&Vec<String>>,
-    compat_mode: Option<CompatMode>,
 ) -> Result<()> {
     let package_folder = package_path.parent().unwrap();
 
@@ -96,57 +91,24 @@ pub async fn run_script(
     let self_exe = env::current_exe()?;
     let patched_path = make_patched_path(package_path)?;
 
-    subproc
-        .env("PATH", patched_path)
-        .env("npm_execpath", &self_exe)
-        .env("npm_lifecycle_event", script_name);
+    subproc.env("PATH", patched_path);
 
     subproc
         .env("NRR_COMPAT_MODE", "1")
         .env("NRR_LEVEL", format!("{}", crate::get_level() + 1));
 
-    if let Ok(node_path) = which(match compat_mode {
-        Some(CompatMode::Bun) => "bun",
-        _ => "node",
-    }) {
-        subproc
-            .env("NODE", &node_path)
-            .env("npm_node_execpath", &node_path);
-    }
+    subproc
+        .env("npm_execpath", &self_exe)
+        .env("npm_lifecycle_event", script_name)
+        .env("npm_lifecycle_script", &full_cmd);
 
-    if compat_mode == Some(CompatMode::Npm) {
-        subproc.env("COLOR", "0");
-    } else if compat_mode == Some(CompatMode::Yarn) {
-        subproc.env("YARN_WRAP_OUTPUT", "false");
-    } else if compat_mode == Some(CompatMode::Pnpm) {
-        subproc.env("PNPM_SCRIPT_SRC_DIR", package_folder);
-    }
+    subproc.env("npm_package_json", package_path);
 
-    if compat_mode != Some(CompatMode::Bun) {
-        subproc.env("npm_lifecycle_script", &full_cmd);
-        if let Ok(cwd) = env::current_dir() {
-            subproc.env("INIT_CWD", &cwd);
-        }
+    if let Some(name) = &package_data.name {
+        subproc.env("npm_package_name", name);
     }
-
-    if let Some(CompatMode::Npm | CompatMode::Bun) = compat_mode {
-        subproc.env("npm_package_json", package_path);
-    }
-
-    if let Some(CompatMode::Npm | CompatMode::Pnpm) = compat_mode {
-        subproc.env("npm_command", "run-script");
-    }
-
-    if let Some(CompatMode::Yarn | CompatMode::Pnpm) = compat_mode {
-        let package_value = serde_json::to_value(package_data)?;
-        subproc.envs(serialize_package_json_env(&package_value));
-    } else {
-        if let Some(p_name) = &package_data.name {
-            subproc.env("npm_package_name", p_name);
-        }
-        if let Some(p_version) = &package_data.version {
-            subproc.env("npm_package_version", p_version);
-        }
+    if let Some(version) = &package_data.version {
+        subproc.env("npm_package_version", version);
     }
 
     let mut child = subproc.spawn()?;
