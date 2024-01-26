@@ -38,21 +38,39 @@ $ nix profile install 'github:ryanccn/nrr#nrr'
 $ cargo install nrr
 ```
 
-### Build from source
-
 ```console
 $ cargo install --git https://github.com/ryanccn/nrr.git
 ```
 
-## Compatibility modes
+## Usage
 
-By providing a flag `-c/--compat {npm,yarn,pnpm,bun}` to `nrr` when running scripts, `nrr` can emulate the environments constructed by these package managers. Each package manager has a unique set of environment variables that they make available and `nrr` does its best to emulate them.
+```
+nrr dev
+```
 
-`npm_config_*` environment variables are not emulated. `nrr` is not a package manager.
+```console
+sveltekit-project@0.0.1
+$ vite dev
+
+  VITE v5.0.12  ready in 10 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+  ➜  press h + enter to show help
+```
 
 ## Compatibility with other tools
 
 `nrr` has compatibility functionality that patches `npm_execpath` so that tools like [`npm-run-all2`](https://github.com/bcomnes/npm-run-all2) use it instead of package managers for running sub-scripts. This may cause unexpected behavior when `npm_execpath` is used for non-script running purposes, so open an issue if you encounter any bugs.
+
+In addition, when running nested scripts with `nrr` (i.e. running scripts with `nrr` through using tools like `npm-run-all2`), `nrr` has specialized behavior that prints extra information while staying minimal and performant:
+
+```console
+sveltekit-project@0.0.1
+$ run-s lint format:check
+sveltekit-project@0.0.1 lint
+$$ eslint .
+```
 
 ## License
 
