@@ -10,7 +10,7 @@ use tokio::fs;
 
 mod package_json;
 mod run_script;
-use package_json::{make_package_prefix, PackageJson};
+use package_json::PackageJson;
 use run_script::run_script;
 
 use crate::run_script::ScriptType;
@@ -46,103 +46,106 @@ pub fn get_level() -> usize {
 }
 
 impl Cli {
-    #[allow(clippy::too_many_lines)]
+    async fn run_script_full(
+        &self,
+        script_name: &str,
+        script_cmd: &str,
+        package: &Path,
+        package_data: &PackageJson<'_>,
+    ) -> Result<()> {
+        eprint!(
+            "{}",
+            package_data.make_prefix(match get_level() {
+                1 => None,
+                _ => Some(script_name),
+            })
+        );
+
+        if self.pre_post {
+            let pre_script_name = "pre".to_owned() + script_name;
+
+            if let Some(pre_script_cmd) = package_data.scripts.get(&pre_script_name) {
+                run_script(
+                    package,
+                    package_data,
+                    &pre_script_name,
+                    pre_script_cmd,
+                    ScriptType::Pre,
+                    None,
+                )
+                .await?;
+            }
+        }
+
+        run_script(
+            package,
+            package_data,
+            script_name,
+            script_cmd,
+            ScriptType::Normal,
+            self.extra_args.as_ref(),
+        )
+        .await?;
+
+        if self.pre_post {
+            let post_script_name = "post".to_owned() + script_name;
+
+            if let Some(post_script_cmd) = package_data.scripts.get(&post_script_name) {
+                run_script(
+                    package,
+                    package_data,
+                    &post_script_name,
+                    post_script_cmd,
+                    ScriptType::Post,
+                    None,
+                )
+                .await?;
+            }
+        }
+
+        Ok(())
+    }
+
     async fn execute(&self) -> Result<()> {
-        let packages = env::current_dir()?
+        let current_dir = env::current_dir()?;
+        let packages = current_dir
             .ancestors()
             .map(|p| p.join("package.json"))
-            .filter(|p| p.is_file())
-            .collect::<Vec<_>>();
+            .filter(|p| p.is_file());
 
-        if let Some(self_script) = &self.script {
+        if let Some(script_name) = &self.script {
             let mut executed_script = false;
-            let mut searched_pkgs: Vec<&Path> = vec![];
 
-            for package in &packages {
-                if let Ok(Ok(package_data)) = fs::read_to_string(package)
-                    .await
-                    .map(|raw| serde_json::from_str::<PackageJson>(&raw))
-                {
-                    if let Some(script_cmd) = package_data.scripts.get(self_script) {
-                        eprint!(
-                            "{}",
-                            make_package_prefix(
-                                &package_data,
-                                match get_level() {
-                                    1 => None,
-                                    _ => Some(self_script),
-                                }
-                            )
-                        );
-
-                        if self.pre_post {
-                            let pre_script_name = "pre".to_owned() + self_script;
-
-                            if let Some(pre_script_cmd) = package_data.scripts.get(&pre_script_name)
-                            {
-                                run_script(
-                                    package,
-                                    &package_data,
-                                    &pre_script_name,
-                                    pre_script_cmd,
-                                    ScriptType::Pre,
-                                    None,
-                                )
-                                .await?;
-                            }
-                        }
-
-                        run_script(
-                            package,
-                            &package_data,
-                            self_script,
-                            script_cmd,
-                            ScriptType::Normal,
-                            self.extra_args.as_ref(),
-                        )
-                        .await?;
-
-                        if self.pre_post {
-                            let post_script_name = "post".to_owned() + self_script;
-
-                            if let Some(post_script_cmd) =
-                                package_data.scripts.get(&post_script_name)
-                            {
-                                run_script(
-                                    package,
-                                    &package_data,
-                                    &post_script_name,
-                                    post_script_cmd,
-                                    ScriptType::Post,
-                                    None,
-                                )
-                                .await?;
-                            }
-                        }
+            for package in packages.clone() {
+                let raw = fs::read(&package).await?;
+                if let Ok(package_data) = serde_json::from_slice::<PackageJson>(&raw) {
+                    if let Some(script_cmd) = package_data.scripts.get(script_name) {
+                        self.run_script_full(script_name, script_cmd, &package, &package_data)
+                            .await?;
 
                         executed_script = true;
                         break;
                     }
                 }
-
-                searched_pkgs.push(package);
             }
 
             if !executed_script {
                 eprintln!(
                     "{}{}{}",
                     "No script found with name ".red(),
-                    self_script.red().bold(),
+                    script_name.red().bold(),
                     "!".red()
                 );
+
+                let packages = packages.collect::<Vec<_>>();
 
                 eprintln!(
                     "{} {}",
                     "Searched:".dimmed(),
-                    if searched_pkgs.is_empty() {
+                    if packages.is_empty() {
                         "<no packages found>".to_owned()
                     } else {
-                        searched_pkgs
+                        packages
                             .iter()
                             .map(|p| p.to_string_lossy())
                             .collect::<Vec<_>>()
@@ -156,11 +159,9 @@ impl Cli {
             let mut found_package = false;
 
             for package in packages {
-                if let Ok(Ok(package_data)) = fs::read_to_string(package)
-                    .await
-                    .map(|raw| serde_json::from_str::<PackageJson>(&raw))
-                {
-                    eprint!("{}", make_package_prefix(&package_data, None));
+                let raw = fs::read(package).await?;
+                if let Ok(package_data) = serde_json::from_slice::<PackageJson>(&raw) {
+                    eprint!("{}", package_data.make_prefix(None));
 
                     found_package = true;
 
@@ -198,7 +199,6 @@ async fn main() -> Result<()> {
     }
 
     let cli = Cli::parse_from(raw_args);
-
     cli.execute().await?;
 
     Ok(())

@@ -17,6 +17,7 @@ use crate::package_json::PackageJson;
 
 #[cfg(unix)]
 #[allow(clippy::unnecessary_wraps)]
+#[inline]
 fn make_shell_cmd() -> Result<Command> {
     let mut cmd = Command::new("sh");
     cmd.arg("-c");
@@ -25,24 +26,26 @@ fn make_shell_cmd() -> Result<Command> {
 
 #[cfg(windows)]
 #[allow(clippy::unnecessary_wraps)]
+#[inline]
 fn make_shell_cmd() -> Result<Command> {
     let mut cmd = Command::new(env::var("ComSpec")?);
     cmd.args(["/d", "/s", "/c"]);
     Ok(cmd)
 }
 
+#[inline]
 fn make_patched_path(package_path: &Path) -> Result<OsString> {
-    let mut nm_bin_folders = package_path
+    let mut patched_path = package_path
         .ancestors()
         .map(|p| p.join("node_modules").join(".bin"))
         .filter(|p| p.is_dir())
         .collect::<Vec<_>>();
 
     if let Ok(existing_path) = env::var("PATH") {
-        nm_bin_folders.extend(env::split_paths(&existing_path));
+        patched_path.extend(env::split_paths(&existing_path));
     }
 
-    Ok(env::join_paths(nm_bin_folders)?)
+    Ok(env::join_paths(patched_path)?)
 }
 
 #[derive(Copy, Clone, PartialEq)]
@@ -52,10 +55,9 @@ pub enum ScriptType {
     Normal,
 }
 
-#[allow(clippy::too_many_lines)]
 pub async fn run_script(
     package_path: &Path,
-    package_data: &PackageJson,
+    package_data: &PackageJson<'_>,
     script_name: &str,
     script_cmd: &str,
     script_type: ScriptType,
