@@ -1,6 +1,6 @@
 [package]
 name = "nrr"
-version = "0.5.0"
+version = "0.5.1"
 edition = "2021"
 
 description = "Minimal, blazing fast Node.js script runner"
