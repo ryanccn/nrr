@@ -1,16 +1,16 @@
 use owo_colors::OwoColorize;
-use std::collections::HashMap;
+use std::{borrow::Cow, collections::HashMap};
 
 #[derive(serde::Serialize, serde::Deserialize, Clone, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct PackageJson<'a> {
     #[serde(borrow)]
-    pub name: Option<&'a str>,
+    pub name: Option<Cow<'a, str>>,
     #[serde(borrow)]
-    pub version: Option<&'a str>,
+    pub version: Option<Cow<'a, str>>,
 
     #[serde(borrow, default)]
-    pub scripts: HashMap<String, &'a str>,
+    pub scripts: HashMap<String, Cow<'a, str>>,
 }
 
 impl PackageJson<'_> {

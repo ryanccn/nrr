@@ -117,8 +117,8 @@ impl Cli {
             let mut executed_script = false;
 
             for package in packages.clone() {
-                let raw = fs::read(&package).await?;
-                if let Ok(package_data) = serde_json::from_slice::<PackageJson>(&raw) {
+                let raw = fs::read_to_string(&package).await?;
+                if let Ok(package_data) = serde_json::from_str::<PackageJson>(&raw) {
                     if let Some(script_cmd) = package_data.scripts.get(script_name) {
                         self.run_script_full(script_name, script_cmd, &package, &package_data)
                             .await?;
@@ -159,8 +159,8 @@ impl Cli {
             let mut found_package = false;
 
             for package in packages {
-                let raw = fs::read(package).await?;
-                if let Ok(package_data) = serde_json::from_slice::<PackageJson>(&raw) {
+                let raw = fs::read_to_string(package).await?;
+                if let Ok(package_data) = serde_json::from_str::<PackageJson>(&raw) {
                     eprint!("{}", package_data.make_prefix(None));
 
                     found_package = true;
