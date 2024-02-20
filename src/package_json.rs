@@ -1,15 +1,18 @@
 use owo_colors::{OwoColorize, Stream};
 use std::{borrow::Cow, collections::HashMap};
 
-#[derive(serde::Deserialize, Clone, Debug)]
+use crate::serde_util;
+use serde::Deserialize;
+
+#[derive(Deserialize, Clone, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct PackageJson<'a> {
-    #[serde(borrow)]
+    #[serde(borrow, deserialize_with = "serde_util::de_opt_cow_str")]
     pub name: Option<Cow<'a, str>>,
-    #[serde(borrow)]
+    #[serde(borrow, deserialize_with = "serde_util::de_opt_cow_str")]
     pub version: Option<Cow<'a, str>>,
 
-    #[serde(borrow, default)]
+    #[serde(borrow, default, deserialize_with = "serde_util::de_hashmap_cow_str")]
     pub scripts: HashMap<String, Cow<'a, str>>,
 }
 

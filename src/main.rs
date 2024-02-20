@@ -8,6 +8,7 @@ use tokio::fs;
 
 mod package_json;
 mod run_script;
+mod serde_util;
 
 use crate::package_json::PackageJson;
 use crate::run_script::{run_script, ScriptType};
