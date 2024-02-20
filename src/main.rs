@@ -1,19 +1,16 @@
-#![warn(clippy::all, clippy::pedantic, clippy::perf)]
-#![forbid(unsafe_code)]
-
 use clap::{CommandFactory, Parser, ValueEnum};
-use owo_colors::OwoColorize;
+use owo_colors::{OwoColorize, Stream};
 
 use color_eyre::Result;
+use std::sync::OnceLock;
 use std::{env, path::Path};
 use tokio::fs;
 
 mod package_json;
 mod run_script;
-use package_json::PackageJson;
-use run_script::run_script;
 
-use crate::run_script::ScriptType;
+use crate::package_json::PackageJson;
+use crate::run_script::{run_script, ScriptType};
 
 #[derive(ValueEnum, PartialEq, Eq, Debug, Clone, Copy)]
 pub enum CompatMode {
@@ -37,12 +34,14 @@ struct Cli {
     pre_post: bool,
 }
 
-#[must_use]
-pub fn get_level() -> usize {
-    std::env::var("NRR_LEVEL")
-        .ok()
-        .and_then(|s| s.parse::<usize>().ok())
-        .unwrap_or(1)
+fn get_level() -> &'static usize {
+    static ONCE_LOCK: OnceLock<usize> = OnceLock::new();
+    ONCE_LOCK.get_or_init(|| {
+        std::env::var("NRR_LEVEL")
+            .ok()
+            .and_then(|s| s.parse::<usize>().ok())
+            .unwrap_or(1)
+    })
 }
 
 impl Cli {
@@ -132,16 +131,19 @@ impl Cli {
             if !executed_script {
                 eprintln!(
                     "{}{}{}",
-                    "No script found with name ".red(),
-                    script_name.red().bold(),
-                    "!".red()
+                    "No script found with name "
+                        .if_supports_color(Stream::Stderr, |text| text.red()),
+                    script_name
+                        .if_supports_color(Stream::Stderr, |text| text.red())
+                        .if_supports_color(Stream::Stderr, |text| text.bold()),
+                    "!".if_supports_color(Stream::Stderr, |text| text.red())
                 );
 
                 let packages = packages.collect::<Vec<_>>();
 
                 eprintln!(
                     "{} {}",
-                    "Searched:".dimmed(),
+                    "Searched:".if_supports_color(Stream::Stderr, |text| text.dimmed()),
                     if packages.is_empty() {
                         "<no packages found>".to_owned()
                     } else {
@@ -169,7 +171,10 @@ impl Cli {
                     all_scripts.sort_by_key(|s| s.0);
 
                     for (script_name, script_content) in &all_scripts {
-                        println!("{}", script_name.cyan());
+                        println!(
+                            "{}",
+                            script_name.if_supports_color(Stream::Stdout, |text| text.cyan())
+                        );
                         println!("  {script_content}");
                     }
                 }

@@ -9,11 +9,31 @@ license = "GPL-3.0-only"
 repository = "https://github.com/ryanccn/nrr.git"
 
 [dependencies]
-clap = { version = "4.4.13", features = ["derive"] }
 color-eyre = "0.6.2"
-nix = { version = "0.27.1", features = ["signal"] }
-owo-colors = { version = "4.0.0" }
-serde = { version = "1.0.195", features = ["derive"] }
+serde = { version = "1.0.197", features = ["derive"] }
 serde_json = "1.0.109"
 shell-escape = "0.1.5"
-tokio = { version = "1.35.1", features = ["full"] }
+
+[dependencies.clap]
+version = "4.4.13"
+features = ["derive"]
+
+[dependencies.nix]
+version = "0.27.1"
+features = ["signal"]
+
+[dependencies.owo-colors]
+version = "4.0.0"
+features = ["supports-colors"]
+
+[dependencies.tokio]
+version = "1.35.1"
+features = ["full"]
+
+[lints.rust]
+unsafe_code = "forbid"
+
+[lints.clippy]
+all = "warn"
+pedantic = "warn"
+perf = "warn"

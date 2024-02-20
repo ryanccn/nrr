@@ -8,7 +8,7 @@ use std::{env, ffi::OsString, path::Path};
 use tokio::process::Command;
 
 use color_eyre::Result;
-use owo_colors::OwoColorize;
+use owo_colors::{OwoColorize, Stream};
 
 #[cfg(unix)]
 use tokio::signal::ctrl_c;
@@ -83,9 +83,15 @@ pub async fn run_script(
         ScriptType::Normal => String::new(),
         ScriptType::Pre => "pre".to_owned(),
         ScriptType::Post => "post".to_owned(),
-    } + &"$".repeat(crate::get_level());
+    } + &"$".repeat(*crate::get_level());
 
-    eprintln!("{} {}", cmd_prefix.cyan().dimmed(), full_cmd.dimmed());
+    eprintln!(
+        "{} {}",
+        cmd_prefix
+            .if_supports_color(Stream::Stderr, |text| text.cyan())
+            .if_supports_color(Stream::Stderr, |text| text.dimmed()),
+        full_cmd.if_supports_color(Stream::Stderr, |text| text.dimmed())
+    );
 
     let mut subproc = make_shell_cmd()?;
     subproc.current_dir(package_folder).arg(&full_cmd);
@@ -138,10 +144,13 @@ pub async fn run_script(
 
         eprintln!(
             "{} {}{}",
-            "Exited with status".red(),
-            code.to_string().red().bold(),
-            "!".red()
+            "Exited with status".if_supports_color(Stream::Stderr, |text| text.red()),
+            code.to_string()
+                .if_supports_color(Stream::Stderr, |text| text.red())
+                .if_supports_color(Stream::Stderr, |text| text.bold()),
+            "!".if_supports_color(Stream::Stderr, |text| text.red())
         );
+
         std::process::exit(code);
     }
 
