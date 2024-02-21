@@ -27,7 +27,9 @@ pub enum CompatMode {
 struct Cli {
     /// The name of the script
     script: Option<String>,
+
     /// Extra arguments to pass to the script
+    #[clap(allow_hyphen_values = true)]
     extra_args: Option<Vec<String>>,
 
     /// Run pre- and post- scripts
