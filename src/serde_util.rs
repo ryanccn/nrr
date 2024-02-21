@@ -1,3 +1,4 @@
+use smartstring::alias::String;
 use std::{borrow::Cow, hash::BuildHasherDefault};
 
 use ahash::AHasher;

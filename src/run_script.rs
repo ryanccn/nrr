@@ -4,6 +4,7 @@ use nix::{
     unistd::Pid,
 };
 
+use smartstring::alias::String;
 use std::{borrow::Cow, env, ffi::OsString, path::Path};
 use tokio::process::Command;
 
@@ -60,8 +61,8 @@ impl ScriptType {
     pub fn prefix(self) -> String {
         match self {
             ScriptType::Normal => String::new(),
-            ScriptType::Pre => "pre".to_owned(),
-            ScriptType::Post => "post".to_owned(),
+            ScriptType::Pre => "pre".into(),
+            ScriptType::Post => "post".into(),
         }
     }
 }

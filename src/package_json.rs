@@ -3,6 +3,7 @@ use std::borrow::Cow;
 
 use crate::serde_util;
 use serde::Deserialize;
+use smartstring::alias::String;
 
 #[derive(Deserialize, Clone, Debug)]
 #[serde(rename_all = "camelCase")]

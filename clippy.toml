@@ -1,0 +1,3 @@
+[[disallowed-types]]
+path = "std::string::String"
+reason = "prefer `smartstring::alias::String` over `std::string::String` if possible"

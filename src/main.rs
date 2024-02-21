@@ -1,7 +1,9 @@
 use clap::{CommandFactory, Parser};
+use color_eyre::Result;
 use owo_colors::{OwoColorize, Stream};
 
-use color_eyre::Result;
+use smartstring::alias::String;
+use std::path::PathBuf;
 use std::sync::OnceLock;
 use std::{env, path::Path};
 use tokio::fs;
@@ -56,7 +58,7 @@ impl Cli {
         );
 
         if self.pre_post {
-            let pre_script_name = "pre".to_owned() + script_name;
+            let pre_script_name = String::from("pre") + script_name;
 
             if let Some(pre_script_cmd) = package_data.scripts.get(&pre_script_name) {
                 run_script(
@@ -82,7 +84,7 @@ impl Cli {
         .await?;
 
         if self.pre_post {
-            let post_script_name = "post".to_owned() + script_name;
+            let post_script_name = String::from("post") + script_name;
 
             if let Some(post_script_cmd) = package_data.scripts.get(&post_script_name) {
                 run_script(
@@ -134,7 +136,7 @@ impl Cli {
                     "!".if_supports_color(Stream::Stderr, |text| text.red())
                 );
 
-                let packages = packages.collect::<Vec<_>>();
+                let packages = packages.collect::<Vec<PathBuf>>();
 
                 eprintln!(
                     "{} {}",
@@ -158,14 +160,11 @@ impl Cli {
             for package in packages {
                 let raw = fs::read_to_string(package).await?;
                 if let Ok(package_data) = serde_json::from_str::<PackageJson>(&raw) {
-                    eprint!("{}", package_data.make_prefix(None));
+                    println!("{}", package_data.make_prefix(None));
 
                     found_package = true;
 
-                    let mut all_scripts = package_data.scripts.iter().collect::<Vec<_>>();
-                    all_scripts.sort_by_key(|s| s.0);
-
-                    for (script_name, script_content) in &all_scripts {
+                    for (script_name, script_content) in &package_data.scripts {
                         println!(
                             "{}",
                             script_name.if_supports_color(Stream::Stdout, |text| text.cyan())
@@ -188,7 +187,8 @@ impl Cli {
 async fn main() -> Result<()> {
     color_eyre::install()?;
 
-    let mut raw_args: Vec<String> = env::args().collect();
+    #[allow(clippy::disallowed_types)]
+    let mut raw_args: Vec<std::string::String> = env::args().collect();
 
     if env::var_os("NRR_COMPAT_MODE").is_some_and(|v| !v.is_empty())
         && raw_args
