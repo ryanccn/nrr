@@ -1,9 +1,9 @@
 [package]
 name = "nrr"
-version = "0.6.0"
+version = "0.7.0"
 edition = "2021"
 
-description = "Minimal, blazing fast Node.js script runner"
+description = "Minimal, blazing fast npm scripts runner"
 authors = ["Ryan Cao <hello@ryanccn.dev>"]
 license = "GPL-3.0-only"
 repository = "https://github.com/ryanccn/nrr.git"

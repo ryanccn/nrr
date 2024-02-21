@@ -1,6 +1,6 @@
 # `nrr`
 
-Minimal, blazing fast Node.js script runner.
+Minimal, blazing fast npm scripts runner.
 
 ## Why?
 
@@ -12,11 +12,14 @@ Minimal, blazing fast Node.js script runner.
 
 | Command |   Mean [ms] | Min [ms] | Max [ms] |     Relative |
 | :------ | ----------: | -------: | -------: | -----------: |
-| `nrr`   |   5.7 ± 0.4 |      5.1 |      8.0 |         1.00 |
-| `bun`   |   7.8 ± 0.5 |      7.2 |      9.4 |  1.37 ± 0.13 |
-| `yarn`  | 146.3 ± 1.3 |    145.0 |    149.7 | 25.79 ± 1.93 |
-| `npm`   | 159.9 ± 2.2 |    155.8 |    164.5 | 28.19 ± 2.13 |
-| `pnpm`  | 223.1 ± 1.8 |    220.2 |    225.7 | 39.33 ± 2.94 |
+| `nrr`   |   2.5 ± 0.2 |      2.3 |      3.3 |         1.00 |
+| `dum`   |   5.3 ± 0.4 |      4.8 |      7.4 |  2.13 ± 0.21 |
+| `bun`   |   7.8 ± 0.5 |      7.3 |     12.9 |  3.15 ± 0.30 |
+| `yarn`  | 152.7 ± 0.8 |    151.0 |    154.3 | 61.41 ± 4.32 |
+| `npm`   | 160.0 ± 1.2 |    157.9 |    162.4 | 64.35 ± 4.54 |
+| `pnpm`  | 223.7 ± 0.9 |    222.2 |    225.6 | 89.94 ± 6.32 |
+
+<small><code>hyperfine --shell=none --warmup=5 --export-markdown=benchmark.md 'dum run test' -n dum 'pnpm run test' -n pnpm 'yarn run test' -n yarn 'npm run test' -n npm 'bun run test' -n bun 'nrr run test' -n nrr</code></small>
 
 </details>
 
