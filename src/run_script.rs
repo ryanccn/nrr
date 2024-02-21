@@ -4,7 +4,7 @@ use nix::{
     unistd::Pid,
 };
 
-use std::{env, ffi::OsString, path::Path};
+use std::{borrow::Cow, env, ffi::OsString, path::Path};
 use tokio::process::Command;
 
 use color_eyre::Result;
@@ -80,13 +80,11 @@ pub async fn run_script(
 
     if let Some(extra_args) = extra_args {
         if !extra_args.is_empty() {
-            full_cmd = full_cmd
-                + " "
-                + &extra_args
-                    .iter()
-                    .map(|f| shell_escape::escape(f.into()).into_owned())
-                    .collect::<Vec<String>>()
-                    .join(" ");
+            full_cmd.push(' ');
+            extra_args
+                .iter()
+                .map(|f| shell_escape::escape(Cow::Borrowed(f)))
+                .for_each(|arg| full_cmd.push_str(arg.as_ref()));
         }
     }
 

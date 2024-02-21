@@ -1,4 +1,4 @@
-use clap::{CommandFactory, Parser, ValueEnum};
+use clap::{CommandFactory, Parser};
 use owo_colors::{OwoColorize, Stream};
 
 use color_eyre::Result;
@@ -12,14 +12,6 @@ mod serde_util;
 
 use crate::package_json::PackageJson;
 use crate::run_script::{run_script, ScriptType};
-
-#[derive(ValueEnum, PartialEq, Eq, Debug, Clone, Copy)]
-pub enum CompatMode {
-    Npm,
-    Yarn,
-    Pnpm,
-    Bun,
-}
 
 #[derive(Parser)]
 #[command(author, version, about, long_about = None)]
