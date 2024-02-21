@@ -1,6 +1,10 @@
-use std::{borrow::Cow, collections::HashMap};
+use std::{borrow::Cow, hash::BuildHasherDefault};
 
+use ahash::AHasher;
+use indexmap::IndexMap;
 use serde::{Deserialize, Deserializer};
+
+pub type AIndexMap<K, V> = IndexMap<K, V, BuildHasherDefault<AHasher>>;
 
 #[derive(Deserialize, Clone, Debug)]
 #[serde(transparent)]
@@ -15,13 +19,13 @@ where
 
 pub fn de_hashmap_cow_str<'de, D>(
     deserializer: D,
-) -> Result<HashMap<String, Cow<'de, str>>, D::Error>
+) -> Result<AIndexMap<String, Cow<'de, str>>, D::Error>
 where
     D: Deserializer<'de>,
 {
-    HashMap::<String, WrappedCowStr<'de>>::deserialize(deserializer).map(|val| {
+    AIndexMap::<String, WrappedCowStr<'de>>::deserialize(deserializer).map(|val| {
         val.into_iter()
             .map(|(k, v)| (k, v.0))
-            .collect::<HashMap<_, _>>()
+            .collect::<AIndexMap<_, _>>()
     })
 }

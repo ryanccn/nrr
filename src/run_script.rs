@@ -55,6 +55,17 @@ pub enum ScriptType {
     Normal,
 }
 
+impl ScriptType {
+    #[must_use]
+    pub fn prefix(self) -> String {
+        match self {
+            ScriptType::Normal => String::new(),
+            ScriptType::Pre => "pre".to_owned(),
+            ScriptType::Post => "post".to_owned(),
+        }
+    }
+}
+
 pub async fn run_script(
     package_path: &Path,
     package_data: &PackageJson<'_>,
@@ -79,11 +90,7 @@ pub async fn run_script(
         }
     }
 
-    let cmd_prefix = match script_type {
-        ScriptType::Normal => String::new(),
-        ScriptType::Pre => "pre".to_owned(),
-        ScriptType::Post => "post".to_owned(),
-    } + &"$".repeat(*crate::get_level());
+    let cmd_prefix = script_type.prefix() + &"$".repeat(*crate::get_level());
 
     eprintln!(
         "{} {}",

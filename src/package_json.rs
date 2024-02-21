@@ -1,5 +1,5 @@
 use owo_colors::{OwoColorize, Stream};
-use std::{borrow::Cow, collections::HashMap};
+use std::borrow::Cow;
 
 use crate::serde_util;
 use serde::Deserialize;
@@ -13,7 +13,7 @@ pub struct PackageJson<'a> {
     pub version: Option<Cow<'a, str>>,
 
     #[serde(borrow, default, deserialize_with = "serde_util::de_hashmap_cow_str")]
-    pub scripts: HashMap<String, Cow<'a, str>>,
+    pub scripts: serde_util::AIndexMap<String, Cow<'a, str>>,
 }
 
 impl PackageJson<'_> {
