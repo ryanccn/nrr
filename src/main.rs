@@ -157,7 +157,7 @@ impl Cli {
             for package in packages {
                 let raw = fs::read_to_string(package)?;
                 if let Ok(package_data) = serde_json::from_str::<PackageJson>(&raw) {
-                    println!("{}", package_data.make_prefix(None));
+                    print!("{}", package_data.make_prefix(None));
 
                     found_package = true;
 
@@ -168,6 +168,8 @@ impl Cli {
                         );
                         println!("  {script_content}");
                     }
+
+                    println!();
                 }
             }
 
