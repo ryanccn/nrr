@@ -3,10 +3,11 @@ use color_eyre::Result;
 use owo_colors::{OwoColorize, Stream};
 
 use smartstring::alias::String;
-use std::path::PathBuf;
-use std::sync::OnceLock;
-use std::{env, path::Path};
-use tokio::fs;
+use std::{
+    env, fs,
+    path::{Path, PathBuf},
+    sync::OnceLock,
+};
 
 mod package_json;
 mod run_script;
@@ -42,7 +43,7 @@ fn get_level() -> &'static usize {
 }
 
 impl Cli {
-    async fn run_script_full(
+    fn run_script_full(
         &self,
         script_name: &str,
         script_cmd: &str,
@@ -68,8 +69,7 @@ impl Cli {
                     pre_script_cmd,
                     ScriptType::Pre,
                     None,
-                )
-                .await?;
+                )?;
             }
         }
 
@@ -80,8 +80,7 @@ impl Cli {
             script_cmd,
             ScriptType::Normal,
             self.extra_args.as_ref(),
-        )
-        .await?;
+        )?;
 
         if self.pre_post {
             let post_script_name = String::from("post") + script_name;
@@ -94,15 +93,14 @@ impl Cli {
                     post_script_cmd,
                     ScriptType::Post,
                     None,
-                )
-                .await?;
+                )?;
             }
         }
 
         Ok(())
     }
 
-    async fn execute(&self) -> Result<()> {
+    fn execute(&self) -> Result<()> {
         let current_dir = env::current_dir()?;
         let packages = current_dir
             .ancestors()
@@ -113,11 +111,10 @@ impl Cli {
             let mut executed_script = false;
 
             for package in packages.clone() {
-                let raw = fs::read_to_string(&package).await?;
+                let raw = fs::read_to_string(&package)?;
                 if let Ok(package_data) = serde_json::from_str::<PackageJson>(&raw) {
                     if let Some(script_cmd) = package_data.scripts.get(script_name) {
-                        self.run_script_full(script_name, script_cmd, &package, &package_data)
-                            .await?;
+                        self.run_script_full(script_name, script_cmd, &package, &package_data)?;
 
                         executed_script = true;
                         break;
@@ -158,7 +155,7 @@ impl Cli {
             let mut found_package = false;
 
             for package in packages {
-                let raw = fs::read_to_string(package).await?;
+                let raw = fs::read_to_string(package)?;
                 if let Ok(package_data) = serde_json::from_str::<PackageJson>(&raw) {
                     println!("{}", package_data.make_prefix(None));
 
@@ -183,8 +180,7 @@ impl Cli {
     }
 }
 
-#[tokio::main]
-async fn main() -> Result<()> {
+fn main() -> Result<()> {
     color_eyre::install()?;
 
     #[allow(clippy::disallowed_types)]
@@ -199,7 +195,7 @@ async fn main() -> Result<()> {
     }
 
     let cli = Cli::parse_from(raw_args);
-    cli.execute().await?;
+    cli.execute()?;
 
     Ok(())
 }

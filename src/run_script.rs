@@ -5,14 +5,13 @@ use nix::{
 };
 
 use smartstring::alias::String;
-use std::{borrow::Cow, env, ffi::OsString, path::Path};
-use tokio::process::Command;
+use std::{env, ffi::OsString, path::Path, process::Command};
 
 use color_eyre::Result;
 use owo_colors::{OwoColorize, Stream};
 
 #[cfg(unix)]
-use tokio::signal::ctrl_c;
+use ctrlc::set_handler;
 
 use crate::package_json::PackageJson;
 
@@ -67,7 +66,7 @@ impl ScriptType {
     }
 }
 
-pub async fn run_script(
+pub fn run_script(
     package_path: &Path,
     package_data: &PackageJson<'_>,
     script_name: &str,
@@ -84,7 +83,9 @@ pub async fn run_script(
             full_cmd.push(' ');
             extra_args
                 .iter()
-                .map(|f| shell_escape::escape(Cow::Borrowed(f)))
+                .map(|f| shlex::try_quote(f))
+                .collect::<Result<Vec<_>, _>>()?
+                .into_iter()
                 .for_each(|arg| full_cmd.push_str(arg.as_ref()));
         }
     }
@@ -129,21 +130,14 @@ pub async fn run_script(
 
     #[allow(clippy::cast_possible_wrap)]
     #[cfg(unix)]
-    let pid = child.id().map(|v| Pid::from_raw(v as i32));
+    let pid = Pid::from_raw(child.id() as i32);
 
     #[cfg(unix)]
-    let task = tokio::task::spawn(async move {
-        if ctrl_c().await.is_ok() {
-            if let Some(pid) = pid {
-                kill(pid, Signal::SIGINT).ok();
-            }
-        }
-    });
+    set_handler(move || {
+        kill(pid, Signal::SIGINT).ok();
+    })?;
 
-    let status = child.wait().await?;
-
-    #[cfg(unix)]
-    task.abort();
+    let status = child.wait()?;
 
     if !status.success() {
         let code = status.code().unwrap_or(1);
