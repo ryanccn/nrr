@@ -17,7 +17,31 @@ pub struct PackageJson<'a> {
     pub scripts: serde_util::AIndexMap<String, Cow<'a, str>>,
 }
 
+#[derive(Deserialize, Clone, Debug)]
+#[serde(rename_all = "camelCase")]
+pub struct PackageJsonOwned {
+    pub name: Option<String>,
+    pub version: Option<String>,
+
+    #[serde(default)]
+    pub scripts: serde_util::AIndexMap<String, String>,
+}
+
 impl PackageJson<'_> {
+    #[must_use]
+    pub fn to_owned(&self) -> PackageJsonOwned {
+        PackageJsonOwned {
+            name: self.name.clone().map(|v| v.into()),
+            version: self.version.clone().map(|v| v.into()),
+            scripts: self
+                .scripts
+                .clone()
+                .into_iter()
+                .map(|(k, v)| (k, v.into()))
+                .collect(),
+        }
+    }
+
     #[must_use]
     pub fn make_prefix(&self, script_name: Option<&str>) -> String {
         let mut prefix = String::new();

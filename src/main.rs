@@ -1,17 +1,22 @@
+#![warn(clippy::all, clippy::pedantic, clippy::perf)]
+#![allow(
+    clippy::redundant_closure_for_method_calls,
+    clippy::module_name_repetitions
+)]
+#![forbid(unsafe_code)]
+
 use clap::{CommandFactory, Parser};
 use color_eyre::Result;
 use owo_colors::{OwoColorize, Stream};
 
+use package_json::PackageJsonOwned;
 use smartstring::alias::String;
-use std::{
-    env, fs,
-    path::{Path, PathBuf},
-    sync::OnceLock,
-};
+use std::{env, fs, path::Path, sync::OnceLock};
 
 mod package_json;
 mod run_script;
 mod serde_util;
+mod suggest;
 
 use crate::package_json::PackageJson;
 use crate::run_script::{run_script, ScriptType};
@@ -102,59 +107,61 @@ impl Cli {
 
     fn execute(&self) -> Result<()> {
         let current_dir = env::current_dir()?;
-        let packages = current_dir
+        let package_paths = current_dir
             .ancestors()
             .map(|p| p.join("package.json"))
-            .filter(|p| p.is_file());
+            .filter(|p| p.is_file())
+            .collect::<Vec<_>>();
+
+        let mut resolved_packages = Vec::<PackageJsonOwned>::new();
 
         if let Some(script_name) = &self.script {
             let mut executed_script = false;
 
-            for package in packages.clone() {
-                let raw = fs::read_to_string(&package)?;
-                if let Ok(package_data) = serde_json::from_str::<PackageJson>(&raw) {
-                    if let Some(script_cmd) = package_data.scripts.get(script_name) {
-                        self.run_script_full(script_name, script_cmd, &package, &package_data)?;
+            for package_path in &package_paths {
+                if let Ok(raw) = fs::read_to_string(package_path) {
+                    if let Ok(package) = serde_json::from_str::<PackageJson>(&raw) {
+                        if let Some(script_cmd) = package.scripts.get(script_name) {
+                            self.run_script_full(script_name, script_cmd, package_path, &package)?;
 
-                        executed_script = true;
-                        break;
+                            executed_script = true;
+                            break;
+                        }
+
+                        resolved_packages.push(package.to_owned());
                     }
                 }
             }
 
             if !executed_script {
                 eprintln!(
-                    "{}{}{}",
-                    "No script found with name "
-                        .if_supports_color(Stream::Stderr, |text| text.red()),
-                    script_name
-                        .if_supports_color(Stream::Stderr, |text| text.red())
-                        .if_supports_color(Stream::Stderr, |text| text.bold()),
-                    "!".if_supports_color(Stream::Stderr, |text| text.red())
+                    "{}  No script found with name {}.",
+                    "error".if_supports_color(Stream::Stderr, |text| text.red()),
+                    script_name.if_supports_color(Stream::Stderr, |text| text.bold()),
                 );
 
-                let packages = packages.collect::<Vec<PathBuf>>();
+                for resolved_package in &resolved_packages {
+                    if let Some(alternative) = suggest::suggest(script_name, resolved_package) {
+                        eprintln!(
+                            "       {} {}{}{}",
+                            "Did you mean".if_supports_color(Stream::Stderr, |text| text.dimmed()),
+                            "`".if_supports_color(Stream::Stderr, |text| text.dimmed()),
+                            format!("nrr {alternative}")
+                                .if_supports_color(Stream::Stderr, |text| text.cyan())
+                                .if_supports_color(Stream::Stderr, |text| text.dimmed()),
+                            "`?".if_supports_color(Stream::Stderr, |text| text.dimmed())
+                        );
 
-                eprintln!(
-                    "{} {}",
-                    "Searched:".if_supports_color(Stream::Stderr, |text| text.dimmed()),
-                    if packages.is_empty() {
-                        "<no packages found>".to_owned()
-                    } else {
-                        packages
-                            .iter()
-                            .map(|p| p.to_string_lossy())
-                            .collect::<Vec<_>>()
-                            .join(", ")
-                            .dimmed()
-                            .to_string()
+                        break;
                     }
-                );
+                }
+
+                std::process::exit(1);
             }
         } else {
             let mut found_package = false;
 
-            for package in packages {
+            for package in &package_paths {
                 let raw = fs::read_to_string(package)?;
                 if let Ok(package_data) = serde_json::from_str::<PackageJson>(&raw) {
                     print!("{}", package_data.make_prefix(None));

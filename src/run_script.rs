@@ -143,12 +143,10 @@ pub fn run_script(
         let code = status.code().unwrap_or(1);
 
         eprintln!(
-            "{} {}{}",
-            "Exited with status".if_supports_color(Stream::Stderr, |text| text.red()),
+            "{}  Exited with status {}!",
+            "error".if_supports_color(Stream::Stderr, |text| text.red()),
             code.to_string()
-                .if_supports_color(Stream::Stderr, |text| text.red())
                 .if_supports_color(Stream::Stderr, |text| text.bold()),
-            "!".if_supports_color(Stream::Stderr, |text| text.red())
         );
 
         std::process::exit(code);

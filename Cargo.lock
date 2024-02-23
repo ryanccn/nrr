@@ -347,6 +347,7 @@ dependencies = [
  "serde_json",
  "shlex",
  "smartstring",
+ "strsim",
 ]
 
 [[package]]
