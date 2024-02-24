@@ -41,7 +41,8 @@ Running `nrr` without any arguments will try to find any packages in the current
 
 `nrr` has compatibility functionality that patches `npm_execpath` so that tools like [`npm-run-all2`](https://github.com/bcomnes/npm-run-all2) use it instead of package managers for running sub-scripts.
 
-> **Warning**
+> [!WARNING]
+>
 > This may cause unexpected behavior when `npm_execpath` is used for non-script running purposes, so open an issue if you encounter any bugs.
 
 When running nested scripts with `nrr`, `nrr` has specialized behavior that prints extra information while staying minimal and performant:
