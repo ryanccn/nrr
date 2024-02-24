@@ -2,7 +2,9 @@
 
 Minimal, blazing fast npm scripts runner.
 
-## Why?
+## Features
+
+### Performance
 
 `nrr` initializes and resolves scripts way faster than package managers. It achieves this by providing the largest feature coverage possible while keeping it simple and performant.
 
@@ -23,7 +25,33 @@ Minimal, blazing fast npm scripts runner.
 
 </details>
 
-In addition, `nrr` provides a better-looking display of project details and the command being run than most, and also prints this information to `stderr` instead of `stdout` like some of the package managers do (erroneously).
+### Package and script metadata display
+
+`nrr` provides a better-looking display of package details and the command being run than most, and also prints this information to `stderr` instead of `stdout` like some of the package managers do (erroneously).
+
+### Spelling suggestions
+
+If you mistype a script name (e.g. `buils` instead of `build`), `nrr` will intelligently suggest the right script to run in the error message using the Jaro similarity algorithm from the [`strsim`](https://docs.rs/strsim/latest/strsim/fn.jaro.html) crate.
+
+### Script listing
+
+Running `nrr` without any arguments will try to find any packages in the current working directory and its ancestors, and list the scripts available from them, both name and command.
+
+### Tooling compatibility
+
+`nrr` has compatibility functionality that patches `npm_execpath` so that tools like [`npm-run-all2`](https://github.com/bcomnes/npm-run-all2) use it instead of package managers for running sub-scripts.
+
+> **Warning**
+> This may cause unexpected behavior when `npm_execpath` is used for non-script running purposes, so open an issue if you encounter any bugs.
+
+When running nested scripts with `nrr`, `nrr` has specialized behavior that prints extra information while staying minimal and performant:
+
+```
+sveltekit-project@0.0.1
+$ run-s lint format:check
+sveltekit-project@0.0.1 lint
+$$ eslint .
+```
 
 ## Installation
 
@@ -34,6 +62,8 @@ Add the overlay or package from the `github:ryanccn/nrr` flake to your own syste
 ```console
 $ nix profile install 'github:ryanccn/nrr#nrr'
 ```
+
+`nrr` is also available in [Nixpkgs](https://github.com/NixOS/nixpkgs) as `nixpkgs#nrr`.
 
 ### Cargo
 
@@ -60,19 +90,6 @@ $ vite dev
   ➜  Local:   http://localhost:5173/
   ➜  Network: use --host to expose
   ➜  press h + enter to show help
-```
-
-## Compatibility with other tools
-
-`nrr` has compatibility functionality that patches `npm_execpath` so that tools like [`npm-run-all2`](https://github.com/bcomnes/npm-run-all2) use it instead of package managers for running sub-scripts. This may cause unexpected behavior when `npm_execpath` is used for non-script running purposes, so open an issue if you encounter any bugs.
-
-In addition, when running nested scripts with `nrr` (i.e. running scripts with `nrr` through using tools like `npm-run-all2`), `nrr` has specialized behavior that prints extra information while staying minimal and performant:
-
-```
-sveltekit-project@0.0.1
-$ run-s lint format:check
-sveltekit-project@0.0.1 lint
-$$ eslint .
 ```
 
 ## License
