@@ -11,7 +11,6 @@ pub fn suggest(input: &str, package: &PackageJsonOwned) -> Option<String> {
         .filter(|(_, confidence)| *confidence > 0.7)
         .collect::<Vec<_>>();
 
-    distances.sort_unstable_by(|a, b| a.1.partial_cmp(&b.1).unwrap_or(Ordering::Equal));
-
+    distances.sort_unstable_by(|a, b| b.1.partial_cmp(&a.1).unwrap_or(Ordering::Equal));
     distances.first().map(|a| a.0.to_owned())
 }
