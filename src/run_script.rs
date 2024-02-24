@@ -68,7 +68,7 @@ impl ScriptType {
 
 pub fn run_script(
     package_path: &Path,
-    package_data: &PackageJson<'_>,
+    package_data: &PackageJson<'_, '_, '_>,
     script_name: &str,
     script_cmd: &str,
     script_type: ScriptType,

@@ -1,20 +1,25 @@
 use owo_colors::{OwoColorize, Stream};
+use serde::Deserialize;
+use serde_with::{serde_as, BorrowCow};
+
+use indexmap::IndexMap;
+use smartstring::alias::String;
 use std::borrow::Cow;
 
-use crate::serde_util;
-use serde::Deserialize;
-use smartstring::alias::String;
+pub type AIndexMap<K, V> = IndexMap<K, V, ahash::RandomState>;
 
+#[serde_as]
 #[derive(Deserialize, Clone, Debug)]
 #[serde(rename_all = "camelCase")]
-pub struct PackageJson<'a> {
-    #[serde(borrow, deserialize_with = "serde_util::de_opt_cow_str")]
+pub struct PackageJson<'a, 'b, 'c> {
+    #[serde_as(as = "Option<BorrowCow>")]
     pub name: Option<Cow<'a, str>>,
-    #[serde(borrow, deserialize_with = "serde_util::de_opt_cow_str")]
-    pub version: Option<Cow<'a, str>>,
+    #[serde_as(as = "Option<BorrowCow>")]
+    pub version: Option<Cow<'b, str>>,
 
-    #[serde(borrow, default, deserialize_with = "serde_util::de_hashmap_cow_str")]
-    pub scripts: serde_util::AIndexMap<String, Cow<'a, str>>,
+    #[serde(default)]
+    #[serde_as(as = "AIndexMap<_, BorrowCow>")]
+    pub scripts: AIndexMap<String, Cow<'c, str>>,
 }
 
 #[derive(Deserialize, Clone, Debug)]
@@ -24,10 +29,10 @@ pub struct PackageJsonOwned {
     pub version: Option<String>,
 
     #[serde(default)]
-    pub scripts: serde_util::AIndexMap<String, String>,
+    pub scripts: AIndexMap<String, String>,
 }
 
-impl PackageJson<'_> {
+impl PackageJson<'_, '_, '_> {
     #[must_use]
     pub fn to_owned(&self) -> PackageJsonOwned {
         PackageJsonOwned {

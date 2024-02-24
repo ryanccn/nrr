@@ -15,7 +15,6 @@ use std::{env, fs, path::Path, sync::OnceLock};
 
 mod package_json;
 mod run_script;
-mod serde_util;
 mod suggest;
 
 use crate::package_json::PackageJson;
@@ -53,7 +52,7 @@ impl Cli {
         script_name: &str,
         script_cmd: &str,
         package: &Path,
-        package_data: &PackageJson<'_>,
+        package_data: &PackageJson<'_, '_, '_>,
     ) -> Result<()> {
         eprint!(
             "{}",
@@ -110,19 +109,18 @@ impl Cli {
         let package_paths = current_dir
             .ancestors()
             .map(|p| p.join("package.json"))
-            .filter(|p| p.is_file())
-            .collect::<Vec<_>>();
+            .filter(|p| p.is_file());
 
         let mut resolved_packages = Vec::<PackageJsonOwned>::new();
 
         if let Some(script_name) = &self.script {
             let mut executed_script = false;
 
-            for package_path in &package_paths {
-                if let Ok(raw) = fs::read_to_string(package_path) {
+            for package_path in package_paths {
+                if let Ok(raw) = fs::read_to_string(&package_path) {
                     if let Ok(package) = serde_json::from_str::<PackageJson>(&raw) {
                         if let Some(script_cmd) = package.scripts.get(script_name) {
-                            self.run_script_full(script_name, script_cmd, package_path, &package)?;
+                            self.run_script_full(script_name, script_cmd, &package_path, &package)?;
 
                             executed_script = true;
                             break;
@@ -161,7 +159,7 @@ impl Cli {
         } else {
             let mut found_package = false;
 
-            for package in &package_paths {
+            for package in package_paths {
                 let raw = fs::read_to_string(package)?;
                 if let Ok(package_data) = serde_json::from_str::<PackageJson>(&raw) {
                     print!("{}", package_data.make_prefix(None));
