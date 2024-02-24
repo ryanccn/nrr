@@ -8,18 +8,18 @@ Minimal, blazing fast npm scripts runner.
 
 <details>
 
-<summary>Benchmark of <code>nrr</code>, <code>npm</code>, <code>yarn</code>, <code>pnpm</code>, and <code>bun</code> running a simple <code>echo</code> script</summary>
+<summary>Benchmark of <code>nrr</code>, <code>npm</code>, <code>yarn</code>, <code>pnpm</code>, <code>bun</code>, and <code>dum</code> running a simple <code>echo</code> script</summary>
 
-| Command |   Mean [ms] | Min [ms] | Max [ms] |     Relative |
-| :------ | ----------: | -------: | -------: | -----------: |
-| `nrr`   |   2.5 ± 0.2 |      2.3 |      3.3 |         1.00 |
-| `dum`   |   5.3 ± 0.4 |      4.8 |      7.4 |  2.13 ± 0.21 |
-| `bun`   |   7.8 ± 0.5 |      7.3 |     12.9 |  3.15 ± 0.30 |
-| `yarn`  | 152.7 ± 0.8 |    151.0 |    154.3 | 61.41 ± 4.32 |
-| `npm`   | 160.0 ± 1.2 |    157.9 |    162.4 | 64.35 ± 4.54 |
-| `pnpm`  | 223.7 ± 0.9 |    222.2 |    225.6 | 89.94 ± 6.32 |
+| Command   |   Mean [ms] | Min [ms] | Max [ms] |     Relative |
+| :-------- | ----------: | -------: | -------: | -----------: |
+| **`nrr`** |   6.1 ± 0.3 |      5.6 |      8.2 |  1.17 ± 0.09 |
+| `dum`     |   5.2 ± 0.3 |      4.9 |      6.1 |         1.00 |
+| `bun`     |   7.8 ± 0.3 |      7.3 |      9.0 |  1.50 ± 0.10 |
+| `yarn`    | 152.7 ± 0.9 |    151.0 |    154.8 | 29.39 ± 1.51 |
+| `npm`     | 162.2 ± 1.3 |    159.9 |    164.8 | 31.21 ± 1.62 |
+| `pnpm`    | 223.8 ± 2.7 |    220.4 |    231.3 | 43.07 ± 2.27 |
 
-<small><code>hyperfine --shell=none --warmup=5 --export-markdown=benchmark.md 'dum run test' -n dum 'pnpm run test' -n pnpm 'yarn run test' -n yarn 'npm run test' -n npm 'bun run test' -n bun 'nrr run test' -n nrr</code></small>
+<small><code>hyperfine --shell=none --warmup=5 --output=pipe --export-markdown=benchmark.md 'npm run dev' -n 'npm' 'yarn run dev' -n 'yarn' 'pnpm run dev' -n 'pnpm' 'bun run dev' -n 'bun' 'dum run dev' -n 'dum' 'nrr dev' -n 'nrr'</code></small>
 
 </details>
 
