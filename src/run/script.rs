@@ -4,8 +4,7 @@ use nix::{
     unistd::Pid,
 };
 
-use smartstring::alias::String;
-use std::{env, ffi::OsString, path::Path, process::Command};
+use std::{env, path::Path, process::Command};
 
 use color_eyre::Result;
 use owo_colors::{OwoColorize, Stream};
@@ -13,13 +12,13 @@ use owo_colors::{OwoColorize, Stream};
 #[cfg(unix)]
 use ctrlc::set_handler;
 
-use crate::package_json::PackageJson;
+use crate::{package_json::PackageJson, run::util::make_patched_path};
 
 #[cfg(unix)]
 #[allow(clippy::unnecessary_wraps)]
 #[inline]
 fn make_shell_cmd() -> Result<Command> {
-    let mut cmd = Command::new("sh");
+    let mut cmd = Command::new("/bin/sh");
     cmd.arg("-c");
     Ok(cmd)
 }
@@ -31,21 +30,6 @@ fn make_shell_cmd() -> Result<Command> {
     let mut cmd = Command::new(env::var("ComSpec")?);
     cmd.args(["/d", "/s", "/c"]);
     Ok(cmd)
-}
-
-#[inline]
-fn make_patched_path(package_path: &Path) -> Result<OsString> {
-    let mut patched_path = package_path
-        .ancestors()
-        .map(|p| p.join("node_modules").join(".bin"))
-        .filter(|p| p.is_dir())
-        .collect::<Vec<_>>();
-
-    if let Ok(existing_path) = env::var("PATH") {
-        patched_path.extend(env::split_paths(&existing_path));
-    }
-
-    Ok(env::join_paths(patched_path)?)
 }
 
 #[derive(Copy, Clone, PartialEq)]
@@ -72,22 +56,20 @@ pub fn run_script(
     script_name: &str,
     script_cmd: &str,
     script_type: ScriptType,
-    extra_args: Option<&Vec<String>>,
+    extra_args: &[String],
 ) -> Result<()> {
     let package_folder = package_path.parent().unwrap();
 
     let mut full_cmd = script_cmd.to_owned();
 
-    if let Some(extra_args) = extra_args {
-        if !extra_args.is_empty() {
-            full_cmd.push(' ');
-            extra_args
-                .iter()
-                .map(|f| shlex::try_quote(f))
-                .collect::<Result<Vec<_>, _>>()?
-                .into_iter()
-                .for_each(|arg| full_cmd.push_str(arg.as_ref()));
-        }
+    if !extra_args.is_empty() {
+        full_cmd.push(' ');
+        extra_args
+            .iter()
+            .map(|f| shlex::try_quote(f))
+            .collect::<Result<Vec<_>, _>>()?
+            .into_iter()
+            .for_each(|arg| full_cmd.push_str(arg.as_ref()));
     }
 
     let cmd_prefix = script_type.prefix() + &"$".repeat(*crate::get_level());
@@ -103,17 +85,12 @@ pub fn run_script(
     let mut subproc = make_shell_cmd()?;
     subproc.current_dir(package_folder).arg(&full_cmd);
 
-    let self_exe = env::current_exe()?;
-    let patched_path = make_patched_path(package_path)?;
+    subproc.env("PATH", make_patched_path(package_path)?);
 
-    subproc.env("PATH", patched_path);
-
-    subproc
-        .env("NRR_COMPAT_MODE", "1")
-        .env("NRR_LEVEL", format!("{}", crate::get_level() + 1));
+    subproc.env("NRR_LEVEL", format!("{}", crate::get_level() + 1));
 
     subproc
-        .env("npm_execpath", &self_exe)
+        .env("npm_execpath", env::current_exe()?)
         .env("npm_lifecycle_event", script_name)
         .env("npm_lifecycle_script", &full_cmd);
 

@@ -1,5 +1,5 @@
 {
-  description = "Minimal, blazing fast Node.js script runner";
+  description = "Minimal, blazing fast npm scripts runner";
 
   nixConfig = {
     extra-substituters = ["https://cache.garnix.io"];
