@@ -41,7 +41,7 @@ pub fn run_exec(
 
     subproc.env("PATH", util::make_patched_path(package_path)?);
 
-    subproc.env("NRR_LEVEL", format!("{}", crate::get_level() + 1));
+    subproc.env("__NRR_LEVEL", format!("{}", crate::get_level() + 1));
 
     subproc
         .env("npm_execpath", env::current_exe()?)

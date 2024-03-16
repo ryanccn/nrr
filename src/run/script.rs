@@ -62,15 +62,15 @@ pub fn run_script(
 
     let mut full_cmd = script_cmd.to_owned();
 
-    if !extra_args.is_empty() {
-        full_cmd.push(' ');
-        extra_args
-            .iter()
-            .map(|f| shlex::try_quote(f))
-            .collect::<Result<Vec<_>, _>>()?
-            .into_iter()
-            .for_each(|arg| full_cmd.push_str(arg.as_ref()));
-    }
+    extra_args
+        .iter()
+        .map(|f| shlex::try_quote(f))
+        .collect::<Result<Vec<_>, _>>()?
+        .into_iter()
+        .for_each(|arg| {
+            full_cmd.push(' ');
+            full_cmd.push_str(arg.as_ref());
+        });
 
     let cmd_prefix = script_type.prefix() + &"$".repeat(*crate::get_level());
 
@@ -87,7 +87,7 @@ pub fn run_script(
 
     subproc.env("PATH", make_patched_path(package_path)?);
 
-    subproc.env("NRR_LEVEL", format!("{}", crate::get_level() + 1));
+    subproc.env("__NRR_LEVEL", format!("{}", crate::get_level() + 1));
 
     subproc
         .env("npm_execpath", env::current_exe()?)
