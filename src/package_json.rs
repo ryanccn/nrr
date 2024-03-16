@@ -33,6 +33,7 @@ fn make_prefix_internal(
     name: Option<impl Into<String>>,
     version: Option<impl Into<String>>,
     script: Option<impl Into<String>>,
+    stream: Stream,
 ) -> String {
     let mut prefix = String::new();
 
@@ -40,7 +41,7 @@ fn make_prefix_internal(
         prefix.push_str(
             &name
                 .into()
-                .if_supports_color(Stream::Stderr, |text| text.magenta())
+                .if_supports_color(stream, |text| text.magenta())
                 .to_string(),
         );
 
@@ -50,8 +51,8 @@ fn make_prefix_internal(
             version_str.push_str(&version.into());
             prefix.push_str(
                 &version_str
-                    .if_supports_color(Stream::Stderr, |text| text.magenta())
-                    .if_supports_color(Stream::Stderr, |text| text.dimmed())
+                    .if_supports_color(stream, |text| text.magenta())
+                    .if_supports_color(stream, |text| text.dimmed())
                     .to_string(),
             );
         }
@@ -90,11 +91,12 @@ impl PackageJson<'_, '_, '_> {
 
     #[allow(dead_code)]
     #[must_use]
-    pub fn make_prefix(&self, script_name: Option<&str>) -> String {
+    pub fn make_prefix(&self, script_name: Option<&str>, stream: Stream) -> String {
         make_prefix_internal(
             self.name.as_ref().map(|v| v.as_ref()),
             self.version.as_ref().map(|v| v.as_ref()),
             script_name,
+            stream,
         )
     }
 }
@@ -102,7 +104,12 @@ impl PackageJson<'_, '_, '_> {
 impl PackageJsonOwned {
     #[allow(dead_code)]
     #[must_use]
-    pub fn make_prefix(&self, script_name: Option<&str>) -> String {
-        make_prefix_internal(self.name.as_ref(), self.version.as_ref(), script_name)
+    pub fn make_prefix(&self, script_name: Option<&str>, stream: Stream) -> String {
+        make_prefix_internal(
+            self.name.as_ref(),
+            self.version.as_ref(),
+            script_name,
+            stream,
+        )
     }
 }

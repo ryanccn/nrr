@@ -17,10 +17,13 @@ pub fn handle(package_paths: impl Iterator<Item = PathBuf>, args: &ExecArgs) -> 
                 if has_exec(&package_path, &args.bin) {
                     eprint!(
                         "{}",
-                        package.make_prefix(match crate::get_level() {
-                            1 => None,
-                            _ => Some(&args.bin),
-                        })
+                        package.make_prefix(
+                            match crate::get_level() {
+                                1 => None,
+                                _ => Some(&args.bin),
+                            },
+                            Stream::Stderr
+                        )
                     );
 
                     run_exec(&package_path, &package, &args.bin, &args.extra_args)?;

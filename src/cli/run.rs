@@ -19,10 +19,13 @@ fn run_script_full(
 ) -> Result<()> {
     eprint!(
         "{}",
-        package_data.make_prefix(match crate::get_level() {
-            1 => None,
-            _ => Some(script_name),
-        })
+        package_data.make_prefix(
+            match crate::get_level() {
+                1 => None,
+                _ => Some(script_name),
+            },
+            Stream::Stderr
+        )
     );
 
     if !no_pre_post {
