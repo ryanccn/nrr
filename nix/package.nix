@@ -23,7 +23,7 @@ crane.buildPackage {
     CoreFoundation
     Security
     IOKit
-    libiconv
+    darwin.libiconv
   ]);
 
   nativeBuildInputs = lib.optionals stdenv.isDarwin [

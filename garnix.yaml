@@ -1,5 +1,7 @@
 builds:
-  exclude: []
+  exclude:
+    - "packages.*.nrr-static-x86_64"
+    - "packages.*.nrr-static-aarch64"
   include:
     - "packages.x86_64-linux.*"
     - "packages.aarch64-linux.*"
