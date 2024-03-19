@@ -1,8 +1,5 @@
 builds:
   exclude:
-    - "packages.*.nrr-static-x86_64"
-    - "packages.*.nrr-static-aarch64"
+    - "packages.x86_64-darwin.*"
   include:
-    - "packages.x86_64-linux.*"
-    - "packages.aarch64-linux.*"
-    - "packages.aarch64-darwin.*"
+    - "packages.*.nrr"
