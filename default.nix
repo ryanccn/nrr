@@ -11,6 +11,7 @@
   self,
   lto ? true,
   optimizeSize ? true,
+  nrxAlias ? true,
 }: let
   filter = path: type: let
     path' = toString path;
@@ -49,8 +50,12 @@ in
       pkg-config
     ];
 
+    postInstall = ''
+      ${lib.optionalString nrxAlias "ln -s $out/bin/nrr $out/bin/nrx"}
+    '';
+
     meta = with lib; {
-      description = "Minimal, blazing fast Node.js script runner";
+      description = "Minimal, blazing fast npm scripts runner";
       maintainers = with maintainers; [ryanccn];
       license = licenses.gpl3Only;
       mainProgram = "nrr";

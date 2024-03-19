@@ -1,8 +1,8 @@
 use crate::package_json::PackageJsonOwned;
 
-use smartstring::alias::String;
 use std::cmp::Ordering;
 
+#[must_use]
 pub fn suggest(input: &str, package: &PackageJsonOwned) -> Option<String> {
     let mut distances = package
         .scripts
