@@ -8,15 +8,23 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+
+    crane = {
+      url = "github:ipetkov/crane";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    fenix = {
+      url = "github:nix-community/fenix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = {
     self,
     nixpkgs,
     ...
-  }: let
-    version = builtins.substring 0 8 self.lastModifiedDate or "dirty";
-
+  } @ inputs: let
     inherit (nixpkgs) lib;
 
     systems = [
@@ -28,13 +36,16 @@
 
     forAllSystems = fn: lib.genAttrs systems (s: fn nixpkgs.legacyPackages.${s});
   in {
-    checks = forAllSystems (pkgs: let
-      formatter = self.formatter.${pkgs.system};
-    in {
+    checks = forAllSystems ({
+      lib,
+      pkgs,
+      system,
+      ...
+    }: {
       fmt =
         pkgs.runCommand "check-fmt" {}
         ''
-          ${pkgs.lib.getExe formatter} --check ${self}
+          ${lib.getExe self.formatter.${system}} --check ${self}
           touch $out
         '';
     });
@@ -53,22 +64,35 @@
       };
     });
 
-    packages = forAllSystems (
-      pkgs: let
-        scope = lib.makeScope pkgs.newScope;
-        fn = final: {p = self.overlays.default final pkgs;};
-        inherit (scope fn) p;
-      in
-        p // {default = p.nrr;}
-    );
+    packages = forAllSystems ({
+      pkgs,
+      stdenv,
+      system,
+      ...
+    }: let
+      crane = inputs.crane.lib.${system};
+      nrr = pkgs.callPackage ./nix/package.nix {
+        inherit crane;
+      };
+    in
+      {
+        inherit nrr;
+        default = nrr;
+      }
+      // lib.optionalAttrs stdenv.isLinux {
+        nrr-static = pkgs.callPackage ./nix/static.nix {
+          inherit crane nrr;
+          fenix = inputs.fenix.packages.${system};
+        };
+      });
 
     formatter = forAllSystems (p: p.alejandra);
 
     overlays.default = _: prev: {
-      nrr = prev.callPackage ./default.nix {
-        inherit self version;
-        inherit (prev.darwin.apple_sdk_11_0.frameworks) CoreFoundation Security;
-        inherit (prev.darwin) IOKit;
+      nrr = prev.callPackage ./nix/package.nix {
+        crane =
+          inputs.crane.lib.${prev.stdenv.hostPlatform.system}
+          or (prev.callPackage inputs.crane {});
       };
     };
   };
