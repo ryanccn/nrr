@@ -7,15 +7,24 @@ on:
     branches: ["main"]
 
 jobs:
-  build:
+  rust-stable:
     strategy:
       matrix:
-        runner:
-          - ubuntu-latest
-          - macos-latest
-          - windows-latest
+        system:
+          - name: macos
+            arch: x86_64
+            runner: macos-latest
+          - name: macos
+            arch: aarch64
+            runner: macos-14
+          - name: windows
+            arch: x86_64
+            runner: windows-latest
+          - name: linux-gnu
+            arch: x86_64
+            runner: ubuntu-latest
 
-    runs-on: ${{ matrix.runner }}
+    runs-on: ${{ matrix.system.runner }}
 
     steps:
       - name: Checkout repository
@@ -31,3 +40,42 @@ jobs:
 
       - name: Build
         run: cargo build --release --locked
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+           name: nrr-${{ matrix.system.arch }}-${{ matrix.system.name }}
+           path: ./target/release/nrr*
+
+  linux-static:
+    strategy:
+      matrix:
+        arch: 
+          - x86_64
+          - arch64
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@v10
+
+      - name: Setup Nix cache
+        uses: determinatesystems/magic-nix-cache-action@v4
+
+      - name: Build package
+        run: |
+          nix build .#nrr-static-${{ matrix.arch }} \
+            --accept-flake-config \
+            --fallback \
+            --out-link built-${{ matrix.arch }} \
+            --print-build-log
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+           name: nrr-${{ matrix.arch }}-linux-musl
+           path: ./built-${{ matrix.arch }}/bin/nrr

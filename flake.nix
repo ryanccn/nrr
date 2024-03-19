@@ -71,6 +71,7 @@
       ...
     }: let
       crane = inputs.crane.lib.${system};
+      fenix = inputs.fenix.packages.${system};
       nrr = pkgs.callPackage ./nix/package.nix {
         inherit crane;
       };
@@ -80,9 +81,14 @@
         default = nrr;
       }
       // lib.optionalAttrs stdenv.isLinux {
-        nrr-static = pkgs.callPackage ./nix/static.nix {
-          inherit crane nrr;
-          fenix = inputs.fenix.packages.${system};
+        nrr-static-x86_64 = pkgs.callPackage ./nix/static.nix {
+          inherit crane fenix nrr;
+          pkgsStatic = pkgs.pkgsCross.musl64;
+        };
+
+        nrr-static-aarch64 = pkgs.callPackage ./nix/static.nix {
+          inherit crane fenix nrr;
+          inherit (pkgs.pkgsCross.aarch64-multiplatform) pkgsStatic;
         };
       });
 
