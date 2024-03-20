@@ -52,7 +52,7 @@ jobs:
       matrix:
         arch: 
           - x86_64
-          - arch64
+          - aarch64
 
     runs-on: ubuntu-latest
 
@@ -64,15 +64,14 @@ jobs:
         uses: DeterminateSystems/nix-installer-action@v10
 
       - name: Setup Nix cache
-        uses: determinatesystems/magic-nix-cache-action@v4
+        uses: DeterminateSystems/magic-nix-cache-action@v4
 
       - name: Build package
         run: |
           nix build .#nrr-static-${{ matrix.arch }} \
-            --accept-flake-config \
             --fallback \
             --out-link built-${{ matrix.arch }} \
-            --print-build-log
+            --print-build-logs
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
