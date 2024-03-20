@@ -14,8 +14,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    fenix = {
-      url = "github:nix-community/fenix";
+    rust-overlay = {
+      url = "github:oxalica/rust-overlay";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
@@ -34,7 +34,18 @@
       "aarch64-darwin"
     ];
 
-    forAllSystems = fn: lib.genAttrs systems (s: fn nixpkgs.legacyPackages.${s});
+    forAllSystems = fn:
+      lib.genAttrs systems (system:
+        fn rec {
+          pkgs = import nixpkgs {
+            inherit system;
+            config = {};
+            overlays = [inputs.rust-overlay.overlays.default self.overlays.default];
+          };
+
+          inherit (pkgs) lib;
+          inherit system;
+        });
   in {
     checks = forAllSystems ({
       lib,
@@ -50,7 +61,7 @@
         '';
     });
 
-    devShells = forAllSystems (pkgs: {
+    devShells = forAllSystems ({pkgs, ...}: {
       default = pkgs.mkShell {
         packages = with pkgs; [
           rust-analyzer
@@ -66,33 +77,28 @@
 
     packages = forAllSystems ({
       pkgs,
-      stdenv,
       system,
       ...
     }: let
       crane = inputs.crane.lib.${system};
-      fenix = inputs.fenix.packages.${system};
-      nrr = pkgs.callPackage ./nix/package.nix {
-        inherit crane;
-      };
     in
       {
-        inherit nrr;
-        default = nrr;
+        inherit (pkgs) nrr;
+        default = pkgs.nrr;
       }
-      // lib.optionalAttrs stdenv.isLinux {
+      // lib.optionalAttrs pkgs.stdenv.isLinux {
         nrr-static-x86_64 = pkgs.callPackage ./nix/static.nix {
-          inherit crane fenix nrr;
+          inherit crane;
           pkgsStatic = pkgs.pkgsCross.musl64;
         };
 
         nrr-static-aarch64 = pkgs.callPackage ./nix/static.nix {
-          inherit crane fenix nrr;
+          inherit crane;
           inherit (pkgs.pkgsCross.aarch64-multiplatform) pkgsStatic;
         };
       });
 
-    formatter = forAllSystems (p: p.alejandra);
+    formatter = forAllSystems ({pkgs, ...}: pkgs.alejandra);
 
     overlays.default = _: prev: {
       nrr = prev.callPackage ./nix/package.nix {

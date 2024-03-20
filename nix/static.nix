@@ -1,37 +1,30 @@
 {
-  lib,
   pkgsStatic,
   crane,
-  fenix,
+  rust-bin,
   nrr,
 }: let
   target = pkgsStatic.stdenv.hostPlatform.config;
-  targetUpper = lib.toUpper (builtins.replaceStrings ["-"] ["_"] target);
-  inherit (pkgsStatic.stdenv) cc;
+  inherit (pkgsStatic.stdenv) cc buildPlatform hostPlatform;
 
-  toolchain = with fenix;
-    combine [
-      minimal.cargo
-      minimal.rustc
-      targets.${target}.latest.rust-std
-    ];
+  staticToolchain = rust-bin.nightly.latest.minimal.override {
+    extensions = ["rust-std"];
+    targets = [target];
+  };
 
-  crane' = crane.overrideToolchain toolchain;
+  crane' = crane.overrideToolchain staticToolchain;
 in
   (nrr.override {
     crane = crane';
     lto = true;
   })
   .overrideAttrs (old: {
-    nativeBuildInputs = old.nativeBuildInputs ++ [pkgsStatic.stdenv.cc];
-
-    # we may be cross compiling here, so there's
-    # no guarntee we can actually run the built binary
-    doCheck = false;
+    # don't run checks when cross compiling,
+    # as we can't guarantee support for the target architecture
+    doCheck = buildPlatform.system == hostPlatform.system;
 
     env = {
       CARGO_BUILD_TARGET = target;
-      CARGO_BUILD_RUSTFLAGS = old.env.CARGO_BUILD_RUSTFLAGS + " -C target-feature=+crt-static";
-      "CARGO_TARGET_${targetUpper}_LINKER" = "${cc}/bin/${cc.targetPrefix}cc";
+      CARGO_BUILD_RUSTFLAGS = old.env.CARGO_BUILD_RUSTFLAGS + " -C target-feature=+crt-static -C linker=${cc}/bin/${cc.targetPrefix}cc";
     };
   })
