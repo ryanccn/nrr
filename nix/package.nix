@@ -10,14 +10,7 @@
   nrxAlias ? true,
 }:
 crane.buildPackage {
-  src = lib.fileset.toSource {
-    root = ../.;
-    fileset = lib.fileset.unions [
-      ../src
-      ../Cargo.toml
-      ../Cargo.lock
-    ];
-  };
+  src = crane.cleanCargoSource (crane.path ../.);
 
   buildInputs = lib.optionals stdenv.isDarwin (with darwin.apple_sdk.frameworks; [
     CoreFoundation
