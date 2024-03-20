@@ -8,61 +8,43 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
-
-    crane = {
-      url = "github:ipetkov/crane";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    flake-utils.url = "github:numtide/flake-utils";
 
     rust-overlay = {
       url = "github:oxalica/rust-overlay";
-      inputs.nixpkgs.follows = "nixpkgs";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        flake-utils.follows = "flake-utils";
+      };
     };
   };
 
   outputs = {
     self,
     nixpkgs,
+    flake-utils,
     ...
-  } @ inputs: let
-    inherit (nixpkgs) lib;
+  } @ inputs:
+    flake-utils.lib.eachDefaultSystem (system: let
+      pkgs = import nixpkgs {
+        inherit system;
+        config = {};
+        overlays = [
+          inputs.rust-overlay.overlays.default
+          self.overlays.default
+        ];
+      };
 
-    systems = [
-      "x86_64-linux"
-      "aarch64-linux"
-      "x86_64-darwin"
-      "aarch64-darwin"
-    ];
-
-    forAllSystems = fn:
-      lib.genAttrs systems (system:
-        fn rec {
-          pkgs = import nixpkgs {
-            inherit system;
-            config = {};
-            overlays = [inputs.rust-overlay.overlays.default self.overlays.default];
-          };
-
-          inherit (pkgs) lib;
-          inherit system;
-        });
-  in {
-    checks = forAllSystems ({
-      lib,
-      pkgs,
-      system,
-      ...
-    }: {
-      fmt =
-        pkgs.runCommand "check-fmt" {}
-        ''
-          ${lib.getExe self.formatter.${system}} --check ${self}
+      inherit (pkgs) lib;
+    in rec {
+      checks = {
+        fmt = pkgs.runCommand "check-fmt" {} ''
+          ${lib.getExe formatter} --check ${./.}
           touch $out
         '';
-    });
+      };
 
-    devShells = forAllSystems ({pkgs, ...}: {
-      default = pkgs.mkShell {
+      devShells.default = pkgs.mkShell {
         packages = with pkgs; [
           rust-analyzer
           rustc
@@ -73,39 +55,21 @@
         RUST_BACKTRACE = 1;
         RUST_SRC_PATH = "${pkgs.rust.packages.stable.rustPlatform.rustLibSrc}";
       };
-    });
 
-    packages = forAllSystems ({
-      pkgs,
-      system,
-      ...
-    }: let
-      crane = inputs.crane.lib.${system};
-    in
-      {
-        inherit (pkgs) nrr;
-        default = pkgs.nrr;
-      }
-      // lib.optionalAttrs pkgs.stdenv.isLinux {
-        nrr-static-x86_64 = pkgs.callPackage ./nix/static.nix {
-          inherit crane;
-          pkgsStatic = pkgs.pkgsCross.musl64;
-        };
+      packages = let
+        staticPkgs = import ./nix/static.nix pkgs;
+      in
+        {
+          inherit (pkgs) nrr;
+          default = pkgs.nrr;
+        }
+        // lib.optionalAttrs pkgs.stdenv.isLinux staticPkgs;
 
-        nrr-static-aarch64 = pkgs.callPackage ./nix/static.nix {
-          inherit crane;
-          inherit (pkgs.pkgsCross.aarch64-multiplatform) pkgsStatic;
-        };
-      });
-
-    formatter = forAllSystems ({pkgs, ...}: pkgs.alejandra);
-
-    overlays.default = _: prev: {
-      nrr = prev.callPackage ./nix/package.nix {
-        crane =
-          inputs.crane.lib.${prev.stdenv.hostPlatform.system}
-          or (prev.callPackage inputs.crane {});
+      formatter = pkgs.alejandra;
+    })
+    // {
+      overlays.default = _: prev: {
+        nrr = prev.callPackage ./nix/package.nix {};
       };
     };
-  };
 }

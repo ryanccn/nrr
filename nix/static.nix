@@ -1,30 +1,37 @@
 {
-  pkgsStatic,
-  crane,
+  lib,
+  pkgsCross,
   rust-bin,
   nrr,
+  ...
 }: let
-  target = pkgsStatic.stdenv.hostPlatform.config;
-  inherit (pkgsStatic.stdenv) cc buildPlatform hostPlatform;
-
-  staticToolchain = rust-bin.nightly.latest.minimal.override {
-    extensions = ["rust-std"];
-    targets = [target];
+  targets = {
+    x86_64 = pkgsCross.musl64.pkgsStatic;
+    aarch64 = pkgsCross.aarch64-multiplatform.pkgsStatic;
   };
 
-  crane' = crane.overrideToolchain staticToolchain;
-in
-  (nrr.override {
-    crane = crane';
-    lto = true;
-  })
-  .overrideAttrs (old: {
-    # don't run checks when cross compiling,
-    # as we can't guarantee support for the target architecture
-    doCheck = buildPlatform.system == hostPlatform.system;
+  toolchain = rust-bin.nightly.latest.minimal.override {
+    extensions = ["rust-std"];
+    targets = map (pkgs: pkgs.stdenv.hostPlatform.config) (lib.attrValues targets);
+  };
 
-    env = {
-      CARGO_BUILD_TARGET = target;
-      CARGO_BUILD_RUSTFLAGS = old.env.CARGO_BUILD_RUSTFLAGS + " -C target-feature=+crt-static -C linker=${cc}/bin/${cc.targetPrefix}cc";
+  rustPlatforms =
+    lib.mapAttrs (
+      lib.const (pkgs:
+        pkgs.makeRustPlatform (
+          lib.genAttrs ["cargo" "rustc"] (lib.const toolchain)
+        ))
+    )
+    targets;
+
+  mkPackageWith = rustPlatform:
+    nrr.override {
+      inherit rustPlatform;
+      lto = true;
     };
-  })
+in
+  lib.mapAttrs' (
+    target: rustPlatform:
+      lib.nameValuePair "nrr-static-${target}" (mkPackageWith rustPlatform)
+  )
+  rustPlatforms

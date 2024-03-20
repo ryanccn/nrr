@@ -1,7 +1,7 @@
 {
   lib,
   stdenv,
-  crane,
+  rustPlatform,
   darwin,
   pkg-config,
   # this doesn't work with a default toolchain
@@ -9,8 +9,24 @@
   optimizeSize ? false,
   nrxAlias ? true,
 }:
-crane.buildPackage {
-  src = crane.cleanCargoSource (crane.path ../.);
+rustPlatform.buildRustPackage rec {
+  pname = passthru.cargoToml.package.name;
+  inherit (passthru.cargoToml.package) version;
+
+  __structuredAttrs = true;
+
+  src = lib.fileset.toSource {
+    root = ../.;
+    fileset = lib.fileset.unions [
+      ../src
+      ../Cargo.lock
+      ../Cargo.toml
+    ];
+  };
+
+  cargoLock = {
+    lockFile = ../Cargo.lock;
+  };
 
   buildInputs = lib.optionals stdenv.isDarwin (with darwin.apple_sdk.frameworks; [
     CoreFoundation
@@ -40,6 +56,10 @@ crane.buildPackage {
   };
 
   postInstall = lib.optionalString nrxAlias "ln -s $out/bin/nr{r,x}";
+
+  passthru = {
+    cargoToml = lib.importTOML ../Cargo.toml;
+  };
 
   meta = with lib; {
     description = "Minimal, blazing fast npm scripts runner";
