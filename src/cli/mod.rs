@@ -52,8 +52,12 @@ struct RootArgs {
     extra_args: Vec<String>,
 
     /// Don't run pre- and post- scripts
-    #[arg(short, long)]
+    #[arg(short, long, env = "NRR_NO_PRE_POST")]
     no_pre_post: bool,
+
+    /// Disable printing package and command information
+    #[clap(short, long, env = "NRR_SILENT")]
+    silent: bool,
 }
 
 #[derive(Args, Clone)]
@@ -66,8 +70,12 @@ struct RunArgs {
     extra_args: Vec<String>,
 
     /// Don't run pre- and post- scripts
-    #[arg(short, long)]
+    #[arg(short, long, env = "NRR_NO_PRE_POST")]
     no_pre_post: bool,
+
+    /// Disable printing package and command information
+    #[clap(short, long, env = "NRR_SILENT")]
+    silent: bool,
 }
 
 #[derive(Args, Clone)]
@@ -78,6 +86,10 @@ struct ExecArgs {
     /// Extra arguments to pass to the command
     #[clap(allow_hyphen_values = true)]
     extra_args: Vec<String>,
+
+    /// Disable printing package and command information
+    #[clap(short, long, env = "NRR_SILENT")]
+    silent: bool,
 }
 
 pub fn get_level() -> &'static usize {
@@ -127,6 +139,7 @@ impl Cli {
                             script: script_name.to_owned(),
                             extra_args: self.root_args.extra_args.clone(),
                             no_pre_post: self.root_args.no_pre_post,
+                            silent: self.root_args.silent,
                         },
                     )?;
                 } else {

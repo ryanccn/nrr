@@ -51,12 +51,13 @@ impl ScriptType {
 }
 
 pub fn run_script(
+    script_type: ScriptType,
     package_path: &Path,
     package_data: &PackageJson,
     script_name: &str,
     script_cmd: &str,
-    script_type: ScriptType,
     extra_args: &[String],
+    silent: bool,
 ) -> Result<()> {
     let package_folder = package_path.parent().unwrap();
 
@@ -72,15 +73,17 @@ pub fn run_script(
             full_cmd.push_str(arg.as_ref());
         });
 
-    let cmd_prefix = script_type.prefix() + &"$".repeat(*crate::get_level());
+    if !silent {
+        let cmd_prefix = script_type.prefix() + &"$".repeat(*crate::get_level());
 
-    eprintln!(
-        "{} {}",
-        cmd_prefix
-            .if_supports_color(Stream::Stderr, |text| text.cyan())
-            .if_supports_color(Stream::Stderr, |text| text.dimmed()),
-        full_cmd.if_supports_color(Stream::Stderr, |text| text.dimmed())
-    );
+        eprintln!(
+            "{} {}",
+            cmd_prefix
+                .if_supports_color(Stream::Stderr, |text| text.cyan())
+                .if_supports_color(Stream::Stderr, |text| text.dimmed()),
+            full_cmd.if_supports_color(Stream::Stderr, |text| text.dimmed())
+        );
+    }
 
     let mut subproc = make_shell_cmd()?;
     subproc.current_dir(package_folder).arg(&full_cmd);
@@ -119,11 +122,13 @@ pub fn run_script(
     if !status.success() {
         let code = status.code().unwrap_or(1);
 
-        eprintln!(
-            "{}  Exited with status {}!",
-            "error".if_supports_color(Stream::Stderr, |text| text.red()),
-            util::itoa(code).if_supports_color(Stream::Stderr, |text| text.bold()),
-        );
+        if !silent {
+            eprintln!(
+                "{}  Exited with status {}!",
+                "error".if_supports_color(Stream::Stderr, |text| text.red()),
+                util::itoa(code).if_supports_color(Stream::Stderr, |text| text.bold()),
+            );
+        }
 
         std::process::exit(code);
     }
