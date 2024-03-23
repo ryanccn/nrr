@@ -17,6 +17,10 @@ pub struct Cli {
 
     #[clap(subcommand)]
     subcommand: Option<Subcommands>,
+
+    /// Disable printing package and command information
+    #[clap(short, long, global = true, env = "NRR_SILENT")]
+    silent: bool,
 }
 
 #[derive(Parser, Clone)]
@@ -24,6 +28,10 @@ pub struct Cli {
 pub struct NrxCli {
     #[clap(flatten)]
     args: ExecArgs,
+
+    /// Disable printing package and command information
+    #[clap(short, long, env = "NRR_SILENT")]
+    silent: bool,
 }
 
 #[derive(Subcommand, Clone)]
@@ -52,7 +60,7 @@ struct RootArgs {
     extra_args: Vec<String>,
 
     /// Don't run pre- and post- scripts
-    #[arg(short, long)]
+    #[arg(short, long, env = "NRR_NO_PRE_POST")]
     no_pre_post: bool,
 }
 
@@ -66,7 +74,7 @@ struct RunArgs {
     extra_args: Vec<String>,
 
     /// Don't run pre- and post- scripts
-    #[arg(short, long)]
+    #[arg(short, long, env = "NRR_NO_PRE_POST")]
     no_pre_post: bool,
 }
 
@@ -100,11 +108,11 @@ impl Cli {
 
         match &self.subcommand {
             Some(Subcommands::Run(args)) => {
-                run::handle(package_paths, args)?;
+                run::handle(package_paths, args, self.silent)?;
             }
 
             Some(Subcommands::Exec(args)) => {
-                exec::handle(package_paths, args)?;
+                exec::handle(package_paths, args, self.silent)?;
             }
 
             Some(Subcommands::List) => {
@@ -128,6 +136,7 @@ impl Cli {
                             extra_args: self.root_args.extra_args.clone(),
                             no_pre_post: self.root_args.no_pre_post,
                         },
+                        self.silent,
                     )?;
                 } else {
                     let found_package = list::handle(package_paths)?;
@@ -150,7 +159,7 @@ impl NrxCli {
             .map(|p| p.join("package.json"))
             .filter(|p| p.is_file());
 
-        exec::handle(package_paths, &self.args)?;
+        exec::handle(package_paths, &self.args, self.silent)?;
 
         Ok(())
     }

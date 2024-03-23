@@ -16,40 +16,45 @@ fn run_script_full(
     script_cmd: &str,
     extra_args: &[String],
     no_pre_post: bool,
+    silent: bool,
 ) -> Result<()> {
-    eprint!(
-        "{}",
-        package_data.make_prefix(
-            match crate::get_level() {
-                1 => None,
-                _ => Some(script_name),
-            },
-            Stream::Stderr
-        )
-    );
+    if !silent {
+        eprint!(
+            "{}",
+            package_data.make_prefix(
+                match crate::get_level() {
+                    1 => None,
+                    _ => Some(script_name),
+                },
+                Stream::Stderr
+            )
+        );
+    }
 
     if !no_pre_post {
         let pre_script_name = String::from("pre") + script_name;
 
         if let Some(pre_script_cmd) = package_data.scripts.get(&pre_script_name) {
             run_script(
+                ScriptType::Pre,
                 package,
                 package_data,
                 &pre_script_name,
                 pre_script_cmd,
-                ScriptType::Pre,
                 &[],
+                silent,
             )?;
         }
     }
 
     run_script(
+        ScriptType::Normal,
         package,
         package_data,
         script_name,
         script_cmd,
-        ScriptType::Normal,
         extra_args,
+        silent,
     )?;
 
     if !no_pre_post {
@@ -57,12 +62,13 @@ fn run_script_full(
 
         if let Some(post_script_cmd) = package_data.scripts.get(&post_script_name) {
             run_script(
+                ScriptType::Post,
                 package,
                 package_data,
                 &post_script_name,
                 post_script_cmd,
-                ScriptType::Post,
                 &[],
+                silent,
             )?;
         }
     }
@@ -70,7 +76,11 @@ fn run_script_full(
     Ok(())
 }
 
-pub fn handle(package_paths: impl Iterator<Item = PathBuf>, args: &RunArgs) -> Result<()> {
+pub fn handle(
+    package_paths: impl Iterator<Item = PathBuf>,
+    args: &RunArgs,
+    silent: bool,
+) -> Result<()> {
     let mut resolved_packages = Vec::<PackageJsonOwned>::new();
     let mut executed_script = false;
 
@@ -85,6 +95,7 @@ pub fn handle(package_paths: impl Iterator<Item = PathBuf>, args: &RunArgs) -> R
                         script_cmd,
                         &args.extra_args,
                         args.no_pre_post,
+                        silent,
                     )?;
 
                     executed_script = true;
