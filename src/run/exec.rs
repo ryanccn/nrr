@@ -7,7 +7,7 @@ use nix::{
 use std::{env, path::Path, process::Command};
 
 use color_eyre::Result;
-use owo_colors::{OwoColorize, Stream};
+use owo_colors::{OwoColorize as _, Stream};
 
 #[cfg(unix)]
 use ctrlc::set_handler;
@@ -16,7 +16,7 @@ use crate::{package_json::PackageJson, run::util};
 
 pub fn run_exec(
     package_path: &Path,
-    package_data: &PackageJson<'_, '_, '_>,
+    package_data: &PackageJson,
     bin: &str,
     args: &[String],
 ) -> Result<()> {
@@ -39,9 +39,9 @@ pub fn run_exec(
 
     subproc.args(args.iter().map(|f| f.to_string()));
 
-    subproc.env("PATH", util::make_patched_path(package_path)?);
-
-    subproc.env("__NRR_LEVEL", format!("{}", crate::get_level() + 1));
+    subproc
+        .env("PATH", util::make_patched_path(package_path)?)
+        .env("__NRR_LEVEL", util::itoa(crate::get_level() + 1));
 
     subproc
         .env("npm_execpath", env::current_exe()?)
@@ -73,8 +73,7 @@ pub fn run_exec(
         eprintln!(
             "{}  Exited with status {}!",
             "error".if_supports_color(Stream::Stderr, |text| text.red()),
-            code.to_string()
-                .if_supports_color(Stream::Stderr, |text| text.bold()),
+            util::itoa(code).if_supports_color(Stream::Stderr, |text| text.bold()),
         );
 
         std::process::exit(code);

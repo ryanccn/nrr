@@ -1,6 +1,6 @@
 use clap::{Args, CommandFactory, Parser, Subcommand};
 use color_eyre::Result;
-use owo_colors::{OwoColorize, Stream};
+use owo_colors::{OwoColorize as _, Stream};
 
 use std::{env, sync::OnceLock};
 
@@ -114,6 +114,8 @@ impl Cli {
                         "{}  No packages found!",
                         "error".if_supports_color(Stream::Stderr, |text| text.red()),
                     );
+
+                    std::process::exit(1);
                 }
             }
 

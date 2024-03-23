@@ -2,6 +2,7 @@
 name = "nrr"
 version = "0.8.1"
 edition = "2021"
+rust-version = "1.70"
 
 description = "Minimal, blazing fast npm scripts runner"
 authors = ["Ryan Cao <hello@ryanccn.dev>"]
@@ -14,6 +15,7 @@ clap = { version = "4.5.1", features = ["derive"] }
 color-eyre = "0.6.2"
 ctrlc = "3.4.2"
 indexmap = { version = "2.2.3", features = ["serde"] }
+itoa = "1.0.10"
 nix = { version = "0.27.1", features = ["signal"] }
 owo-colors = { version = "4.0.0", features = ["supports-colors"] }
 serde = { version = "1.0.197", features = ["derive"] }

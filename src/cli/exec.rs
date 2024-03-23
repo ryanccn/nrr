@@ -1,5 +1,5 @@
 use color_eyre::eyre::Result;
-use owo_colors::{OwoColorize, Stream};
+use owo_colors::{OwoColorize as _, Stream};
 use std::fs;
 use std::path::PathBuf;
 

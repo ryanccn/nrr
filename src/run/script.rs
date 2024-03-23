@@ -7,12 +7,12 @@ use nix::{
 use std::{env, path::Path, process::Command};
 
 use color_eyre::Result;
-use owo_colors::{OwoColorize, Stream};
+use owo_colors::{OwoColorize as _, Stream};
 
 #[cfg(unix)]
 use ctrlc::set_handler;
 
-use crate::{package_json::PackageJson, run::util::make_patched_path};
+use crate::{package_json::PackageJson, run::util};
 
 #[cfg(unix)]
 #[allow(clippy::unnecessary_wraps)]
@@ -32,7 +32,7 @@ fn make_shell_cmd() -> Result<Command> {
     Ok(cmd)
 }
 
-#[derive(Copy, Clone, PartialEq)]
+#[derive(Debug, Copy, Clone, PartialEq)]
 pub enum ScriptType {
     Pre,
     Post,
@@ -52,7 +52,7 @@ impl ScriptType {
 
 pub fn run_script(
     package_path: &Path,
-    package_data: &PackageJson<'_, '_, '_>,
+    package_data: &PackageJson,
     script_name: &str,
     script_cmd: &str,
     script_type: ScriptType,
@@ -85,9 +85,9 @@ pub fn run_script(
     let mut subproc = make_shell_cmd()?;
     subproc.current_dir(package_folder).arg(&full_cmd);
 
-    subproc.env("PATH", make_patched_path(package_path)?);
-
-    subproc.env("__NRR_LEVEL", format!("{}", crate::get_level() + 1));
+    subproc
+        .env("PATH", util::make_patched_path(package_path)?)
+        .env("__NRR_LEVEL", util::itoa(crate::get_level() + 1));
 
     subproc
         .env("npm_execpath", env::current_exe()?)
@@ -122,8 +122,7 @@ pub fn run_script(
         eprintln!(
             "{}  Exited with status {}!",
             "error".if_supports_color(Stream::Stderr, |text| text.red()),
-            code.to_string()
-                .if_supports_color(Stream::Stderr, |text| text.bold()),
+            util::itoa(code).if_supports_color(Stream::Stderr, |text| text.bold()),
         );
 
         std::process::exit(code);

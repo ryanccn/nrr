@@ -502,6 +502,7 @@ dependencies = [
  "color-eyre",
  "ctrlc",
  "indexmap 2.2.5",
+ "itoa",
  "nix",
  "owo-colors 4.0.0",
  "serde",

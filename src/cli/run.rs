@@ -1,5 +1,5 @@
 use color_eyre::eyre::Result;
-use owo_colors::{OwoColorize, Stream};
+use owo_colors::{OwoColorize as _, Stream};
 use std::path::PathBuf;
 use std::{fs, path::Path};
 
@@ -11,7 +11,7 @@ use super::RunArgs;
 
 fn run_script_full(
     package: &Path,
-    package_data: &PackageJson<'_, '_, '_>,
+    package_data: &PackageJson,
     script_name: &str,
     script_cmd: &str,
     extra_args: &[String],
