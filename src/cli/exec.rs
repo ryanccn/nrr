@@ -12,33 +12,33 @@ pub fn handle(package_paths: impl Iterator<Item = PathBuf>, args: &ExecArgs) -> 
     let mut executed_exec = false;
 
     for package_path in package_paths {
-        if let Ok(raw) = fs::read_to_string(&package_path) {
-            if let Ok(package) = serde_json::from_str::<PackageJson>(&raw) {
-                if has_exec(&package_path, &args.bin) {
-                    if !args.silent {
-                        eprint!(
-                            "{}",
-                            package.make_prefix(
-                                match crate::get_level() {
-                                    1 => None,
-                                    _ => Some(&args.bin),
-                                },
-                                Stream::Stderr
-                            )
-                        );
-                    }
-
-                    run_exec(
-                        &package_path,
-                        &package,
-                        &args.bin,
-                        &args.extra_args,
-                        args.silent,
-                    )?;
-
-                    executed_exec = true;
-                    break;
+        if let Ok(Ok(package)) =
+            fs::read(&package_path).map(|mut raw| simd_json::from_slice::<PackageJson>(&mut raw))
+        {
+            if has_exec(&package_path, &args.bin) {
+                if !args.silent {
+                    eprint!(
+                        "{}",
+                        package.make_prefix(
+                            match crate::get_level() {
+                                1 => None,
+                                _ => Some(&args.bin),
+                            },
+                            Stream::Stderr
+                        )
+                    );
                 }
+
+                run_exec(
+                    &package_path,
+                    &package,
+                    &args.bin,
+                    &args.extra_args,
+                    args.silent,
+                )?;
+
+                executed_exec = true;
+                break;
             }
         }
     }

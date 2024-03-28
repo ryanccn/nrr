@@ -49,10 +49,10 @@ pub fn run_exec(
         .env("npm_package_json", package_path);
 
     if let Some(name) = &package_data.name {
-        subproc.env("npm_package_name", name.as_ref());
+        subproc.env("npm_package_name", name);
     }
     if let Some(version) = &package_data.version {
-        subproc.env("npm_package_version", version.as_ref());
+        subproc.env("npm_package_version", version);
     }
 
     let mut child = subproc.spawn()?;

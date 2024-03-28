@@ -15,7 +15,10 @@ use color_eyre::eyre::Result;
 fn main() -> Result<()> {
     color_eyre::install()?;
 
-    if env::current_exe().is_ok_and(|exe| exe.file_name().is_some_and(|f| f == "nrx")) {
+    if env::current_exe().is_ok_and(|exe| {
+        exe.file_name()
+            .is_some_and(|f| f == "nrx" || f == "nrx.exe")
+    }) {
         let cli = NrxCli::parse();
         cli.execute()?;
     } else {
