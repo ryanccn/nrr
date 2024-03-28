@@ -5,8 +5,17 @@ on:
     tags: ["v*.*.*"]
 
 jobs:
-  publish:
+  build:
+    uses: ./.github/workflows/build.yml
+
+  crates-io:
+    name: Publish to crates.io
+    needs: build
+
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
 
     steps:
       - name: Checkout repository
@@ -24,3 +33,48 @@ jobs:
         run: cargo publish
         env:
           CARGO_REGISTRY_TOKEN: ${{ secrets.CRATES_IO_API_TOKEN }}
+
+  github:
+    name: Make GitHub release
+    needs: build
+
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download artifacts
+        id: download
+        uses: actions/download-artifact@v4
+        with:
+          path: /tmp/artifacts
+
+      - name: Prepare assets
+        env:
+          ARTIFACTS: ${{ steps.download.outputs.download-path }}
+        id: prepare
+        run: |
+          asset_path="/tmp/assets"
+          mkdir -p "$asset_path"
+          for artifact in "$ARTIFACTS"/*/; do
+            basename "$artifact" | \
+              xargs -I {} zip -jr "$asset_path"/{}.zip "$artifact"
+          done
+          echo "asset-path=$asset_path" >> "$GITHUB_OUTPUT"
+
+      - name: Create release
+        env:
+          ASSETS: ${{ steps.prepare.outputs.asset-path }}
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          gh release create \
+            --draft \
+            --notes-from-tag \
+            --verify-tag \
+            "$TAG" \
+            "$ASSETS"/*.zip
