@@ -39,21 +39,16 @@ rustPlatform.buildRustPackage rec {
     pkg-config
   ];
 
-  env = {
-    CARGO_BUILD_RUSTFLAGS = lib.concatStringsSep " " (
-      lib.optionals lto [
-        "-C lto=fat"
-        "-C embed-bitcode=yes"
-        "-Zdylib-lto"
-      ]
-      ++ lib.optionals optimizeSize [
-        "-C codegen-units=1"
-        "-C opt-level=z"
-        "-C panic=abort"
-        "-C strip=symbols"
-      ]
-    );
-  };
+  env =
+    lib.optionalAttrs lto {
+      CARGO_PROFILE_RELEASE_LTO = "fat";
+    }
+    // lib.optionalAttrs optimizeSize {
+      CARGO_PROFILE_RELEASE_OPT_LEVEL = "z";
+      CARGO_PROFILE_RELEASE_PANIC = "abort";
+      CARGO_PROFILE_RELEASE_CODEGEN_UNITS = "1";
+      CARGO_PROFILE_RELEASE_STRIP = "symbols";
+    };
 
   postInstall = lib.optionalString nrxAlias "ln -s $out/bin/nr{r,x}";
 
