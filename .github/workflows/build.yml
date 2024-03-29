@@ -9,24 +9,22 @@ on:
   workflow_dispatch:
 
 jobs:
-  rust-stable:
+  build:
     strategy:
       matrix:
-        system:
-          - name: macos
-            arch: x86_64
-            runner: macos-latest
-          - name: macos
-            arch: aarch64
+        target:
+          - aarch64-apple-darwin
+          - x86_64-apple-darwin
+          - x86_64-pc-windows-msvc
+        include:
+          - target: aarch64-apple-darwin
             runner: macos-14
-          - name: windows
-            arch: x86_64
+          - target: x86_64-apple-darwin
+            runner: macos-latest
+          - target: x86_64-pc-windows-msvc
             runner: windows-latest
-          - name: linux-gnu
-            arch: x86_64
-            runner: ubuntu-latest
 
-    runs-on: ${{ matrix.system.runner }}
+    runs-on: ${{ matrix.runner }}
 
     steps:
       - name: Checkout repository
@@ -36,26 +34,27 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: stable
+          target: ${{ matrix.target }}
 
       - name: Setup Rust cache
         uses: Swatinem/rust-cache@v2
 
       - name: Build
-        run: cargo build --release --locked
+        run: cargo build --release --locked --target ${{ matrix.target }}
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-           if-no-files-found: 'error'
-           name: nrr-${{ matrix.system.arch }}-${{ matrix.system.name }}
-           path: |
-             ./target/release/nrr
-             ./target/release/nrr.exe
+          if-no-files-found: "error"
+          name: nrr-${{ matrix.target }}
+          path: |
+            ./target/release/nrr
+            ./target/release/nrr.exe
 
   linux-static:
     strategy:
       matrix:
-        arch: 
+        arch:
           - x86_64
           - aarch64
 
@@ -81,6 +80,6 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-           if-no-files-found: 'error'
-           name: nrr-${{ matrix.arch }}-linux-musl
-           path: ./built-${{ matrix.arch }}/bin/nrr
+          if-no-files-found: "error"
+          name: nrr-${{ matrix.arch }}-unknown-linux-musl
+          path: ./built-${{ matrix.arch }}/bin/nrr

@@ -10,7 +10,7 @@
     aarch64 = pkgsCross.aarch64-multiplatform.pkgsStatic;
   };
 
-  toolchain = rust-bin.nightly.latest.minimal.override {
+  toolchain = rust-bin.stable.latest.minimal.override {
     extensions = ["rust-std"];
     targets = map (pkgs: pkgs.stdenv.hostPlatform.config) (lib.attrValues targets);
   };
