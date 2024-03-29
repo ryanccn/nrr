@@ -48,8 +48,8 @@ jobs:
           if-no-files-found: "error"
           name: nrr-${{ matrix.target }}
           path: |
-            ./target/release/nrr
-            ./target/release/nrr.exe
+            ./target/${{ matrix.target }}/release/nrr
+            ./target/${{ matrix.target }}/release/nrr.exe
 
   linux-static:
     strategy:
@@ -70,12 +70,8 @@ jobs:
       - name: Setup Nix cache
         uses: DeterminateSystems/magic-nix-cache-action@v4
 
-      - name: Build package
-        run: |
-          nix build .#nrr-static-${{ matrix.arch }} \
-            --fallback \
-            --out-link built-${{ matrix.arch }} \
-            --print-build-logs
+      - name: Build
+        run: nix build --fallback --print-build-logs '.#legacyPackages.nrr-static-${{ matrix.arch }}'
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4

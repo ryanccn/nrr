@@ -56,14 +56,16 @@
         RUST_SRC_PATH = "${pkgs.rust.packages.stable.rustPlatform.rustLibSrc}";
       };
 
-      packages = let
+      packages = {
+        inherit (pkgs) nrr;
+        default = pkgs.nrr;
+      };
+
+      legacyPackages = let
         staticPkgs = import ./nix/static.nix pkgs;
-      in
-        {
-          inherit (pkgs) nrr;
-          default = pkgs.nrr;
-        }
-        // lib.optionalAttrs pkgs.stdenv.isLinux staticPkgs;
+      in (lib.optionalAttrs
+        pkgs.stdenv.isLinux
+        staticPkgs);
 
       formatter = pkgs.alejandra;
     })
