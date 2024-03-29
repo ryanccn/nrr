@@ -71,7 +71,7 @@ jobs:
         uses: DeterminateSystems/magic-nix-cache-action@v4
 
       - name: Build
-        run: nix build --fallback --print-build-logs '.#legacyPackages.nrr-static-${{ matrix.arch }}'
+        run: nix build --fallback --print-build-logs '.#nrr-static-${{ matrix.arch }}'
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4

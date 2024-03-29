@@ -63,9 +63,7 @@
 
       legacyPackages = let
         staticPkgs = import ./nix/static.nix pkgs;
-      in (lib.optionalAttrs
-        pkgs.stdenv.isLinux
-        staticPkgs);
+      in (lib.optionalAttrs pkgs.stdenv.isLinux staticPkgs);
 
       formatter = pkgs.alejandra;
     })
