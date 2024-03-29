@@ -78,4 +78,4 @@ jobs:
         with:
           if-no-files-found: "error"
           name: nrr-${{ matrix.arch }}-unknown-linux-musl
-          path: ./built-${{ matrix.arch }}/bin/nrr
+          path: ./result/bin/nrr
