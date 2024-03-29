@@ -3,7 +3,7 @@ use owo_colors::{OwoColorize as _, Stream};
 use std::path::PathBuf;
 use std::{fs, path::Path};
 
-use crate::package_json::{PackageJson, PackageJsonOwned};
+use crate::package_json::PackageJson;
 use crate::run::{run_script, ScriptType};
 use crate::suggest::suggest;
 
@@ -77,29 +77,29 @@ fn run_script_full(
 }
 
 pub fn handle(package_paths: impl Iterator<Item = PathBuf>, args: &RunArgs) -> Result<()> {
-    let mut resolved_packages = Vec::<PackageJsonOwned>::new();
+    let mut resolved_packages: Vec<PackageJson> = Vec::new();
     let mut executed_script = false;
 
     for package_path in package_paths {
-        if let Ok(raw) = fs::read_to_string(&package_path) {
-            if let Ok(package) = serde_json::from_str::<PackageJson>(&raw) {
-                if let Some(script_cmd) = package.scripts.get(&args.script) {
-                    run_script_full(
-                        &package_path,
-                        &package,
-                        &args.script,
-                        script_cmd,
-                        &args.extra_args,
-                        args.no_pre_post,
-                        args.silent,
-                    )?;
+        if let Ok(Ok(package)) =
+            fs::read(&package_path).map(|mut raw| simd_json::from_slice::<PackageJson>(&mut raw))
+        {
+            if let Some(script_cmd) = package.scripts.get(&args.script) {
+                run_script_full(
+                    &package_path,
+                    &package,
+                    &args.script,
+                    script_cmd,
+                    &args.extra_args,
+                    args.no_pre_post,
+                    args.silent,
+                )?;
 
-                    executed_script = true;
-                    break;
-                }
-
-                resolved_packages.push(package.to_owned(package_path));
+                executed_script = true;
+                break;
             }
+
+            resolved_packages.push(package);
         }
     }
 

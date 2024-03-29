@@ -1,9 +1,9 @@
-use crate::package_json::PackageJsonOwned;
+use crate::package_json::PackageJson;
 
 use std::cmp::Ordering;
 
 #[must_use]
-pub fn suggest(input: &str, package: &PackageJsonOwned) -> Option<String> {
+pub fn suggest(input: &str, package: &PackageJson) -> Option<String> {
     let mut distances = package
         .scripts
         .keys()
