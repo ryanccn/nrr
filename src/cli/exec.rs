@@ -29,13 +29,7 @@ pub fn handle(package_paths: impl Iterator<Item = PathBuf>, args: &ExecArgs) -> 
                     );
                 }
 
-                run_exec(
-                    &package_path,
-                    &package,
-                    &args.bin,
-                    &args.extra_args,
-                    args.silent,
-                )?;
+                run_exec(&package_path, &package, args)?;
 
                 executed_exec = true;
                 break;

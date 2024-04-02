@@ -8,7 +8,29 @@ mod exec;
 mod list;
 mod run;
 
-/// Minimal, blazing fast npm scripts runner.
+#[derive(Clone, Debug)]
+pub struct EnvFile {
+    inner: Vec<(String, String)>,
+}
+
+impl From<Vec<(String, String)>> for EnvFile {
+    fn from(inner: Vec<(String, String)>) -> Self {
+        Self { inner }
+    }
+}
+
+impl EnvFile {
+    pub fn from_path(path: &str) -> dotenvy::Result<Self> {
+        let file = dotenvy::from_filename_iter(path)?;
+        let env = file.collect::<dotenvy::Result<Vec<(String, String)>>>()?;
+        Ok(Self { inner: env })
+    }
+
+    pub fn iter(&self) -> impl Iterator<Item = (&String, &String)> {
+        self.inner.iter().map(|(a, b)| (a, b))
+    }
+}
+
 #[derive(Parser, Clone)]
 #[command(author, version, about, long_about = None)]
 pub struct Cli {
@@ -42,54 +64,66 @@ enum Subcommands {
     List,
 }
 
-#[derive(Args, Clone)]
-struct RootArgs {
+#[derive(Args, Clone, Debug)]
+pub struct RootArgs {
     /// The name of the script
-    script: Option<String>,
+    pub script: Option<String>,
 
     /// Extra arguments to pass to the script
     #[clap(allow_hyphen_values = true)]
-    extra_args: Vec<String>,
+    pub extra_args: Vec<String>,
 
     /// Don't run pre- and post- scripts
     #[arg(short, long, env = "NRR_NO_PRE_POST")]
-    no_pre_post: bool,
+    pub no_pre_post: bool,
 
     /// Disable printing package and command information
     #[clap(short, long, env = "NRR_SILENT")]
-    silent: bool,
+    pub silent: bool,
+
+    /// An environment file to read environment variables from
+    #[clap(short, long, env = "NRR_ENV_FILE", value_parser = EnvFile::from_path)]
+    pub env_file: Option<EnvFile>,
 }
 
-#[derive(Args, Clone)]
-struct RunArgs {
+#[derive(Args, Clone, Debug)]
+pub struct RunArgs {
     /// The name of the script
-    script: String,
+    pub script: String,
 
     /// Extra arguments to pass to the script
     #[clap(allow_hyphen_values = true)]
-    extra_args: Vec<String>,
+    pub extra_args: Vec<String>,
 
     /// Don't run pre- and post- scripts
     #[arg(short, long, env = "NRR_NO_PRE_POST")]
-    no_pre_post: bool,
+    pub no_pre_post: bool,
 
     /// Disable printing package and command information
     #[clap(short, long, env = "NRR_SILENT")]
-    silent: bool,
+    pub silent: bool,
+
+    /// An environment file to read environment variables from
+    #[clap(short, long, env = "NRR_ENV_FILE", value_parser = EnvFile::from_path)]
+    pub env_file: Option<EnvFile>,
 }
 
-#[derive(Args, Clone)]
-struct ExecArgs {
+#[derive(Args, Clone, Debug)]
+pub struct ExecArgs {
     /// The name of the command
-    bin: String,
+    pub bin: String,
 
     /// Extra arguments to pass to the command
     #[clap(allow_hyphen_values = true)]
-    extra_args: Vec<String>,
+    pub extra_args: Vec<String>,
 
     /// Disable printing package and command information
     #[clap(short, long, env = "NRR_SILENT")]
-    silent: bool,
+    pub silent: bool,
+
+    /// An environment file to read environment variables from
+    #[clap(short, long, env = "NRR_ENV_FILE", value_parser = EnvFile::from_path)]
+    pub env_file: Option<EnvFile>,
 }
 
 pub fn get_level() -> &'static usize {
@@ -140,6 +174,7 @@ impl Cli {
                             extra_args: self.root_args.extra_args.clone(),
                             no_pre_post: self.root_args.no_pre_post,
                             silent: self.root_args.silent,
+                            env_file: self.root_args.env_file.clone(),
                         },
                     )?;
                 } else {

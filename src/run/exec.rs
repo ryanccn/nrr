@@ -12,18 +12,12 @@ use owo_colors::{OwoColorize as _, Stream};
 #[cfg(unix)]
 use ctrlc::set_handler;
 
-use crate::{package_json::PackageJson, run::util};
+use crate::{cli::ExecArgs, package_json::PackageJson, run::util};
 
-pub fn run_exec(
-    package_path: &Path,
-    package_data: &PackageJson,
-    bin: &str,
-    args: &[String],
-    silent: bool,
-) -> Result<()> {
+pub fn run_exec(package_path: &Path, package_data: &PackageJson, args: &ExecArgs) -> Result<()> {
     let package_folder = package_path.parent().unwrap();
 
-    if !silent {
+    if !args.silent {
         let cmd_prefix = "$".repeat(*crate::get_level());
 
         eprintln!(
@@ -31,14 +25,20 @@ pub fn run_exec(
             cmd_prefix
                 .if_supports_color(Stream::Stderr, |text| text.cyan())
                 .if_supports_color(Stream::Stderr, |text| text.dimmed()),
-            bin.if_supports_color(Stream::Stderr, |text| text.dimmed()),
-            args.join(" ")
+            args.bin
+                .if_supports_color(Stream::Stderr, |text| text.dimmed()),
+            args.extra_args
+                .join(" ")
                 .if_supports_color(Stream::Stderr, |text| text.dimmed())
         );
     }
 
-    let mut subproc = Command::new(bin);
-    subproc.current_dir(package_folder).args(args);
+    let mut subproc = Command::new(&args.bin);
+    subproc.current_dir(package_folder).args(&args.extra_args);
+
+    if let Some(env_file) = &args.env_file {
+        subproc.envs(env_file.iter());
+    }
 
     subproc
         .env("PATH", util::make_patched_path(package_path)?)
@@ -71,7 +71,7 @@ pub fn run_exec(
     if !status.success() {
         let code = status.code().unwrap_or(1);
 
-        if !silent {
+        if !args.silent {
             eprintln!(
                 "{}  Exited with status {}!",
                 "error".if_supports_color(Stream::Stderr, |text| text.red()),

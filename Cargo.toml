@@ -12,8 +12,9 @@ repository = "https://github.com/ryanccn/nrr.git"
 [dependencies]
 ahash = "0.8.9"
 clap = { version = "4.5.1", features = ["derive", "env"] }
-color-eyre = "0.6.2"
+color-eyre = { version = "0.6.2", default-features = false }
 ctrlc = "3.4.2"
+dotenvy = "0.15.7"
 indexmap = { version = "2.2.3", features = ["serde"] }
 itoa = "1.0.10"
 nix = { version = "0.28.0", features = ["signal"] }

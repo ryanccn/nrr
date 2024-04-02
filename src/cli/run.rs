@@ -1,80 +1,12 @@
 use color_eyre::eyre::Result;
 use owo_colors::{OwoColorize as _, Stream};
-use std::path::PathBuf;
-use std::{fs, path::Path};
+use std::{fs, path::PathBuf};
 
 use crate::package_json::PackageJson;
-use crate::run::{run_script, ScriptType};
+use crate::run::run_script;
 use crate::suggest::suggest;
 
 use super::RunArgs;
-
-fn run_script_full(
-    package: &Path,
-    package_data: &PackageJson,
-    script_name: &str,
-    script_cmd: &str,
-    extra_args: &[String],
-    no_pre_post: bool,
-    silent: bool,
-) -> Result<()> {
-    if !silent {
-        eprint!(
-            "{}",
-            package_data.make_prefix(
-                match crate::get_level() {
-                    1 => None,
-                    _ => Some(script_name),
-                },
-                Stream::Stderr
-            )
-        );
-    }
-
-    if !no_pre_post {
-        let pre_script_name = String::from("pre") + script_name;
-
-        if let Some(pre_script_cmd) = package_data.scripts.get(&pre_script_name) {
-            run_script(
-                ScriptType::Pre,
-                package,
-                package_data,
-                &pre_script_name,
-                pre_script_cmd,
-                &[],
-                silent,
-            )?;
-        }
-    }
-
-    run_script(
-        ScriptType::Normal,
-        package,
-        package_data,
-        script_name,
-        script_cmd,
-        extra_args,
-        silent,
-    )?;
-
-    if !no_pre_post {
-        let post_script_name = String::from("post") + script_name;
-
-        if let Some(post_script_cmd) = package_data.scripts.get(&post_script_name) {
-            run_script(
-                ScriptType::Post,
-                package,
-                package_data,
-                &post_script_name,
-                post_script_cmd,
-                &[],
-                silent,
-            )?;
-        }
-    }
-
-    Ok(())
-}
 
 pub fn handle(package_paths: impl Iterator<Item = PathBuf>, args: &RunArgs) -> Result<()> {
     let mut resolved_packages: Vec<PackageJson> = Vec::new();
@@ -85,15 +17,7 @@ pub fn handle(package_paths: impl Iterator<Item = PathBuf>, args: &RunArgs) -> R
             fs::read(&package_path).map(|mut raw| simd_json::from_slice::<PackageJson>(&mut raw))
         {
             if let Some(script_cmd) = package.scripts.get(&args.script) {
-                run_script_full(
-                    &package_path,
-                    &package,
-                    &args.script,
-                    script_cmd,
-                    &args.extra_args,
-                    args.no_pre_post,
-                    args.silent,
-                )?;
+                run_script(&package_path, &package, &args.script, script_cmd, args)?;
 
                 executed_script = true;
                 break;

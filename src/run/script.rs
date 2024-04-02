@@ -12,7 +12,7 @@ use owo_colors::{OwoColorize as _, Stream};
 #[cfg(unix)]
 use ctrlc::set_handler;
 
-use crate::{package_json::PackageJson, run::util};
+use crate::{cli::RunArgs, package_json::PackageJson, run::util};
 
 #[cfg(unix)]
 #[allow(clippy::unnecessary_wraps)]
@@ -50,30 +50,31 @@ impl ScriptType {
     }
 }
 
-pub fn run_script(
+fn run_single_script(
     script_type: ScriptType,
     package_path: &Path,
     package_data: &PackageJson,
     script_name: &str,
     script_cmd: &str,
-    extra_args: &[String],
-    silent: bool,
+    args: &RunArgs,
 ) -> Result<()> {
     let package_folder = package_path.parent().unwrap();
 
     let mut full_cmd = script_cmd.to_owned();
 
-    extra_args
-        .iter()
-        .map(|f| shlex::try_quote(f))
-        .collect::<Result<Vec<_>, _>>()?
-        .into_iter()
-        .for_each(|arg| {
-            full_cmd.push(' ');
-            full_cmd.push_str(arg.as_ref());
-        });
+    if script_type == ScriptType::Normal {
+        args.extra_args
+            .iter()
+            .map(|f| shlex::try_quote(f))
+            .collect::<Result<Vec<_>, _>>()?
+            .into_iter()
+            .for_each(|arg| {
+                full_cmd.push(' ');
+                full_cmd.push_str(arg.as_ref());
+            });
+    }
 
-    if !silent {
+    if !args.silent {
         let cmd_prefix = script_type.prefix() + &"$".repeat(*crate::get_level());
 
         eprintln!(
@@ -87,6 +88,10 @@ pub fn run_script(
 
     let mut subproc = make_shell_cmd()?;
     subproc.current_dir(package_folder).arg(&full_cmd);
+
+    if let Some(env_file) = &args.env_file {
+        subproc.envs(env_file.iter());
+    }
 
     subproc
         .env("PATH", util::make_patched_path(package_path)?)
@@ -122,7 +127,7 @@ pub fn run_script(
     if !status.success() {
         let code = status.code().unwrap_or(1);
 
-        if !silent {
+        if !args.silent {
             eprintln!(
                 "{}  Exited with status {}!",
                 "error".if_supports_color(Stream::Stderr, |text| text.red()),
@@ -131,6 +136,68 @@ pub fn run_script(
         }
 
         std::process::exit(code);
+    }
+
+    Ok(())
+}
+
+pub fn run_script(
+    package_path: &Path,
+    package_data: &PackageJson,
+    script_name: &str,
+    script_cmd: &str,
+    args: &RunArgs,
+) -> Result<()> {
+    if !args.silent {
+        eprint!(
+            "{}",
+            package_data.make_prefix(
+                match crate::get_level() {
+                    1 => None,
+                    _ => Some(script_name),
+                },
+                Stream::Stderr
+            )
+        );
+    }
+
+    if !args.no_pre_post {
+        let pre_script_name = String::from("pre") + script_name;
+
+        if let Some(pre_script_cmd) = package_data.scripts.get(&pre_script_name) {
+            run_single_script(
+                ScriptType::Pre,
+                package_path,
+                package_data,
+                &pre_script_name,
+                pre_script_cmd,
+                args,
+            )?;
+        }
+    }
+
+    run_single_script(
+        ScriptType::Normal,
+        package_path,
+        package_data,
+        script_name,
+        script_cmd,
+        args,
+    )?;
+
+    if !args.no_pre_post {
+        let post_script_name = String::from("post") + script_name;
+
+        if let Some(post_script_cmd) = package_data.scripts.get(&post_script_name) {
+            run_single_script(
+                ScriptType::Post,
+                package_path,
+                package_data,
+                &post_script_name,
+                post_script_cmd,
+                args,
+            )?;
+        }
     }
 
     Ok(())
