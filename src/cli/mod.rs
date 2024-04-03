@@ -33,6 +33,7 @@ impl EnvFile {
 
 #[derive(Parser, Clone)]
 #[command(author, version, about, long_about = None)]
+#[command(args_conflicts_with_subcommands = true)]
 pub struct Cli {
     #[clap(flatten)]
     root_args: RootArgs,
@@ -49,7 +50,6 @@ pub struct NrxCli {
 }
 
 #[derive(Subcommand, Clone)]
-#[command(args_conflicts_with_subcommands = true)]
 enum Subcommands {
     /// Run a script
     #[clap(visible_alias = "run-script")]
@@ -110,12 +110,9 @@ pub struct RunArgs {
 
 #[derive(Args, Clone, Debug)]
 pub struct ExecArgs {
-    /// The name of the command
-    pub bin: String,
-
-    /// Extra arguments to pass to the command
-    #[clap(allow_hyphen_values = true)]
-    pub extra_args: Vec<String>,
+    /// The command to execute in a shell
+    #[clap(required = true, allow_hyphen_values = true)]
+    pub command: Vec<String>,
 
     /// Disable printing package and command information
     #[clap(short, long, env = "NRR_SILENT")]

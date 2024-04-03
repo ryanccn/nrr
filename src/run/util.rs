@@ -3,6 +3,7 @@ use std::{
     env,
     ffi::OsString,
     path::{Path, PathBuf},
+    process::Command,
 };
 
 #[must_use]
@@ -35,4 +36,22 @@ pub fn has_exec(package_path: &Path, bin: &str) -> bool {
         .into_iter()
         .map(|p| p.join(bin))
         .any(|p| p.is_file())
+}
+
+#[cfg(unix)]
+#[allow(clippy::unnecessary_wraps)]
+#[inline]
+pub fn make_shell_cmd() -> Result<Command> {
+    let mut cmd = Command::new("/bin/sh");
+    cmd.arg("-c");
+    Ok(cmd)
+}
+
+#[cfg(windows)]
+#[allow(clippy::unnecessary_wraps)]
+#[inline]
+pub fn make_shell_cmd() -> Result<Command> {
+    let mut cmd = Command::new(env::var("ComSpec")?);
+    cmd.args(["/d", "/s", "/c"]);
+    Ok(cmd)
 }

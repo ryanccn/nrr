@@ -449,7 +449,6 @@ dependencies = [
  "dotenvy",
  "indexmap",
  "itoa",
- "nix",
  "owo-colors 4.0.0",
  "serde",
  "shlex",

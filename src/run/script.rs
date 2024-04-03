@@ -1,36 +1,12 @@
-#[cfg(unix)]
-use nix::{
-    sys::signal::{kill, Signal},
-    unistd::Pid,
-};
-
-use std::{env, path::Path, process::Command};
+use std::{env, path::Path};
 
 use color_eyre::Result;
 use owo_colors::{OwoColorize as _, Stream};
 
 #[cfg(unix)]
-use ctrlc::set_handler;
+use std::os::unix::process::CommandExt as _;
 
 use crate::{cli::RunArgs, package_json::PackageJson, run::util};
-
-#[cfg(unix)]
-#[allow(clippy::unnecessary_wraps)]
-#[inline]
-fn make_shell_cmd() -> Result<Command> {
-    let mut cmd = Command::new("/bin/sh");
-    cmd.arg("-c");
-    Ok(cmd)
-}
-
-#[cfg(windows)]
-#[allow(clippy::unnecessary_wraps)]
-#[inline]
-fn make_shell_cmd() -> Result<Command> {
-    let mut cmd = Command::new(env::var("ComSpec")?);
-    cmd.args(["/d", "/s", "/c"]);
-    Ok(cmd)
-}
 
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub enum ScriptType {
@@ -86,7 +62,7 @@ fn run_single_script(
         );
     }
 
-    let mut subproc = make_shell_cmd()?;
+    let mut subproc = util::make_shell_cmd()?;
     subproc.current_dir(package_folder).arg(&full_cmd);
 
     if let Some(env_file) = &args.env_file {
@@ -111,34 +87,18 @@ fn run_single_script(
         subproc.env("npm_package_version", version);
     }
 
-    let mut child = subproc.spawn()?;
-
-    #[allow(clippy::cast_possible_wrap)]
     #[cfg(unix)]
-    let pid = Pid::from_raw(child.id() as i32);
-
-    #[cfg(unix)]
-    set_handler(move || {
-        kill(pid, Signal::SIGINT).ok();
-    })?;
-
-    let status = child.wait()?;
-
-    if !status.success() {
-        let code = status.code().unwrap_or(1);
-
-        if !args.silent {
-            eprintln!(
-                "{}  Exited with status {}!",
-                "error".if_supports_color(Stream::Stderr, |text| text.red()),
-                util::itoa(code).if_supports_color(Stream::Stderr, |text| text.bold()),
-            );
-        }
-
-        std::process::exit(code);
+    {
+        Err::<(), _>(subproc.exec())?;
+        Ok(())
     }
 
-    Ok(())
+    #[cfg(windows)]
+    {
+        let _ = ctrlc::set_handler(|| {});
+        let status = subproc.status()?;
+        std::process::exit(status.code().unwrap_or(1));
+    }
 }
 
 pub fn run_script(
