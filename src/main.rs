@@ -1,16 +1,14 @@
-pub mod cli;
-pub mod package_json;
-pub mod run;
-pub mod suggest;
+mod cli;
+mod package_json;
+mod run;
+mod suggest;
 
+use clap::Parser as _;
+use color_eyre::eyre::Result;
 use std::env;
 
-pub use cli::get_level;
-
 use crate::cli::{Cli, NrxCli};
-use clap::Parser as _;
-
-use color_eyre::eyre::Result;
+use cli::get_level;
 
 fn main() -> Result<()> {
     color_eyre::install()?;

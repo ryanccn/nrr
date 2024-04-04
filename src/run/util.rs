@@ -30,14 +30,6 @@ pub fn make_patched_path(package_path: &Path) -> Result<OsString> {
     Ok(env::join_paths(make_patched_paths(package_path))?)
 }
 
-#[must_use]
-pub fn has_exec(package_path: &Path, bin: &str) -> bool {
-    make_patched_paths(package_path)
-        .into_iter()
-        .map(|p| p.join(bin))
-        .any(|p| p.is_file())
-}
-
 #[cfg(unix)]
 #[allow(clippy::unnecessary_wraps)]
 #[inline]
