@@ -114,10 +114,6 @@ pub struct ExecArgs {
     #[clap(required = true, allow_hyphen_values = true)]
     pub command: Vec<String>,
 
-    /// Disable printing package and command information
-    #[clap(short, long, env = "NRR_SILENT")]
-    pub silent: bool,
-
     /// An environment file to read environment variables from
     #[clap(short, long, env = "NRR_ENV_FILE", value_parser = EnvFile::from_path)]
     pub env_file: Option<EnvFile>,

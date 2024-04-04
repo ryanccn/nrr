@@ -1,7 +1,5 @@
-use std::{env, path::Path, process::Command};
-
 use color_eyre::Result;
-use owo_colors::{OwoColorize as _, Stream};
+use std::{env, path::Path, process::Command};
 
 #[cfg(unix)]
 use std::os::unix::process::CommandExt as _;
@@ -10,25 +8,6 @@ use crate::{cli::ExecArgs, package_json::PackageJson, run::util};
 
 pub fn run_exec(package_path: &Path, package_data: &PackageJson, args: &ExecArgs) -> Result<()> {
     let package_folder = package_path.parent().unwrap();
-
-    let escaped_command = args
-        .command
-        .iter()
-        .map(|f| shlex::try_quote(f))
-        .collect::<Result<Vec<_>, _>>()?
-        .join(" ");
-
-    if !args.silent {
-        let cmd_prefix = "$".repeat(*crate::get_level());
-
-        eprintln!(
-            "{} {}",
-            cmd_prefix
-                .if_supports_color(Stream::Stderr, |text| text.cyan())
-                .if_supports_color(Stream::Stderr, |text| text.dimmed()),
-            escaped_command.if_supports_color(Stream::Stderr, |text| text.dimmed()),
-        );
-    }
 
     let mut command_iter = args.command.iter();
     let mut subproc = Command::new(command_iter.next().unwrap());

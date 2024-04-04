@@ -15,14 +15,9 @@ pub fn handle(package_paths: impl Iterator<Item = PathBuf>, args: &ExecArgs) -> 
         if let Ok(Ok(package)) =
             fs::read(&package_path).map(|mut raw| simd_json::from_slice::<PackageJson>(&mut raw))
         {
-            if !args.silent {
-                eprint!("{}", package.make_prefix(None, Stream::Stderr));
-
-                run_exec(&package_path, &package, args)?;
-
-                executed_exec = true;
-                break;
-            }
+            run_exec(&package_path, &package, args)?;
+            executed_exec = true;
+            break;
         }
     }
 
