@@ -3,9 +3,6 @@ use std::{env, path::Path};
 use color_eyre::Result;
 use owo_colors::{OwoColorize as _, Stream};
 
-#[cfg(unix)]
-use std::os::unix::process::CommandExt as _;
-
 use crate::{cli::RunArgs, package_json::PackageJson, run::util};
 
 #[derive(Debug, Copy, Clone, PartialEq)]
@@ -87,18 +84,21 @@ fn run_single_script(
         subproc.env("npm_package_version", version);
     }
 
-    #[cfg(unix)]
-    {
-        Err::<(), _>(subproc.exec())?;
-        Ok(())
-    }
+    let _ = ctrlc::set_handler(|| {});
+    let status = subproc.status()?;
 
-    #[cfg(windows)]
-    {
-        let _ = ctrlc::set_handler(|| {});
-        let status = subproc.status()?;
+    if !status.success() {
+        eprintln!(
+            "{}  Script {} exited with code {}!",
+            "error".if_supports_color(Stream::Stderr, |text| text.red()),
+            script_name.if_supports_color(Stream::Stderr, |text| text.bold()),
+            status.code().unwrap_or(1)
+        );
+
         std::process::exit(status.code().unwrap_or(1));
     }
+
+    Ok(())
 }
 
 pub fn run_script(
