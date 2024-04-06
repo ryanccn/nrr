@@ -1,0 +1,9 @@
+args = ["run", "one"]
+
+stdout = """
+two
+"""
+stderr = """
+$ \"$npm_execpath\" run two
+$$ echo two
+"""

@@ -1,0 +1,7 @@
+{
+  "name": "@nrr/testing",
+  "version": "0.1.0",
+  "scripts": {
+    "test-env": "echo:%__NRR_ENV_CANARY%"
+  }
+}

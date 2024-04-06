@@ -1,0 +1,7 @@
+{
+  "name": "@nrr/testing",
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "echo dev"
+  }
+}

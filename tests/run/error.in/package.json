@@ -1,0 +1,5 @@
+{
+  "scripts": {
+    "bad": "exit 1"
+  }
+}

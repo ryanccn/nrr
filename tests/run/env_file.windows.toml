@@ -1,0 +1,9 @@
+args = ["run", "-e", ".env", "test-env"]
+
+stdout = """
+1
+"""
+stderr = """
+@nrr/testing@0.1.0
+$ echo:%__NRR_ENV_CANARY%
+"""

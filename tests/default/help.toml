@@ -1,0 +1,26 @@
+args = []
+
+stdout = """
+Minimal, blazing fast npm scripts runner
+
+Usage: nrr [OPTIONS] [SCRIPT] [EXTRA_ARGS]...
+       nrr <COMMAND>
+
+Commands:
+  run   Run a script [aliases: run-script]
+  exec  Execute a command [aliases: x]
+  list  List available scripts [aliases: ls]
+  help  Print this message or the help of the given subcommand(s)
+
+Arguments:
+  [SCRIPT]         The name of the script
+  [EXTRA_ARGS]...  Extra arguments to pass to the script
+
+Options:
+  -n, --no-pre-post          Don't run pre- and post- scripts [env: NRR_NO_PRE_POST=]
+  -s, --silent               Disable printing package and command information [env: NRR_SILENT=]
+  -e, --env-file <ENV_FILE>  An environment file to read environment variables from [env: NRR_ENV_FILE=]
+  -h, --help                 Print help
+  -V, --version              Print version
+"""
+stderr = ""

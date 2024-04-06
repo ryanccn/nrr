@@ -72,9 +72,6 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           TAG: ${{ github.ref_name }}
         run: |
-          gh release create \
-            --draft \
-            --notes-from-tag \
-            --verify-tag \
-            "$TAG" \
-            "$ASSETS"/*.zip
+          gh release create \ 
+            --draft --notes-from-tag --verify-tag \
+            "$TAG" "$ASSETS"/*.zip

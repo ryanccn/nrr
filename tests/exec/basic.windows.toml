@@ -1,0 +1,7 @@
+args    = ["exec", "cmd", "/c", "echo success"]
+fs.base = "basic.in"
+
+stdout = """
+success
+"""
+stderr = ""

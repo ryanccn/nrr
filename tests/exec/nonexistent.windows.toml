@@ -1,0 +1,13 @@
+args    = ["exec", "dev-bin"]
+fs.base = "nonexistent.in"
+
+stdout = ""
+stderr = """
+Error: 
+   0: \u001B[91mprogram not found\u001B[0m
+
+Backtrace omitted. Run with RUST_BACKTRACE=1 environment variable to display it.
+Run with RUST_BACKTRACE=full to include source snippets.
+"""
+
+status.code = 1

@@ -1,0 +1,7 @@
+args    = ["exec", "dev-bin.bat"]
+fs.base = "binary.in"
+
+stdout = """
+dev
+"""
+stderr = ""

@@ -1,0 +1,7 @@
+args    = ["exec", "echo", "success"]
+fs.base = "basic.in"
+
+stdout = """
+success
+"""
+stderr = ""

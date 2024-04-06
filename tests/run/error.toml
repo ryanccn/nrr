@@ -1,0 +1,9 @@
+args = ["run", "bad"]
+
+stdout = ""
+stderr = """
+$ exit 1
+error  Script bad exited with code 1!
+"""
+
+status.code = 1

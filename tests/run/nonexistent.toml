@@ -1,0 +1,8 @@
+args = ["run", "dev"]
+
+stdout = ""
+stderr = """
+error  No script found with name dev.
+"""
+
+status.code = 1

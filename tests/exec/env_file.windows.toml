@@ -1,0 +1,7 @@
+args    = ["exec", "-e", ".env", "cmd", "/c", "echo:%__NRR_ENV_CANARY%"]
+fs.base = "env_file.in"
+
+stdout = """
+1
+"""
+stderr = ""

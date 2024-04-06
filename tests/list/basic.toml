@@ -1,0 +1,8 @@
+args = ["list"]
+
+stdout = """
+dev
+  echo dev
+
+"""
+stderr = ""

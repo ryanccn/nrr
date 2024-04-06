@@ -1,0 +1,7 @@
+{
+  "scripts": {
+    "dev": "echo dev",
+    "predev": "echo predev",
+    "postdev": "echo postdev"
+  }
+}

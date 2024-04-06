@@ -1,0 +1,7 @@
+args    = ["exec", "dev-bin"]
+fs.base = "binary.in"
+
+stdout = """
+dev
+"""
+stderr = ""

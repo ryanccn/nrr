@@ -1,0 +1,8 @@
+args = ["run", "dev"]
+
+stdout = """
+dev
+"""
+stderr = """
+$ dev-bin
+"""

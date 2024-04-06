@@ -1,0 +1,6 @@
+{
+  "scripts": {
+    "one": "%npm_execpath% run two",
+    "two": "echo two"
+  }
+}

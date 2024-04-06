@@ -23,6 +23,7 @@ jobs:
             runner: macos-latest
           - target: x86_64-pc-windows-msvc
             runner: windows-latest
+      fail-fast: false
 
     runs-on: ${{ matrix.runner }}
 

@@ -1,0 +1,6 @@
+args = ["run", "-s", "dev"]
+
+stdout = """
+dev
+"""
+stderr = ""

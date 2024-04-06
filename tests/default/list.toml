@@ -1,0 +1,8 @@
+args = []
+
+stdout = """
+dev
+  echo dev
+
+"""
+stderr = ""

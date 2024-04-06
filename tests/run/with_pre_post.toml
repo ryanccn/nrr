@@ -1,0 +1,12 @@
+args = ["run", "dev"]
+
+stdout = """
+predev
+dev
+postdev
+"""
+stderr = """
+pre$ echo predev
+$ echo dev
+post$ echo postdev
+"""

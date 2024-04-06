@@ -1,0 +1,9 @@
+args = ["run", "dev"]
+
+stdout = """
+dev
+"""
+stderr = """
+@nrr/testing@0.1.0
+$ echo dev
+"""
