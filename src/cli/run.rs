@@ -3,7 +3,7 @@ use owo_colors::{OwoColorize as _, Stream};
 use std::{fs, path::PathBuf};
 
 use crate::package_json::PackageJson;
-use crate::run::run_script;
+use crate::run;
 use crate::suggest::suggest;
 
 use super::RunArgs;
@@ -17,7 +17,13 @@ pub fn handle(package_paths: impl Iterator<Item = PathBuf>, args: &RunArgs) -> R
             fs::read(&package_path).map(|mut raw| simd_json::from_slice::<PackageJson>(&mut raw))
         {
             if let Some(script_cmd) = package.scripts.get(&args.script) {
-                run_script(&package_path, &package, &args.script, script_cmd, args)?;
+                run::script(
+                    &package_path,
+                    &package,
+                    &args.script,
+                    script_cmd,
+                    &args.options,
+                )?;
 
                 executed_script = true;
                 break;

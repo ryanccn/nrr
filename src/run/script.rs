@@ -3,7 +3,7 @@ use std::{env, path::Path};
 use color_eyre::Result;
 use owo_colors::{OwoColorize as _, Stream};
 
-use crate::{cli::RunArgs, package_json::PackageJson, run::util};
+use crate::{cli::SharedRunOptions, package_json::PackageJson, run::util};
 
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub enum ScriptType {
@@ -23,20 +23,21 @@ impl ScriptType {
     }
 }
 
-fn run_single_script(
+fn single_script(
     script_type: ScriptType,
     package_path: &Path,
     package_data: &PackageJson,
     script_name: &str,
     script_cmd: &str,
-    args: &RunArgs,
+    options: &SharedRunOptions,
 ) -> Result<()> {
     let package_folder = package_path.parent().unwrap();
 
     let mut full_cmd = script_cmd.to_owned();
 
     if script_type == ScriptType::Normal {
-        args.extra_args
+        options
+            .extra_args
             .iter()
             .map(|f| shlex::try_quote(f))
             .collect::<Result<Vec<_>, _>>()?
@@ -47,7 +48,7 @@ fn run_single_script(
             });
     }
 
-    if !args.silent {
+    if !options.silent {
         let cmd_prefix = script_type.prefix() + &"$".repeat(*crate::get_level());
 
         eprintln!(
@@ -59,10 +60,10 @@ fn run_single_script(
         );
     }
 
-    let mut subproc = util::make_shell_cmd()?;
+    let mut subproc = util::make_shell_cmd();
     subproc.current_dir(package_folder).arg(&full_cmd);
 
-    if let Some(env_file) = &args.env_file {
+    if let Some(env_file) = &options.env_file {
         subproc.envs(env_file.iter());
     }
 
@@ -101,14 +102,14 @@ fn run_single_script(
     Ok(())
 }
 
-pub fn run_script(
+pub fn script(
     package_path: &Path,
     package_data: &PackageJson,
     script_name: &str,
     script_cmd: &str,
-    args: &RunArgs,
+    options: &SharedRunOptions,
 ) -> Result<()> {
-    if !args.silent {
+    if !options.silent {
         eprint!(
             "{}",
             package_data.make_prefix(
@@ -121,41 +122,41 @@ pub fn run_script(
         );
     }
 
-    if !args.no_pre_post {
+    if !options.no_pre_post {
         let pre_script_name = String::from("pre") + script_name;
 
         if let Some(pre_script_cmd) = package_data.scripts.get(&pre_script_name) {
-            run_single_script(
+            single_script(
                 ScriptType::Pre,
                 package_path,
                 package_data,
                 &pre_script_name,
                 pre_script_cmd,
-                args,
+                options,
             )?;
         }
     }
 
-    run_single_script(
+    single_script(
         ScriptType::Normal,
         package_path,
         package_data,
         script_name,
         script_cmd,
-        args,
+        options,
     )?;
 
-    if !args.no_pre_post {
+    if !options.no_pre_post {
         let post_script_name = String::from("post") + script_name;
 
         if let Some(post_script_cmd) = package_data.scripts.get(&post_script_name) {
-            run_single_script(
+            single_script(
                 ScriptType::Post,
                 package_path,
                 package_data,
                 &post_script_name,
                 post_script_cmd,
-                args,
+                options,
             )?;
         }
     }

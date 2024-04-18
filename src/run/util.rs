@@ -31,19 +31,17 @@ pub fn make_patched_path(package_path: &Path) -> Result<OsString> {
 }
 
 #[cfg(unix)]
-#[allow(clippy::unnecessary_wraps)]
 #[inline]
-pub fn make_shell_cmd() -> Result<Command> {
+pub fn make_shell_cmd() -> Command {
     let mut cmd = Command::new("/bin/sh");
     cmd.arg("-c");
-    Ok(cmd)
+    cmd
 }
 
 #[cfg(windows)]
-#[allow(clippy::unnecessary_wraps)]
 #[inline]
-pub fn make_shell_cmd() -> Result<Command> {
-    let mut cmd = Command::new(env::var("ComSpec")?);
+pub fn make_shell_cmd() -> Command {
+    let mut cmd = Command::new("cmd.exe");
     cmd.args(["/d", "/s", "/c"]);
-    Ok(cmd)
+    cmd
 }

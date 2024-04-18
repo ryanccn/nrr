@@ -1,4 +1,4 @@
-use owo_colors::{OwoColorize, Stream};
+use owo_colors::{OwoColorize as _, Stream};
 use serde::Deserialize;
 
 use indexmap::IndexMap;

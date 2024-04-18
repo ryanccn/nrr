@@ -4,7 +4,7 @@ use std::fs;
 use std::path::PathBuf;
 
 use crate::package_json::PackageJson;
-use crate::run::run_exec;
+use crate::run;
 
 use super::ExecArgs;
 
@@ -15,7 +15,7 @@ pub fn handle(package_paths: impl Iterator<Item = PathBuf>, args: &ExecArgs) -> 
         if let Ok(Ok(package)) =
             fs::read(&package_path).map(|mut raw| simd_json::from_slice::<PackageJson>(&mut raw))
         {
-            run_exec(&package_path, &package, args)?;
+            run::exec(&package_path, &package, args)?;
             executed_exec = true;
             break;
         }

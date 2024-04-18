@@ -69,21 +69,8 @@ pub struct RootArgs {
     /// The name of the script
     pub script: Option<String>,
 
-    /// Extra arguments to pass to the script
-    #[clap(allow_hyphen_values = true)]
-    pub extra_args: Vec<String>,
-
-    /// Don't run pre- and post- scripts
-    #[arg(short, long, env = "NRR_NO_PRE_POST")]
-    pub no_pre_post: bool,
-
-    /// Disable printing package and command information
-    #[clap(short, long, env = "NRR_SILENT")]
-    pub silent: bool,
-
-    /// An environment file to read environment variables from
-    #[clap(short, long, env = "NRR_ENV_FILE", value_parser = EnvFile::from_path)]
-    pub env_file: Option<EnvFile>,
+    #[clap(flatten)]
+    pub options: SharedRunOptions,
 }
 
 #[derive(Args, Clone, Debug)]
@@ -91,6 +78,12 @@ pub struct RunArgs {
     /// The name of the script
     pub script: String,
 
+    #[clap(flatten)]
+    pub options: SharedRunOptions,
+}
+
+#[derive(Args, Clone, Debug)]
+pub struct SharedRunOptions {
     /// Extra arguments to pass to the script
     #[clap(allow_hyphen_values = true)]
     pub extra_args: Vec<String>,
@@ -164,10 +157,7 @@ impl Cli {
                         package_paths,
                         &RunArgs {
                             script: script_name.to_owned(),
-                            extra_args: self.root_args.extra_args.clone(),
-                            no_pre_post: self.root_args.no_pre_post,
-                            silent: self.root_args.silent,
-                            env_file: self.root_args.env_file.clone(),
+                            options: self.root_args.options.clone(),
                         },
                     )?;
                 } else {

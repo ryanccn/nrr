@@ -6,7 +6,7 @@ use std::os::unix::process::CommandExt as _;
 
 use crate::{cli::ExecArgs, package_json::PackageJson, run::util};
 
-pub fn run_exec(package_path: &Path, package_data: &PackageJson, args: &ExecArgs) -> Result<()> {
+pub fn exec(package_path: &Path, package_data: &PackageJson, args: &ExecArgs) -> Result<()> {
     let package_folder = package_path.parent().unwrap();
 
     let mut command_iter = args.command.iter();
