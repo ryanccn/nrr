@@ -21,7 +21,7 @@ owo-colors = { version = "4.0.0", features = ["supports-colors"] }
 serde      = { version = "1.0.197", features = ["derive"] }
 shlex      = "1.3.0"
 simd-json  = "0.13.9"
-strsim     = "0.11.0"
+strsim     = "0.11.1"
 
 [dev-dependencies]
 trycmd = "0.15.1"
