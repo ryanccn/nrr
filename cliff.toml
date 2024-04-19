@@ -1,0 +1,70 @@
+[changelog]
+header = """
+# Changelog
+
+All notable, and not so notable, changes to this project will be documented in this file.
+
+"""
+
+body = """
+{% if version %}\
+    ## [{{ version | trim_start_matches(pat="v") }}] - {{ timestamp | date(format="%Y-%m-%d") }}
+{% else %}\
+    ## [Unreleased]
+{% endif %}\
+{% for group, commits in commits | group_by(attribute="group") %}
+    ### {{ group | striptags | trim | upper_first }}
+    {% for commit in commits %}
+        - [`{{ commit.id | truncate(length=7, end="") }}`](<REPO>/commit/{{ commit.id }}) \
+            {% if commit.scope %}(*{{ commit.scope }}*) {% endif %}\
+            {% if commit.breaking %}[**breaking**] {% endif %}\
+            {{ commit.message | upper_first }} - {{ commit.author.name }}
+    {%- endfor %}
+{% endfor %}\n
+"""
+
+footer = """
+{% for release in releases -%}
+    {% if release.version -%}
+        {% if release.previous.version -%}
+            [{{ release.version | trim_start_matches(pat="v") }}]: \
+                <REPO>/compare/{{ release.previous.version }}..{{ release.version }}
+        {% endif -%}
+    {% else -%}
+        [Unreleased]: <REPO>/compare/{{ release.previous.version }}..HEAD
+    {% endif -%}
+{% endfor %}
+"""
+
+trim = true
+
+postprocessors = [{ pattern = '<REPO>', replace = "https://github.com/ryanccn/nrr" }]
+
+[git]
+conventional_commits  = true
+filter_unconventional = true
+split_commits         = false
+
+commit_preprocessors = []
+
+commit_parsers = [
+    { message = "^rm", group = "<!-- 0 -->Removed" },
+    { message = "^feat", group = "<!-- 1 -->Features" },
+    { message = "^fix", group = "<!-- 2 -->Bug Fixes" },
+    { message = "^doc", group = "<!-- 6 -->Documentation" },
+    { message = "^perf", group = "<!-- 4 -->Performance" },
+    { message = "^refactor", group = "<!-- 3 -->Refactor" },
+    { message = "^style", group = "<!-- 7 -->Styling" },
+    { message = "^test", group = "<!-- 5 -->Testing" },
+    { message = "^build\\(deps.*\\)", skip = true },
+    { message = "^chore\\(deps.*\\)", skip = true },
+    { message = "^chore|^ci|^nix", group = "<!-- 8 -->Miscellaneous" },
+    { message = "^revert", group = "<!-- 9 -->Revert" },
+]
+
+protect_breaking_commits = false
+filter_commits           = false
+topo_order               = true
+
+[bump]
+breaking_always_bump_major = false
