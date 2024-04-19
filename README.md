@@ -94,7 +94,7 @@ $ cargo install --git https://github.com/ryanccn/nrr.git
 
 ### GitHub Releases
 
-You can download
+You can download binaries pre-compiled for Linux, macOS, and Windows from the [latest GitHub Release](https://github.com/ryanccn/nrr/releases/latest). Linux binaries are statically linked to musl; Windows binaries require MSVC.
 
 ## Usage
 
