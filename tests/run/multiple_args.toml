@@ -1,0 +1,8 @@
+args = ["run", "dev", "a", "b"]
+
+stdout = """
+dev a b
+"""
+stderr = """
+$ echo dev a b
+"""
