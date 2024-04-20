@@ -4,7 +4,6 @@
   rustPlatform,
   darwin,
   pkg-config,
-  # this doesn't work with a default toolchain
   lto ? false,
   optimizeSize ? false,
   nrxAlias ? true,

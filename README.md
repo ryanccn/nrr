@@ -84,9 +84,19 @@ nrr is also available in [Nixpkgs](https://github.com/NixOS/nixpkgs) as `nixpkgs
 
 ### Cargo
 
+nrr supports [cargo-binstall](https://github.com/cargo-bins/cargo-binstall), which downloads a binary if possible from GitHub Releases instead of compiling the crate from source.
+
+```console
+$ cargo binstall nrr
+```
+
+If you do want to compile from source, install with Cargo directly:
+
 ```console
 $ cargo install nrr
 ```
+
+Or if you want to stay on the bleeding edge, install with Cargo from the Git repository:
 
 ```console
 $ cargo install --git https://github.com/ryanccn/nrr.git
