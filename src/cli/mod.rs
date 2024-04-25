@@ -1,35 +1,15 @@
 use clap::{Args, CommandFactory, Parser, Subcommand};
+
 use color_eyre::Result;
 use owo_colors::{OwoColorize as _, Stream};
+use std::env;
 
-use std::{env, sync::OnceLock};
+use self::env_file::EnvFile;
 
+mod env_file;
 mod exec;
 mod list;
 mod run;
-
-#[derive(Clone, Debug)]
-pub struct EnvFile {
-    inner: Vec<(String, String)>,
-}
-
-impl From<Vec<(String, String)>> for EnvFile {
-    fn from(inner: Vec<(String, String)>) -> Self {
-        Self { inner }
-    }
-}
-
-impl EnvFile {
-    pub fn from_path(path: &str) -> dotenvy::Result<Self> {
-        let file = dotenvy::from_filename_iter(path)?;
-        let env = file.collect::<dotenvy::Result<Vec<(String, String)>>>()?;
-        Ok(Self { inner: env })
-    }
-
-    pub fn iter(&self) -> impl Iterator<Item = (&String, &String)> {
-        self.inner.iter().map(|(a, b)| (a, b))
-    }
-}
 
 #[derive(Parser, Clone)]
 #[command(author, version, about, long_about = None)]
@@ -110,16 +90,6 @@ pub struct ExecArgs {
     /// An environment file to read environment variables from
     #[clap(short, long, env = "NRR_ENV_FILE", value_parser = EnvFile::from_path)]
     pub env_file: Option<EnvFile>,
-}
-
-pub fn get_level() -> &'static usize {
-    static ONCE_LOCK: OnceLock<usize> = OnceLock::new();
-    ONCE_LOCK.get_or_init(|| {
-        std::env::var("__NRR_LEVEL")
-            .ok()
-            .and_then(|s| s.parse::<usize>().ok())
-            .unwrap_or(1)
-    })
 }
 
 impl Cli {

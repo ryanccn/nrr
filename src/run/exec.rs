@@ -4,7 +4,13 @@ use std::{env, path::Path, process::Command};
 #[cfg(unix)]
 use std::os::unix::process::CommandExt as _;
 
-use crate::{cli::ExecArgs, package_json::PackageJson, run::util};
+use crate::{
+    cli::ExecArgs,
+    package_json::PackageJson,
+    util::{get_level, itoa},
+};
+
+use super::util::make_patched_path;
 
 pub fn exec(package_path: &Path, package_data: &PackageJson, args: &ExecArgs) -> Result<()> {
     let package_folder = package_path.parent().unwrap();
@@ -18,8 +24,8 @@ pub fn exec(package_path: &Path, package_data: &PackageJson, args: &ExecArgs) ->
     }
 
     subproc
-        .env("PATH", util::make_patched_path(package_path)?)
-        .env("__NRR_LEVEL", util::itoa(crate::get_level() + 1));
+        .env("PATH", make_patched_path(package_path)?)
+        .env("__NRR_LEVEL", itoa(get_level() + 1));
 
     subproc
         .env("npm_execpath", env::current_exe()?)

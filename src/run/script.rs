@@ -3,7 +3,13 @@ use std::{env, path::Path};
 use color_eyre::Result;
 use owo_colors::{OwoColorize as _, Stream};
 
-use crate::{cli::SharedRunOptions, package_json::PackageJson, run::util};
+use crate::{
+    cli::SharedRunOptions,
+    package_json::PackageJson,
+    util::{get_level, itoa},
+};
+
+use super::util::{make_patched_path, make_shell_cmd};
 
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub enum ScriptType {
@@ -49,7 +55,7 @@ fn single_script(
     }
 
     if !options.silent {
-        let cmd_prefix = script_type.prefix() + &"$".repeat(*crate::get_level());
+        let cmd_prefix = script_type.prefix() + &"$".repeat(*get_level());
 
         eprintln!(
             "{} {}",
@@ -60,7 +66,7 @@ fn single_script(
         );
     }
 
-    let mut subproc = util::make_shell_cmd();
+    let mut subproc = make_shell_cmd();
     subproc.current_dir(package_folder).arg(&full_cmd);
 
     if let Some(env_file) = &options.env_file {
@@ -68,8 +74,8 @@ fn single_script(
     }
 
     subproc
-        .env("PATH", util::make_patched_path(package_path)?)
-        .env("__NRR_LEVEL", util::itoa(crate::get_level() + 1));
+        .env("PATH", make_patched_path(package_path)?)
+        .env("__NRR_LEVEL", itoa(get_level() + 1));
 
     subproc
         .env("npm_execpath", env::current_exe()?)
@@ -113,7 +119,7 @@ pub fn script(
         eprint!(
             "{}",
             package_data.make_prefix(
-                match crate::get_level() {
+                match get_level() {
                     1 => None,
                     _ => Some(script_name),
                 },

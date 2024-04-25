@@ -7,11 +7,6 @@ use std::{
 };
 
 #[must_use]
-pub fn itoa(input: impl itoa::Integer) -> String {
-    itoa::Buffer::new().format(input).to_owned()
-}
-
-#[must_use]
 pub fn make_patched_paths(package_path: &Path) -> Vec<PathBuf> {
     let mut patched_path = package_path
         .ancestors()
