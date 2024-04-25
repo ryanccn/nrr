@@ -16,18 +16,19 @@ nrr initializes and resolves scripts way faster than other package managers and 
 
 <details>
 
-<summary>Benchmark of <code>nrr</code>, <code>npm</code>, <code>yarn</code>, <code>pnpm</code>, <code>bun</code>, and <code>dum</code> running a simple <code>true</code> script</summary>
+<summary>Benchmark of <code>nrr</code>, <code>npm</code>, <code>yarn</code>, <code>pnpm</code>, <code>node --run</code>, <code>bun</code>, and <code>dum</code> running a simple <code>true</code> script</summary>
 
-| Command   |    Mean [ms] | Min [ms] | Max [ms] |       Relative |
-| :-------- | -----------: | -------: | -------: | -------------: |
-| **`nrr`** |    1.9 ± 0.1 |      1.7 |      2.3 |           1.00 |
-| `dum`     |    2.5 ± 0.2 |      2.3 |      3.5 |    1.35 ± 0.11 |
-| `bun`     |    6.9 ± 0.2 |      6.6 |      7.7 |    3.69 ± 0.21 |
-| `yarn`    | 304.8 ± 10.5 |    291.2 |    347.2 | 162.32 ± 10.13 |
-| `npm`     | 332.0 ± 17.5 |    314.1 |    421.5 | 176.84 ± 13.10 |
-| `pnpm`    | 511.5 ± 20.6 |    482.8 |    606.3 | 272.41 ± 17.91 |
+| Command      |    Mean [ms] | Min [ms] | Max [ms] |       Relative |
+| :----------- | -----------: | -------: | -------: | -------------: |
+| **`nrr`**    |    2.2 ± 0.3 |      1.9 |      7.7 |           1.00 |
+| `dum`        |    2.7 ± 0.2 |      2.4 |      5.2 |    1.22 ± 0.17 |
+| `bun`        |    7.1 ± 0.3 |      6.5 |     10.3 |    3.21 ± 0.40 |
+| `node --run` |   41.6 ± 1.8 |     39.3 |     49.1 |   18.80 ± 2.35 |
+| `npm`        | 261.7 ± 17.1 |    245.5 |    292.2 | 118.36 ± 15.91 |
+| `yarn`       | 305.7 ± 14.6 |    295.2 |    343.9 | 138.28 ± 17.52 |
+| `pnpm`       | 502.7 ± 10.7 |    489.8 |    522.9 | 227.40 ± 27.12 |
 
-<small>Benchmarks run on an AWS EC2 `t4g.micro` instance with the command <code>hyperfine --shell=none --warmup=5 --runs=1000 --output=pipe --export-markdown=benchmark.md 'npm run dev' -n 'npm' 'yarn run dev' -n 'yarn' 'pnpm run dev' -n 'pnpm' 'bun run dev' -n 'bun' 'dum run dev' -n 'dum' 'nrr dev' -n 'nrr'</code></small>
+<small>Benchmarks run on an AWS EC2 `t4g.micro` instance with the command <code>hyperfine --shell=none --warmup=5 --output=pipe --export-markdown=benchmark.md 'npm run dev' -n 'npm' 'yarn run dev' -n 'yarn' 'pnpm run dev' -n 'pnpm' 'node --run dev' -n 'node --run' 'bun run dev' -n 'bun' 'dum run dev' -n 'dum' 'nrr dev' -n 'nrr'</code></small>
 
 </details>
 
