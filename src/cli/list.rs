@@ -10,6 +10,10 @@ pub fn handle(package_paths: impl Iterator<Item = PathBuf>) -> bool {
         if let Ok(Ok(package)) =
             fs::read(&package_path).map(|mut raw| simd_json::from_slice::<PackageJson>(&mut raw))
         {
+            if found_package {
+                println!();
+            }
+
             print!("{}", package.make_prefix(None, Stream::Stdout));
             found_package = true;
 
@@ -20,8 +24,6 @@ pub fn handle(package_paths: impl Iterator<Item = PathBuf>) -> bool {
                 );
                 println!("  {script_content}");
             }
-
-            println!();
         }
     }
 

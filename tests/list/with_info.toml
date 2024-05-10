@@ -4,6 +4,5 @@ stdout = """
 @nrr/testing@0.1.0
 dev
   echo dev
-
 """
 stderr = ""
