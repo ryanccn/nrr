@@ -2,6 +2,34 @@
 
 All notable, and not so notable, changes to this project will be documented in this file.
 
+## [0.9.1] - 2024-05-11
+
+### Features
+
+- [`c360fbe`](https://github.com/ryanccn/nrr/commit/c360fbe71fa39632c830c6d9d8e6ff38e1c1e3dd) Add installer script - Ryan Cao
+
+### Bug Fixes
+
+- [`7d81dad`](https://github.com/ryanccn/nrr/commit/7d81dada2a2b3ba4c529aa24834bf25ebb354b31) (_list_) Remove extra newline at end of output - Ryan Cao
+
+### Refactor
+
+- [`9235f68`](https://github.com/ryanccn/nrr/commit/9235f68db24aceb9e76ccfeea7e247344348f544) Make shared util modules - Ryan Cao
+
+### Testing
+
+- [`7fe789c`](https://github.com/ryanccn/nrr/commit/7fe789cefdad8917d792fd0fae241e7bdf356340) (_run_) Add test for multiple arguments - Ryan Cao
+
+### Documentation
+
+- [`7a46bb6`](https://github.com/ryanccn/nrr/commit/7a46bb632f3dbdc89fddd9f20ff07ab3ffbf2e64) Complete GitHub Releases section - Ryan Cao
+- [`16ab9b9`](https://github.com/ryanccn/nrr/commit/16ab9b995629cb654dc246d98305793129be8e7e) Add `cargo-binstall` support - Ryan Cao
+- [`e8d5c80`](https://github.com/ryanccn/nrr/commit/e8d5c8075d755e0e65457608e6f57de04bc5aaad) Update benchmark to include `node --run` - Ryan Cao
+
+### Build
+
+- [`122bda0`](https://github.com/ryanccn/nrr/commit/122bda048a3c4811fa966fd0ee220fbecb5ec113) Add `aarch64-pc-windows-msvc` target - Ryan Cao
+
 ## [0.9.0] - 2024-04-19
 
 ### Features
@@ -198,6 +226,7 @@ All notable, and not so notable, changes to this project will be documented in t
 
 - [`1373b97`](https://github.com/ryanccn/nrr/commit/1373b972de7540e9496217b3121455b4eddb83dd) Add cargo release workflow - Ryan Cao
 
+[0.9.1]: https://github.com/ryanccn/nrr/compare/v0.9.0..0.9.1
 [0.9.0]: https://github.com/ryanccn/nrr/compare/v0.8.1..v0.9.0
 [0.8.1]: https://github.com/ryanccn/nrr/compare/v0.8.0..v0.8.1
 [0.8.0]: https://github.com/ryanccn/nrr/compare/v0.7.0..v0.8.0
