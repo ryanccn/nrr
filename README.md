@@ -83,6 +83,14 @@ $ nix profile install 'github:ryanccn/nrr#nrr'
 
 nrr is also available in [Nixpkgs](https://github.com/NixOS/nixpkgs) as `nixpkgs#nrr`.
 
+### Installer
+
+This installer script works on Linux and macOS and downloads binaries from GitHub Releases, falling back to `cargo install` if a prebuilt binary cannot be found.
+
+```console
+$ curl --proto '=https' --tlsv1.2 -fsSL https://nrr.ryanccn.dev | sh
+```
+
 ### Cargo
 
 nrr supports [cargo-binstall](https://github.com/cargo-bins/cargo-binstall), which downloads a binary if possible from GitHub Releases instead of compiling the crate from source.
