@@ -24,7 +24,7 @@ simd-json  = "0.13.10"
 strsim     = "0.11.1"
 
 [dev-dependencies]
-trycmd = "0.15.1"
+trycmd = "0.15.2"
 
 [lints.clippy]
 all      = { level = "warn", priority = -1 }
