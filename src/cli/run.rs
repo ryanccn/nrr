@@ -1,6 +1,6 @@
 use color_eyre::eyre::Result;
 use owo_colors::{OwoColorize as _, Stream};
-use std::{fs, path::PathBuf};
+use std::path::PathBuf;
 
 use crate::package_json::PackageJson;
 use crate::run;
@@ -13,9 +13,7 @@ pub fn handle(package_paths: impl Iterator<Item = PathBuf>, args: &RunArgs) -> R
     let mut executed_script = false;
 
     for package_path in package_paths {
-        if let Ok(Ok(package)) =
-            fs::read(&package_path).map(|mut raw| simd_json::from_slice::<PackageJson>(&mut raw))
-        {
+        if let Some(package) = PackageJson::from_path_safe(&package_path) {
             if let Some(script_cmd) = package.scripts.get(&args.script) {
                 run::script(
                     &package_path,

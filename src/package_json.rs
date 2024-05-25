@@ -1,3 +1,5 @@
+use std::{fs, path::Path};
+
 use owo_colors::{OwoColorize as _, Stream};
 use serde::Deserialize;
 
@@ -14,7 +16,59 @@ pub struct PackageJson {
     pub scripts: AIndexMap<String, String>,
 }
 
+pub enum PackageJsonFromPathError {
+    FileError(std::io::Error),
+    ParseError(simd_json::Error),
+}
+
+impl PackageJsonFromPathError {
+    pub fn do_warn(&self, package_path: &Path) {
+        match self {
+            PackageJsonFromPathError::ParseError(err) => {
+                eprintln!(
+                    "{}   {} could not be parsed: {}",
+                    "warn".if_supports_color(Stream::Stderr, |text| text.yellow()),
+                    &package_path
+                        .to_string_lossy()
+                        .if_supports_color(Stream::Stderr, |text| text.bold()),
+                    &err,
+                );
+            }
+
+            PackageJsonFromPathError::FileError(err) => {
+                eprintln!(
+                    "{}   {} could not be read: {}",
+                    "warn".if_supports_color(Stream::Stderr, |text| text.yellow()),
+                    &package_path
+                        .to_string_lossy()
+                        .if_supports_color(Stream::Stderr, |text| text.bold()),
+                    &err,
+                );
+            }
+        }
+    }
+}
+
 impl PackageJson {
+    pub fn from_path(path: &Path) -> Result<Self, PackageJsonFromPathError> {
+        fs::read(path)
+            .map_err(PackageJsonFromPathError::FileError)
+            .and_then(|mut raw| {
+                simd_json::from_slice::<PackageJson>(&mut raw)
+                    .map_err(PackageJsonFromPathError::ParseError)
+            })
+    }
+
+    pub fn from_path_safe(path: &Path) -> Option<Self> {
+        match Self::from_path(path) {
+            Ok(package) => Some(package),
+            Err(error) => {
+                error.do_warn(path);
+                None
+            }
+        }
+    }
+
     #[must_use]
     pub fn make_prefix(&self, script: Option<&str>, stream: Stream) -> String {
         let mut prefix = String::new();

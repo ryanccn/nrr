@@ -1,15 +1,13 @@
 use owo_colors::{OwoColorize as _, Stream};
 
 use crate::package_json::PackageJson;
-use std::{fs, path::PathBuf};
+use std::path::PathBuf;
 
 pub fn handle(package_paths: impl Iterator<Item = PathBuf>) -> bool {
     let mut found_package = false;
 
     for package_path in package_paths {
-        if let Ok(Ok(package)) =
-            fs::read(&package_path).map(|mut raw| simd_json::from_slice::<PackageJson>(&mut raw))
-        {
+        if let Some(package) = PackageJson::from_path_safe(&package_path) {
             if found_package {
                 println!();
             }
