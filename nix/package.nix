@@ -18,6 +18,7 @@ rustPlatform.buildRustPackage rec {
     root = ../.;
     fileset = lib.fileset.unions [
       ../src
+      ../tests
       ../Cargo.lock
       ../Cargo.toml
     ];
@@ -27,12 +28,12 @@ rustPlatform.buildRustPackage rec {
     lockFile = ../Cargo.lock;
   };
 
-  buildInputs = lib.optionals stdenv.isDarwin (with darwin.apple_sdk.frameworks; [
-    CoreFoundation
-    Security
-    IOKit
+  buildInputs = lib.optionals stdenv.isDarwin [
+    darwin.apple_sdk.frameworks.CoreFoundation
+    darwin.apple_sdk.frameworks.Security
+    darwin.apple_sdk.frameworks.IOKit
     darwin.libiconv
-  ]);
+  ];
 
   nativeBuildInputs = lib.optionals stdenv.isDarwin [
     pkg-config

@@ -22,6 +22,7 @@ serde      = { version = "1.0.203", features = ["derive"] }
 shlex      = "1.3.0"
 simd-json  = "0.13.10"
 strsim     = "0.11.1"
+thiserror = "1.0.61"
 
 [dev-dependencies]
 trycmd = "0.15.4"
