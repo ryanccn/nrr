@@ -2,6 +2,20 @@
 
 All notable, and not so notable, changes to this project will be documented in this file.
 
+## [0.9.2] - 2024-05-31
+
+### Features
+
+- [`ca529de`](https://github.com/ryanccn/nrr/commit/ca529deed726d53168f0c310ecd13638cdaa3542) Warn on read and parse errors - Ryan Cao
+
+### Refactor
+
+- [`d3beafa`](https://github.com/ryanccn/nrr/commit/d3beafa6f3a31b810ece4fbee127bdd3b403c236) Adopt thiserror - Ryan Cao
+
+### Miscellaneous
+
+- [`c1fce66`](https://github.com/ryanccn/nrr/commit/c1fce66725b285b70b3bf8ba79d22811615d1a77) Generate changelog for releases - Ryan Cao
+
 ## [0.9.1] - 2024-05-11
 
 ### Features
@@ -226,7 +240,8 @@ All notable, and not so notable, changes to this project will be documented in t
 
 - [`1373b97`](https://github.com/ryanccn/nrr/commit/1373b972de7540e9496217b3121455b4eddb83dd) Add cargo release workflow - Ryan Cao
 
-[0.9.1]: https://github.com/ryanccn/nrr/compare/v0.9.0..0.9.1
+[0.9.2]: https://github.com/ryanccn/nrr/compare/v0.9.1..0.9.2
+[0.9.1]: https://github.com/ryanccn/nrr/compare/v0.9.0..v0.9.1
 [0.9.0]: https://github.com/ryanccn/nrr/compare/v0.8.1..v0.9.0
 [0.8.1]: https://github.com/ryanccn/nrr/compare/v0.8.0..v0.8.1
 [0.8.0]: https://github.com/ryanccn/nrr/compare/v0.7.0..v0.8.0
