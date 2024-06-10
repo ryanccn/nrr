@@ -28,7 +28,7 @@ pub enum PackageJsonFromPathError {
 impl PackageJsonFromPathError {
     pub fn do_warn(&self, package_path: &Path) {
         match self {
-            PackageJsonFromPathError::ParseError(err) => {
+            Self::ParseError(err) => {
                 eprintln!(
                     "{}   {} could not be parsed: {}",
                     "warn".if_supports_color(Stream::Stderr, |text| text.yellow()),
@@ -39,7 +39,7 @@ impl PackageJsonFromPathError {
                 );
             }
 
-            PackageJsonFromPathError::FileError(err) => {
+            Self::FileError(err) => {
                 eprintln!(
                     "{}   {} could not be read: {}",
                     "warn".if_supports_color(Stream::Stderr, |text| text.yellow()),
@@ -56,7 +56,7 @@ impl PackageJsonFromPathError {
 impl PackageJson {
     pub fn from_path(path: &Path) -> Result<Self, PackageJsonFromPathError> {
         let mut raw = fs::read(path)?;
-        Ok(simd_json::from_slice::<PackageJson>(&mut raw)?)
+        Ok(simd_json::from_slice::<Self>(&mut raw)?)
     }
 
     pub fn from_path_safe(path: &Path) -> Option<Self> {

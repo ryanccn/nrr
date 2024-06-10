@@ -1,0 +1,9 @@
+args = ["run", "nothing"]
+
+stdout = ""
+stderr = """
+warn   [CWD]/package.json could not be parsed: InternalError(TapeError) at character 0 ('h')
+error  No script found with name nothing.
+"""
+
+status.code = 1
