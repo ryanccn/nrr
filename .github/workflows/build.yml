@@ -10,6 +10,10 @@ on:
 
 jobs:
   build:
+    permissions:
+      id-token: write
+      attestations: write
+
     strategy:
       matrix:
         target:
@@ -49,6 +53,13 @@ jobs:
       - name: Build
         run: cargo auditable build --release --locked --target ${{ matrix.target }}
 
+      - name: Generate build provenance attestations
+        uses: actions/attest-build-provenance@v1
+        with:
+          subject-path: |
+            ./target/${{ matrix.target }}/release/nrr
+            ./target/${{ matrix.target }}/release/nrr.exe
+
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -59,6 +70,10 @@ jobs:
             ./target/${{ matrix.target }}/release/nrr.exe
 
   linux-static:
+    permissions:
+      id-token: write
+      attestations: write
+
     strategy:
       matrix:
         arch:
@@ -79,6 +94,11 @@ jobs:
 
       - name: Build
         run: nix build --fallback --print-build-logs '.#nrr-static-${{ matrix.arch }}'
+
+      - name: Generate build provenance attestations
+        uses: actions/attest-build-provenance@v1
+        with:
+          subject-path: ./result/bin/nrr
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
