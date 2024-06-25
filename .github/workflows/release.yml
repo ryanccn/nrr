@@ -6,6 +6,9 @@ on:
 
 jobs:
   build:
+    permissions:
+      id-token: write
+      attestations: write
     uses: ./.github/workflows/build.yml
 
   crates-io:
