@@ -83,7 +83,7 @@ pub struct SharedRunOptions {
 
 #[derive(Args, Clone, Debug)]
 pub struct ExecArgs {
-    /// The command to execute in a shell
+    /// The command to execute
     #[clap(required = true, allow_hyphen_values = true)]
     pub command: Vec<String>,
 
