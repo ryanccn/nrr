@@ -2,6 +2,24 @@
 
 All notable, and not so notable, changes to this project will be documented in this file.
 
+## [0.9.3] - 2024-06-25
+
+### Bug Fixes
+
+- [`d42f7f3`](https://github.com/ryanccn/nrr/commit/d42f7f3984b28abff478a5ec75f8ecd5ad640617) Detect actual argv0 instead of current executable - Ryan Cao
+
+### Testing
+
+- [`6155ae8`](https://github.com/ryanccn/nrr/commit/6155ae8f56d47e8b6fbaf1b15dcb9121b7cb07f9) Add invalid JSON case - Ryan Cao
+
+### Documentation
+
+- [`ea82173`](https://github.com/ryanccn/nrr/commit/ea82173997a24f3ad70ced2d0ac0eb574838c050) Clarify exec context - Ryan Cao
+
+### Miscellaneous
+
+- [`ce64c3f`](https://github.com/ryanccn/nrr/commit/ce64c3f4d1dd99f9c33610e3c494810a8adb6da8) Add build provenance attestations - Ryan Cao
+
 ## [0.9.2] - 2024-05-31
 
 ### Features
@@ -240,7 +258,8 @@ All notable, and not so notable, changes to this project will be documented in t
 
 - [`1373b97`](https://github.com/ryanccn/nrr/commit/1373b972de7540e9496217b3121455b4eddb83dd) Add cargo release workflow - Ryan Cao
 
-[0.9.2]: https://github.com/ryanccn/nrr/compare/v0.9.1..0.9.2
+[0.9.3]: https://github.com/ryanccn/nrr/compare/v0.9.2..0.9.3
+[0.9.2]: https://github.com/ryanccn/nrr/compare/v0.9.1..v0.9.2
 [0.9.1]: https://github.com/ryanccn/nrr/compare/v0.9.0..v0.9.1
 [0.9.0]: https://github.com/ryanccn/nrr/compare/v0.8.1..v0.9.0
 [0.8.1]: https://github.com/ryanccn/nrr/compare/v0.8.0..v0.8.1
