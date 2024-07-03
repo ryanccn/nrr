@@ -50,9 +50,14 @@
           rustc
           cargo
           rustfmt
+
+          # Fix the error while building the project:
+          # `ld: library not found for -liconv`
+          libiconv
         ];
 
-        RUST_BACKTRACE = 1;
+        # WARNING: By enabling this the integration tests will fail
+        # RUST_BACKTRACE = 1;
         RUST_SRC_PATH = "${pkgs.rust.packages.stable.rustPlatform.rustLibSrc}";
       };
 
