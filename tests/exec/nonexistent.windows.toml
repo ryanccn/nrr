@@ -11,3 +11,6 @@ Run with RUST_BACKTRACE=full to include source snippets.
 """
 
 status.code = 1
+
+[env.add]
+RUST_BACKTRACE = "0"
