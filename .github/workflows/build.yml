@@ -55,6 +55,7 @@ jobs:
 
       - name: Generate build provenance attestations
         uses: actions/attest-build-provenance@v1
+        if: ${{ github.event_name != 'pull_request' }}
         with:
           subject-path: |
             ./target/${{ matrix.target }}/release/nrr
@@ -97,6 +98,7 @@ jobs:
 
       - name: Generate build provenance attestations
         uses: actions/attest-build-provenance@v1
+        if: ${{ github.event_name != 'pull_request' }}
         with:
           subject-path: ./result/bin/nrr
 
