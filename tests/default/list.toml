@@ -1,7 +1,6 @@
 args = []
 
 stdout = """
-dev
-  echo dev
+dev  echo dev
 """
 stderr = ""

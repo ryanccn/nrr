@@ -110,7 +110,7 @@ impl Cli {
             }
 
             Some(Subcommands::List) => {
-                let found_package = list::handle(package_paths);
+                let found_package = list::handle(package_paths)?;
                 if !found_package {
                     eprintln!(
                         "{}  No packages found!",
@@ -131,7 +131,7 @@ impl Cli {
                         },
                     )?;
                 } else {
-                    let found_package = list::handle(package_paths);
+                    let found_package = list::handle(package_paths)?;
                     if !found_package {
                         Cli::command().print_help()?;
                     }
