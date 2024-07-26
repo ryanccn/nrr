@@ -2,6 +2,23 @@
 
 All notable, and not so notable, changes to this project will be documented in this file.
 
+## [0.9.4] - 2024-07-26
+
+### Features
+
+- [`0e057b8`](https://github.com/ryanccn/nrr/commit/0e057b8b446c770c4283bee38801d237428e2dd9) (_list_) More compact layout - Ryan Cao
+
+### Miscellaneous
+
+- [`0b0e0bc`](https://github.com/ryanccn/nrr/commit/0b0e0bcd925016df0a5d565806e6c133e90fa61a) Don't generate attestations on PRs - Ryan Cao
+- [`002d6e0`](https://github.com/ryanccn/nrr/commit/002d6e0fe9ab5aa5117c900b449946482c6f107b) Fix inputs and tests in devshell (#52) - Cristian Oliveira
+- [`ce44fc3`](https://github.com/ryanccn/nrr/commit/ce44fc380b0e270e30fcee2bce898503fa2803eb) Update dependencies and inputs - Ryan Cao
+- [`9c4b678`](https://github.com/ryanccn/nrr/commit/9c4b67846876bcffdadd2f445936cb060b577a78) Add Contributor Covenant - Ryan Cao
+
+### Build
+
+- [`37a5834`](https://github.com/ryanccn/nrr/commit/37a583472c9d650bca306f2b5cd7dd840a37681a) Update dependencies - Ryan Cao
+
 ## [0.9.3] - 2024-06-25
 
 ### Bug Fixes
@@ -19,6 +36,7 @@ All notable, and not so notable, changes to this project will be documented in t
 ### Miscellaneous
 
 - [`ce64c3f`](https://github.com/ryanccn/nrr/commit/ce64c3f4d1dd99f9c33610e3c494810a8adb6da8) Add build provenance attestations - Ryan Cao
+- [`8f2f132`](https://github.com/ryanccn/nrr/commit/8f2f1328fa1fb67c512ed0db59d004f020301add) (_release_) Add attestation permissions - Ryan Cao
 
 ## [0.9.2] - 2024-05-31
 
@@ -258,7 +276,8 @@ All notable, and not so notable, changes to this project will be documented in t
 
 - [`1373b97`](https://github.com/ryanccn/nrr/commit/1373b972de7540e9496217b3121455b4eddb83dd) Add cargo release workflow - Ryan Cao
 
-[0.9.3]: https://github.com/ryanccn/nrr/compare/v0.9.2..0.9.3
+[0.9.4]: https://github.com/ryanccn/nrr/compare/v0.9.3..0.9.4
+[0.9.3]: https://github.com/ryanccn/nrr/compare/v0.9.2..v0.9.3
 [0.9.2]: https://github.com/ryanccn/nrr/compare/v0.9.1..v0.9.2
 [0.9.1]: https://github.com/ryanccn/nrr/compare/v0.9.0..v0.9.1
 [0.9.0]: https://github.com/ryanccn/nrr/compare/v0.8.1..v0.9.0
