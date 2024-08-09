@@ -13,13 +13,13 @@ pub fn handle(package_paths: impl Iterator<Item = PathBuf>) -> Result<bool> {
 
     for package_path in package_paths {
         if let Some(package) = PackageJson::from_path_safe(&package_path) {
-            if found_package {
-                println!();
-            }
-
             let mut lock = stdout().lock();
 
-            write!(lock, "{}", package.make_prefix(None, Stream::Stdout))?;
+            if found_package {
+                lock.write_all("\n".as_bytes())?;
+            }
+
+            lock.write_all(package.make_prefix(None, Stream::Stdout).as_bytes())?;
             found_package = true;
 
             let longest_pad = package
@@ -49,12 +49,14 @@ pub fn handle(package_paths: impl Iterator<Item = PathBuf>) -> Result<bool> {
                         .enumerate()
                     {
                         if idx != 0 {
-                            write!(lock, "{}", " ".repeat(longest_pad + 2))?;
+                            lock.write_all(" ".repeat(longest_pad + 2).as_bytes())?;
                         }
-                        writeln!(lock, "{line}")?;
+                        lock.write_all(line.as_bytes())?;
+                        lock.write_all("\n".as_bytes())?;
                     }
                 } else {
-                    writeln!(lock, "{content}")?;
+                    lock.write_all(content.as_bytes())?;
+                    lock.write_all("\n".as_bytes())?;
                 }
             }
         }
