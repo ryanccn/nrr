@@ -1,6 +1,7 @@
 use color_eyre::eyre::Result;
 use owo_colors::{OwoColorize as _, Stream};
 use terminal_size::terminal_size;
+use unicode_width::UnicodeWidthStr as _;
 
 use crate::package_json::PackageJson;
 use std::{
@@ -25,7 +26,7 @@ pub fn handle(package_paths: impl Iterator<Item = PathBuf>) -> Result<bool> {
             let longest_pad = package
                 .scripts
                 .iter()
-                .map(|s| s.0.len())
+                .map(|s| s.0.width())
                 .max()
                 .unwrap_or_default();
 
