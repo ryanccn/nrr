@@ -19,7 +19,6 @@ jobs:
         uses: DeterminateSystems/update-flake-lock@main
         with:
           pr-title: "build(deps): update flake.lock"
-          pr-labels: |
-            dependencies
-            nix
-          token: ${{ secrets.UPDATE_FLAKE_LOCK_GITHUB_TOKEN }}
+          commit-msg: "build(deps): update flake.lock"
+          pr-reviewers: ryanccn
+          pr-labels: dependencies, nix
