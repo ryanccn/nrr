@@ -11,14 +11,14 @@ repository  = "https://github.com/ryanccn/nrr.git"
 
 [dependencies]
 ahash         = "0.8.11"
-clap          = { version = "4.5.13", features = ["derive", "env"] }
+clap          = { version = "4.5.14", features = ["derive", "env"] }
 color-eyre    = { version = "0.6.3", default-features = false }
 ctrlc         = "3.4.4"
 dotenvy       = "0.15.7"
 indexmap      = { version = "2.3.0", features = ["serde"] }
 itoa          = "1.0.11"
 owo-colors    = { version = "4.0.0", features = ["supports-colors"] }
-serde         = { version = "1.0.204", features = ["derive"] }
+serde         = { version = "1.0.205", features = ["derive"] }
 shlex         = "1.3.0"
 simd-json     = "0.13.10"
 strsim        = "0.11.1"
