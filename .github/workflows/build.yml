@@ -88,10 +88,10 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install Nix
-        uses: DeterminateSystems/nix-installer-action@v13
+        uses: DeterminateSystems/nix-installer-action@main
 
       - name: Setup Nix cache
-        uses: DeterminateSystems/magic-nix-cache-action@v7
+        uses: DeterminateSystems/magic-nix-cache-action@main
 
       - name: Build
         run: nix build --fallback --print-build-logs '.#nrr-static-${{ matrix.arch }}'
