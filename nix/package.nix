@@ -4,7 +4,7 @@
   rustPlatform,
   darwin,
   pkg-config,
-  lto ? false,
+  lto ? true,
   optimizeSize ? false,
   nrxAlias ? true,
 }:
@@ -35,13 +35,12 @@ rustPlatform.buildRustPackage rec {
     darwin.libiconv
   ];
 
-  nativeBuildInputs = lib.optionals stdenv.isDarwin [
-    pkg-config
-  ];
+  nativeBuildInputs = lib.optionals stdenv.isDarwin [ pkg-config ];
 
   env =
     lib.optionalAttrs lto {
       CARGO_PROFILE_RELEASE_LTO = "fat";
+      CARGO_PROFILE_RELEASE_CODEGEN_UNITS = "1";
     }
     // lib.optionalAttrs optimizeSize {
       CARGO_PROFILE_RELEASE_OPT_LEVEL = "z";
@@ -58,7 +57,7 @@ rustPlatform.buildRustPackage rec {
 
   meta = with lib; {
     description = "Minimal, blazing fast npm scripts runner";
-    maintainers = with maintainers; [ryanccn];
+    maintainers = with maintainers; [ ryanccn ];
     license = licenses.gpl3Only;
     mainProgram = "nrr";
   };

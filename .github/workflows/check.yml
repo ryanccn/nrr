@@ -16,26 +16,19 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          toolchain: stable
-          components: clippy
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@main
 
-      - name: Setup Rust cache
-        uses: Swatinem/rust-cache@v2
+      - name: Setup Nix cache
+        uses: DeterminateSystems/magic-nix-cache-action@main
 
-      - name: Install SARIF tooling
-        run: cargo install clippy-sarif sarif-fmt
-
-      - name: Run clippy
-        run: cargo clippy --all --all-features --message-format=json | clippy-sarif | tee /tmp/result.sarif | sarif-fmt
-        continue-on-error: true
+      - name: Check
+        run: nix build --fallback --print-build-logs '.#check-clippy'
 
       - name: Upload analysis results
         uses: github/codeql-action/upload-sarif@v3
         with:
-          sarif_file: /tmp/result.sarif
+          sarif_file: result
           wait-for-processing: true
 
   rustfmt:
@@ -45,14 +38,27 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          toolchain: stable
-          components: rustfmt
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@main
 
-      - name: Setup Rust cache
-        uses: Swatinem/rust-cache@v2
+      - name: Setup Nix cache
+        uses: DeterminateSystems/magic-nix-cache-action@main
 
-      - name: Run rustfmt
-        run: cargo fmt --all -- --check
+      - name: Check
+        run: nix build --fallback --print-build-logs '.#check-rustfmt'
+
+  nixfmt:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@main
+
+      - name: Setup Nix cache
+        uses: DeterminateSystems/magic-nix-cache-action@main
+
+      - name: Check
+        run: nix build --fallback --print-build-logs '.#check-nixfmt'
