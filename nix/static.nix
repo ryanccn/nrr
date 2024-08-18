@@ -26,12 +26,7 @@ let
     )
   )) targets;
 
-  mkPackageWith =
-    rustPlatform:
-    nrr.override {
-      inherit rustPlatform;
-      lto = true;
-    };
+  mkPackageWith = rustPlatform: nrr.override { inherit rustPlatform; };
 in
 lib.mapAttrs' (
   target: rustPlatform: lib.nameValuePair "nrr-static-${target}" (mkPackageWith rustPlatform)

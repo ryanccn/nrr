@@ -4,8 +4,8 @@
   rustPlatform,
   darwin,
   pkg-config,
-  lto ? true,
-  optimizeSize ? false,
+  enableLTO ? true,
+  enableOptimizeSize ? false,
   nrxAlias ? true,
 }:
 rustPlatform.buildRustPackage rec {
@@ -13,6 +13,7 @@ rustPlatform.buildRustPackage rec {
   inherit (passthru.cargoToml.package) version;
 
   __structuredAttrs = true;
+  strictDeps = true;
 
   src = lib.fileset.toSource {
     root = ../.;
@@ -38,11 +39,11 @@ rustPlatform.buildRustPackage rec {
   nativeBuildInputs = lib.optionals stdenv.isDarwin [ pkg-config ];
 
   env =
-    lib.optionalAttrs lto {
+    lib.optionalAttrs enableLTO {
       CARGO_PROFILE_RELEASE_LTO = "fat";
       CARGO_PROFILE_RELEASE_CODEGEN_UNITS = "1";
     }
-    // lib.optionalAttrs optimizeSize {
+    // lib.optionalAttrs enableOptimizeSize {
       CARGO_PROFILE_RELEASE_OPT_LEVEL = "z";
       CARGO_PROFILE_RELEASE_PANIC = "abort";
       CARGO_PROFILE_RELEASE_CODEGEN_UNITS = "1";
