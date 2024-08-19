@@ -6,5 +6,11 @@ let
   ];
 in
 builtins.listToAttrs (
-  map (pkgs: lib.nameValuePair (builtins.parseDrvName pkgs.nrr.name).name pkgs.nrr) crossTargets
+  map (
+    pkgs:
+    let
+      package = pkgs.callPackage ./package.nix { };
+    in
+    lib.nameValuePair (builtins.parseDrvName package.name).name package
+  ) crossTargets
 )

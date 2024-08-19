@@ -20,14 +20,7 @@
       ];
 
       forAllSystems = lib.genAttrs systems;
-      nixpkgsFor = forAllSystems (
-        system:
-        import nixpkgs {
-          inherit system;
-          config = { };
-          overlays = [ self.overlays.default ];
-        }
-      );
+      nixpkgsFor = forAllSystems (system: nixpkgs.legacyPackages.${system});
     in
     {
       checks = forAllSystems (
@@ -132,10 +125,13 @@
         system:
         let
           pkgs = nixpkgsFor.${system};
+
+          # re-use our overlay to call packages
+          packages = self.overlays.default null pkgs;
         in
         {
-          inherit (pkgs) nrr;
-          default = pkgs.nrr;
+          inherit (packages) nrr;
+          default = packages.nrr;
         }
         // (lib.attrsets.mapAttrs' (
           name: value: lib.nameValuePair "check-${name}" value
