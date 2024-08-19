@@ -8,7 +8,6 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
-    flake-utils.url = "github:numtide/flake-utils";
 
     rust-overlay = {
       url = "github:oxalica/rust-overlay";
@@ -20,46 +19,58 @@
     {
       self,
       nixpkgs,
-      flake-utils,
-      ...
-    }@inputs:
-    flake-utils.lib.eachDefaultSystem (
-      system:
-      let
-        pkgs = import nixpkgs {
+      rust-overlay,
+    }:
+    let
+      inherit (nixpkgs) lib;
+      systems = [
+        "x86_64-linux"
+        "aarch64-linux"
+        "x86_64-darwin"
+        "aarch64-darwin"
+      ];
+
+      forAllSystems = lib.genAttrs systems;
+      nixpkgsFor = forAllSystems (
+        system:
+        import nixpkgs {
           inherit system;
           config = { };
           overlays = [
-            inputs.rust-overlay.overlays.default
+            rust-overlay.overlays.default
             self.overlays.default
           ];
-        };
+        }
+      );
+    in
+    {
+      checks = forAllSystems (
+        system:
+        let
+          pkgs = nixpkgsFor.${system};
 
-        inherit (pkgs) lib;
+          mkFlakeCheck =
+            {
+              name,
+              nativeBuildInputs ? [ ],
+              command,
+            }:
+            pkgs.stdenv.mkDerivation {
+              name = "check-${name}";
+              inherit nativeBuildInputs;
+              inherit (self.packages.${system}.nrr) src cargoDeps;
 
-        mkFlakeCheck =
-          {
-            name,
-            nativeBuildInputs ? [ ],
-            command,
-          }:
-          pkgs.stdenv.mkDerivation {
-            name = "check-${name}";
-            inherit nativeBuildInputs;
-            inherit (self.packages.${system}.nrr) src cargoDeps;
+              buildPhase = ''
+                ${command}
+                touch "$out"
+              '';
 
-            buildPhase = ''
-              ${command}
-              touch "$out"
-            '';
-
-            doCheck = false;
-            dontInstall = true;
-            dontFixup = true;
-          };
-      in
-      {
-        checks = {
+              doCheck = false;
+              dontInstall = true;
+              dontFixup = true;
+            };
+        in
+        {
           nixfmt = mkFlakeCheck {
             name = "nixfmt";
             nativeBuildInputs = with pkgs; [ nixfmt-rfc-style ];
@@ -68,15 +79,18 @@
 
           rustfmt = mkFlakeCheck {
             name = "rustfmt";
+
             nativeBuildInputs = with pkgs; [
               cargo
               rustfmt
             ];
+
             command = "cargo fmt --check";
           };
 
           clippy = mkFlakeCheck {
             name = "clippy";
+
             nativeBuildInputs = with pkgs; [
               rustPlatform.cargoSetupHook
               cargo
@@ -85,54 +99,67 @@
               clippy-sarif
               sarif-fmt
             ];
+
             command = ''
               cargo clippy --all-features --all-targets --tests \
                 --offline --message-format=json \
                 | clippy-sarif | tee $out | sarif-fmt
             '';
           };
-        };
+        }
+      );
 
-        devShells.default = pkgs.mkShell {
-          packages = with pkgs; [
-            rustc
-            cargo
-            rustfmt
-            clippy
-            rust-analyzer
+      devShells = forAllSystems (
+        system:
+        let
+          pkgs = nixpkgsFor.${system};
+        in
+        {
+          default = pkgs.mkShell {
+            packages = with pkgs; [
+              rustfmt
+              clippy
+              rust-analyzer
 
-            git-cliff # changelog generator
-            taplo # TOML toolkit
+              git-cliff # changelog generator
+              taplo # TOML toolkit
 
-            cargo-audit
-            cargo-bloat
-            cargo-expand
+              cargo-audit
+              cargo-bloat
+              cargo-expand
 
-            libiconv
-          ];
+              libiconv
+            ];
 
-          __structuredAttrs = true;
-          env = {
-            RUST_BACKTRACE = 1;
-            RUST_SRC_PATH = "${pkgs.rust.packages.stable.rustPlatform.rustLibSrc}";
+            inputsFrom = [ self.packages.${system}.nrr ];
+
+            __structuredAttrs = true;
+            env = {
+              RUST_BACKTRACE = 1;
+              RUST_SRC_PATH = toString pkgs.rustPlatform.rustLibSrc;
+            };
           };
-        };
+        }
+      );
 
-        packages =
-          {
-            inherit (pkgs) nrr;
-            default = pkgs.nrr;
-          }
-          // (lib.attrsets.mapAttrs' (
-            name: value: lib.nameValuePair "check-${name}" value
-          ) self.checks.${system});
+      packages = forAllSystems (
+        system:
+        let
+          pkgs = nixpkgsFor.${system};
+        in
+        {
+          inherit (pkgs) nrr;
+          default = pkgs.nrr;
+        }
+        // (lib.attrsets.mapAttrs' (
+          name: value: lib.nameValuePair "check-${name}" value
+        ) self.checks.${system})
+      );
 
-        legacyPackages = import ./nix/static.nix pkgs;
+      legacyPackages = forAllSystems (system: import ./nix/static.nix nixpkgsFor.${system});
 
-        formatter = pkgs.nixfmt-rfc-style;
-      }
-    )
-    // {
+      formatter = forAllSystems (system: nixpkgsFor.${system}.nixfmt-rfc-style);
+
       overlays.default = _: prev: { nrr = prev.callPackage ./nix/package.nix { }; };
     };
 }
