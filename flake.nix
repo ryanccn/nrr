@@ -6,10 +6,17 @@
     extra-trusted-public-keys = [ "cache.garnix.io:CTFPyKSLcx5RMJKfLo5EEPUObbA78b0YQ2DTCJXqr9g=" ];
   };
 
-  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+    nix-filter.url = "github:numtide/nix-filter";
+  };
 
   outputs =
-    { self, nixpkgs }:
+    {
+      self,
+      nixpkgs,
+      nix-filter,
+    }:
     let
       inherit (nixpkgs) lib;
       systems = [
@@ -138,10 +145,14 @@
         ) self.checks.${system})
       );
 
-      legacyPackages = forAllSystems (system: nixpkgsFor.${system}.callPackage ./nix/static.nix { });
+      legacyPackages = forAllSystems (
+        system: nixpkgsFor.${system}.callPackage ./nix/static.nix { inherit nix-filter self; }
+      );
 
       formatter = forAllSystems (system: nixpkgsFor.${system}.nixfmt-rfc-style);
 
-      overlays.default = _: prev: { nrr = prev.callPackage ./nix/package.nix { }; };
+      overlays.default = _: prev: {
+        nrr = prev.callPackage ./nix/package.nix { inherit nix-filter self; };
+      };
     };
 }
