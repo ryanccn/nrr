@@ -17,7 +17,7 @@ pub fn handle(package_paths: impl Iterator<Item = PathBuf>) -> Result<bool> {
             let mut lock = stdout().lock();
 
             if found_package {
-                lock.write_all("\n".as_bytes())?;
+                lock.write_all(b"\n")?;
             }
 
             lock.write_all(package.make_prefix(None, Stream::Stdout).as_bytes())?;
@@ -53,11 +53,11 @@ pub fn handle(package_paths: impl Iterator<Item = PathBuf>) -> Result<bool> {
                             lock.write_all(" ".repeat(longest_pad + 2).as_bytes())?;
                         }
                         lock.write_all(line.as_bytes())?;
-                        lock.write_all("\n".as_bytes())?;
+                        lock.write_all(b"\n")?;
                     }
                 } else {
                     lock.write_all(content.as_bytes())?;
-                    lock.write_all("\n".as_bytes())?;
+                    lock.write_all(b"\n")?;
                 }
             }
         }

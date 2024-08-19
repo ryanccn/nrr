@@ -1,24 +1,16 @@
 use dotenvy::Result;
 
 #[derive(Clone, Debug)]
-pub struct EnvFile {
-    inner: Vec<(String, String)>,
-}
-
-impl From<Vec<(String, String)>> for EnvFile {
-    fn from(inner: Vec<(String, String)>) -> Self {
-        Self { inner }
-    }
-}
+pub struct EnvFile(Vec<(String, String)>);
 
 impl EnvFile {
     pub fn from_path(path: &str) -> Result<Self> {
-        let file = dotenvy::from_filename_iter(path)?;
-        let env: Vec<(String, String)> = file.collect::<Result<_>>()?;
-        Ok(Self { inner: env })
+        dotenvy::from_filename_iter(path)
+            .and_then(|file| file.collect())
+            .map(Self)
     }
 
     pub fn iter(&self) -> impl Iterator<Item = (&String, &String)> {
-        self.inner.iter().map(|(a, b)| (a, b))
+        self.0.iter().map(|(a, b)| (a, b))
     }
 }

@@ -133,7 +133,7 @@ impl Cli {
                 } else {
                     let found_package = list::handle(package_paths)?;
                     if !found_package {
-                        Cli::command().print_help()?;
+                        Self::command().print_help()?;
                     }
                 }
             }

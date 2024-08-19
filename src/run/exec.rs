@@ -40,7 +40,7 @@ pub fn exec(package_path: &Path, package_data: &PackageJson, args: &ExecArgs) ->
 
     #[cfg(unix)]
     {
-        Err::<(), _>(subproc.exec())?;
+        Err(subproc.exec())?;
         Ok(())
     }
 

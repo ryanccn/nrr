@@ -11,7 +11,7 @@ use crate::{
 
 use super::util::{make_patched_path, make_shell_cmd};
 
-#[derive(Debug, Copy, Clone, PartialEq)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum ScriptType {
     Pre,
     Post,
@@ -22,9 +22,9 @@ impl ScriptType {
     #[must_use]
     pub fn prefix(self) -> String {
         match self {
-            ScriptType::Normal => String::new(),
-            ScriptType::Pre => "pre".into(),
-            ScriptType::Post => "post".into(),
+            Self::Normal => String::new(),
+            Self::Pre => "pre".into(),
+            Self::Post => "post".into(),
         }
     }
 }

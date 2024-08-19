@@ -2,7 +2,6 @@ use std::{fs, path::Path};
 
 use owo_colors::{OwoColorize as _, Stream};
 use serde::Deserialize;
-use thiserror::Error;
 
 use indexmap::IndexMap;
 
@@ -17,12 +16,10 @@ pub struct PackageJson {
     pub scripts: AIndexMap<String, String>,
 }
 
-#[derive(Error, Debug)]
+#[derive(Debug)]
 pub enum PackageJsonFromPathError {
-    #[error("error reading file")]
-    FileError(#[from] std::io::Error),
-    #[error("error parsing file")]
-    ParseError(#[from] simd_json::Error),
+    FileError(std::io::Error),
+    ParseError(simd_json::Error),
 }
 
 impl PackageJsonFromPathError {
@@ -55,8 +52,9 @@ impl PackageJsonFromPathError {
 
 impl PackageJson {
     pub fn from_path(path: &Path) -> Result<Self, PackageJsonFromPathError> {
-        let mut raw = fs::read(path)?;
-        Ok(simd_json::from_slice::<Self>(&mut raw)?)
+        use PackageJsonFromPathError::{FileError, ParseError};
+        let mut raw = fs::read(path).map_err(FileError)?;
+        simd_json::from_slice(&mut raw).map_err(ParseError)
     }
 
     pub fn from_path_safe(path: &Path) -> Option<Self> {
