@@ -3,11 +3,14 @@
   stdenv,
   rustPlatform,
   darwin,
+  nix-filter,
   pkg-config,
+  self,
   enableLTO ? true,
   enableOptimizeSize ? false,
   nrxAlias ? true,
 }:
+
 rustPlatform.buildRustPackage rec {
   pname = passthru.cargoToml.package.name;
   inherit (passthru.cargoToml.package) version;
@@ -15,13 +18,13 @@ rustPlatform.buildRustPackage rec {
   __structuredAttrs = true;
   strictDeps = true;
 
-  src = lib.fileset.toSource {
-    root = ../.;
-    fileset = lib.fileset.unions [
-      ../src
-      ../tests
-      ../Cargo.lock
-      ../Cargo.toml
+  src = nix-filter.lib.filter {
+    root = self;
+    include = [
+      "src"
+      "tests"
+      "Cargo.lock"
+      "Cargo.toml"
     ];
   };
 
