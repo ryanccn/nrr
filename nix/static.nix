@@ -1,33 +1,10 @@
-{
-  lib,
-  pkgsCross,
-  rust-bin,
-  nrr,
-  ...
-}:
+{ lib, pkgsCross }:
 let
-  targets = {
-    x86_64 = pkgsCross.musl64.pkgsStatic;
-    aarch64 = pkgsCross.aarch64-multiplatform.pkgsStatic;
-  };
-
-  toolchain = rust-bin.stable.latest.minimal.override {
-    extensions = [ "rust-std" ];
-    targets = map (pkgs: pkgs.stdenv.hostPlatform.config) (lib.attrValues targets);
-  };
-
-  rustPlatforms = lib.mapAttrs (lib.const (
-    pkgs:
-    pkgs.makeRustPlatform (
-      lib.genAttrs [
-        "cargo"
-        "rustc"
-      ] (lib.const toolchain)
-    )
-  )) targets;
-
-  mkPackageWith = rustPlatform: nrr.override { inherit rustPlatform; };
+  crossTargets = [
+    pkgsCross.musl64.pkgsStatic
+    pkgsCross.aarch64-multiplatform.pkgsStatic
+  ];
 in
-lib.mapAttrs' (
-  target: rustPlatform: lib.nameValuePair "nrr-static-${target}" (mkPackageWith rustPlatform)
-) rustPlatforms
+builtins.listToAttrs (
+  map (pkgs: lib.nameValuePair (builtins.parseDrvName pkgs.nrr.name).name pkgs.nrr) crossTargets
+)

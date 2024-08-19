@@ -6,21 +6,10 @@
     extra-trusted-public-keys = [ "cache.garnix.io:CTFPyKSLcx5RMJKfLo5EEPUObbA78b0YQ2DTCJXqr9g=" ];
   };
 
-  inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
-
-    rust-overlay = {
-      url = "github:oxalica/rust-overlay";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-  };
+  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
 
   outputs =
-    {
-      self,
-      nixpkgs,
-      rust-overlay,
-    }:
+    { self, nixpkgs }:
     let
       inherit (nixpkgs) lib;
       systems = [
@@ -36,10 +25,7 @@
         import nixpkgs {
           inherit system;
           config = { };
-          overlays = [
-            rust-overlay.overlays.default
-            self.overlays.default
-          ];
+          overlays = [ self.overlays.default ];
         }
       );
     in
@@ -156,7 +142,7 @@
         ) self.checks.${system})
       );
 
-      legacyPackages = forAllSystems (system: import ./nix/static.nix nixpkgsFor.${system});
+      legacyPackages = forAllSystems (system: nixpkgsFor.${system}.callPackage ./nix/static.nix { });
 
       formatter = forAllSystems (system: nixpkgsFor.${system}.nixfmt-rfc-style);
 
