@@ -45,20 +45,22 @@ conventional_commits  = true
 filter_unconventional = true
 split_commits         = false
 
-commit_preprocessors = []
+commit_preprocessors = [{ pattern = "\\(#([0-9]+)\\)", replace = "([#${1}](<REPO>/issues/${1}))" }]
 
 commit_parsers = [
     { message = "^rm", group = "<!-- 0 -->Removed" },
     { message = "^feat", group = "<!-- 1 -->Features" },
     { message = "^fix", group = "<!-- 2 -->Bug Fixes" },
-    { message = "^doc", group = "<!-- 6 -->Documentation" },
-    { message = "^perf", group = "<!-- 4 -->Performance" },
     { message = "^refactor", group = "<!-- 3 -->Refactor" },
-    { message = "^style", group = "<!-- 7 -->Styling" },
+    { message = "^perf", group = "<!-- 4 -->Performance" },
     { message = "^test", group = "<!-- 5 -->Testing" },
-    { message = "^build\\(deps.*\\)", skip = true },
-    { message = "^chore\\(deps.*\\)", skip = true },
-    { message = "^chore|^ci|^nix", group = "<!-- 8 -->Miscellaneous" },
+    { message = "^doc", group = "<!-- 6 -->Documentation" },
+    { message = "^style", group = "<!-- 7 -->Styling" },
+    { message = "^build\\(deps.*\\)", group = "<!-- 9 -->Dependencies", scope = "" },
+    { message = "^chore\\(deps.*\\)", group = "<!-- 9 -->Dependencies", scope = "" },
+    { message = "^chore", group = "<!-- 8 -->Miscellaneous" },
+    { message = "^nix", group = "<!-- 8 -->Miscellaneous", default_scope = "nix" },
+    { message = "^ci", group = "<!-- 8 -->Miscellaneous", default_scope = "ci" },
     { message = "^revert", group = "<!-- 9 -->Revert" },
 ]
 

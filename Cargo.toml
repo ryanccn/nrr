@@ -1,6 +1,6 @@
 [package]
 name         = "nrr"
-version      = "0.9.4"
+version      = "0.9.5"
 edition      = "2021"
 rust-version = "1.78"
 
@@ -8,6 +8,9 @@ description = "Minimal, blazing fast npm scripts runner"
 authors     = ["Ryan Cao <hello@ryanccn.dev>"]
 license     = "GPL-3.0-only"
 repository  = "https://github.com/ryanccn/nrr.git"
+
+categories = ["command-line-utilities", "development-tools"]
+keywords   = ["cli", "node", "javascript", "npm", "scripts"]
 
 [dependencies]
 ahash         = "0.8.11"
