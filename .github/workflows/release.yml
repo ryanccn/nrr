@@ -49,6 +49,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Install git-cliff
         uses: taiki-e/install-action@git-cliff
@@ -72,7 +74,7 @@ jobs:
           done
 
       - name: Generate changelog
-        run: git-cliff -o /tmp/changelog.md -l --strip all
+        run: git-cliff -l --strip all | tail -n +3 > /tmp/changelog.md
 
       - name: Create release
         env:

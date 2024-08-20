@@ -80,7 +80,7 @@ jobs:
 
     strategy:
       matrix:
-        target: 
+        target:
           - "x86_64-unknown-linux-musl"
           - "aarch64-unknown-linux-musl"
 
