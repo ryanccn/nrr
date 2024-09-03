@@ -18,7 +18,7 @@ clap          = { version = "4.5.16", features = ["derive", "env"] }
 color-eyre    = { version = "0.6.3", default-features = false }
 ctrlc         = "3.4.5"
 dotenvy       = "0.15.7"
-indexmap      = { version = "2.4.0", features = ["serde"] }
+indexmap      = { version = "2.5.0", features = ["serde"] }
 itoa          = "1.0.11"
 owo-colors    = { version = "4.0.0", features = ["supports-colors"] }
 serde         = { version = "1.0.209", features = ["derive"] }
