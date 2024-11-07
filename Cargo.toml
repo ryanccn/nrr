@@ -29,7 +29,7 @@ terminal_size = "0.4.0"
 unicode-width = "0.2.0"
 
 [dev-dependencies]
-trycmd = "0.15.7"
+trycmd = "0.15.8"
 
 [lints.clippy]
 all      = { level = "warn", priority = -1 }
