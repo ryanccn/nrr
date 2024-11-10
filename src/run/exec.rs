@@ -1,9 +1,6 @@
 use color_eyre::Result;
 use std::{env, path::Path, process::Command};
 
-#[cfg(unix)]
-use std::os::unix::process::CommandExt as _;
-
 use crate::{
     cli::ExecArgs,
     package_json::PackageJson,
@@ -40,6 +37,7 @@ pub fn exec(package_path: &Path, package_data: &PackageJson, args: &ExecArgs) ->
 
     #[cfg(unix)]
     {
+        use std::os::unix::process::CommandExt as _;
         Err(subproc.exec())?;
         Ok(())
     }

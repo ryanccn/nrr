@@ -1,12 +1,21 @@
 #!/bin/sh
 set -euf
 
-ansi_red="\033[31m"
-ansi_green="\033[32m"
-ansi_blue="\033[34m"
-ansi_yellow="\033[33m"
-ansi_bold="\033[1m"
-ansi_reset="\033[0m"
+ansi_red=""
+ansi_green=""
+ansi_blue=""
+ansi_yellow=""
+ansi_bold=""
+ansi_reset=""
+
+if [ -t 1 ] && command -v tput > /dev/null 2>&1; then
+    ansi_red="$(tput setaf 1 || true)"
+    ansi_green="$(tput setaf 2 || true)"
+    ansi_yellow="$(tput setaf 3 || true)"
+    ansi_blue="$(tput setaf 4 || true)"
+    ansi_bold="$(tput bold || true)"
+    ansi_reset="$(tput sgr0 || true)"
+fi
 
 success() {
     printf "${ansi_green}success${ansi_reset}  %s\n" "$*"
@@ -29,18 +38,14 @@ bold() {
 }
 
 main() {
-    platform="$(uname -s)"
-    arch="$(uname -m)"
+    platform="$(uname -ms)"
 
-    if [ "$platform" = "Darwin" ]; then
-        if [ "$arch" = "arm64" ]; then target="aarch64-apple-darwin";
-        elif [ "$arch" = "x86_64" ]; then target="x86_64-apple-darwin";
-        fi
-    elif [ "$platform" = "Linux" ]; then
-        if [ "$arch" = "arm64" ]; then target="aarch64-unknown-linux-musl";
-        elif [ "$arch" = "x86_64" ]; then target="x86_64-unknown-linux-musl";
-        fi
-    fi
+    case $platform in
+        "Darwin arm64") target="aarch64-apple-darwin" ;;
+        "Darwin x86_64") target="x86_64-apple-darwin" ;;
+        "Linux aarch64" | "Linux arm64") target="aarch64-unknown-linux-musl" ;;
+        "Linux x86_64") target="x86_64-unknown-linux-musl" ;;
+    esac
 
     if [ -z "$target" ]; then
         if command -v cargo > /dev/null 2>&1; then
@@ -71,8 +76,8 @@ main() {
     success "Installed $version to $cargo_home/bin ^^"
 
     case :$PATH:
-    in *:"$cargo_home/bin":*) ;;
-        *) warn "The installation directory is not in your PATH. You might want to add it in order to use nrr :p" >&2;;
+        in *:"$cargo_home/bin":*) ;;
+        *) warn "The installation directory is not in your PATH. You might want to add it in order to use nrr :p" >&2 ;;
     esac
 }
 
