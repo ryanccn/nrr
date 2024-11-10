@@ -23,7 +23,7 @@ jobs:
         uses: DeterminateSystems/magic-nix-cache-action@main
 
       - name: Check
-        run: nix build --fallback --print-build-logs '.#check-clippy'
+        run: nix build --fallback --print-build-logs '.#checks.x86_64-linux.clippy'
 
       - name: Upload analysis results
         uses: github/codeql-action/upload-sarif@v3
@@ -45,7 +45,7 @@ jobs:
         uses: DeterminateSystems/magic-nix-cache-action@main
 
       - name: Check
-        run: nix build --fallback --print-build-logs '.#check-rustfmt'
+        run: nix build --fallback --print-build-logs '.#checks.x86_64-linux.rustfmt'
 
   nixfmt:
     runs-on: ubuntu-latest
@@ -61,4 +61,4 @@ jobs:
         uses: DeterminateSystems/magic-nix-cache-action@main
 
       - name: Check
-        run: nix build --fallback --print-build-logs '.#check-nixfmt'
+        run: nix build --fallback --print-build-logs '.#checks.x86_64-linux.nixfmt'

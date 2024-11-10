@@ -10,12 +10,15 @@
   enableOptimizeSize ? false,
   nrxAlias ? true,
 }:
-
+let
+  year = builtins.substring 0 4 self.lastModifiedDate;
+  month = builtins.substring 4 2 self.lastModifiedDate;
+  day = builtins.substring 6 2 self.lastModifiedDate;
+in
 rustPlatform.buildRustPackage rec {
   pname = passthru.cargoToml.package.name;
-  inherit (passthru.cargoToml.package) version;
+  version = passthru.cargoToml.package.version + "-unstable-${year}-${month}-${day}";
 
-  __structuredAttrs = true;
   strictDeps = true;
 
   src = nix-filter.lib.filter {

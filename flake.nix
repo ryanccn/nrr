@@ -38,59 +38,68 @@
           mkFlakeCheck =
             {
               name,
-              nativeBuildInputs ? [ ],
               command,
+              extraConfig ? { },
             }:
-            pkgs.stdenv.mkDerivation {
-              name = "check-${name}";
-              inherit nativeBuildInputs;
-              inherit (self.packages.${system}.nrr) src cargoDeps;
+            pkgs.stdenv.mkDerivation (
+              {
+                name = "check-${name}";
+                inherit (self.packages.${system}.nrr) src;
 
-              buildPhase = ''
-                ${command}
-                touch "$out"
-              '';
+                buildPhase = ''
+                  ${command}
+                  touch "$out"
+                '';
 
-              doCheck = false;
-              dontInstall = true;
-              dontFixup = true;
-            };
+                doCheck = false;
+                dontInstall = true;
+                dontFixup = true;
+              }
+              // extraConfig
+            );
         in
         {
           nixfmt = mkFlakeCheck {
             name = "nixfmt";
-            nativeBuildInputs = with pkgs; [ nixfmt-rfc-style ];
             command = "nixfmt --check .";
+
+            extraConfig = {
+              nativeBuildInputs = with pkgs; [ nixfmt-rfc-style ];
+            };
           };
 
           rustfmt = mkFlakeCheck {
             name = "rustfmt";
-
-            nativeBuildInputs = with pkgs; [
-              cargo
-              rustfmt
-            ];
-
             command = "cargo fmt --check";
+
+            extraConfig = {
+              nativeBuildInputs = with pkgs; [
+                cargo
+                rustfmt
+              ];
+            };
           };
 
           clippy = mkFlakeCheck {
             name = "clippy";
-
-            nativeBuildInputs = with pkgs; [
-              rustPlatform.cargoSetupHook
-              cargo
-              rustc
-              clippy
-              clippy-sarif
-              sarif-fmt
-            ];
-
             command = ''
               cargo clippy --all-features --all-targets --tests \
                 --offline --message-format=json \
                 | clippy-sarif | tee $out | sarif-fmt
             '';
+
+            extraConfig = {
+              inherit (self.packages.${system}.nrr) cargoDeps;
+
+              nativeBuildInputs = with pkgs; [
+                rustPlatform.cargoSetupHook
+                cargo
+                rustc
+                clippy
+                clippy-sarif
+                sarif-fmt
+              ];
+            };
           };
         }
       );
@@ -119,7 +128,6 @@
 
             inputsFrom = [ self.packages.${system}.nrr ];
 
-            __structuredAttrs = true;
             env = {
               RUST_BACKTRACE = 1;
               RUST_SRC_PATH = toString pkgs.rustPlatform.rustLibSrc;
@@ -132,17 +140,12 @@
         system:
         let
           pkgs = nixpkgsFor.${system};
-
-          # re-use our overlay to call packages
           packages = self.overlays.default null pkgs;
         in
         {
           inherit (packages) nrr;
           default = packages.nrr;
         }
-        // (lib.attrsets.mapAttrs' (
-          name: value: lib.nameValuePair "check-${name}" value
-        ) self.checks.${system})
       );
 
       legacyPackages = forAllSystems (

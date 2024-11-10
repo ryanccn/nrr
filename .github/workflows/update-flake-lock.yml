@@ -24,5 +24,4 @@ jobs:
         with:
           pr-title: "build(deps): update flake.lock"
           commit-msg: "build(deps): update flake.lock"
-          pr-reviewers: ryanccn
           pr-labels: dependencies, nix
