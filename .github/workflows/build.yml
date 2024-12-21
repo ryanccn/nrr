@@ -57,7 +57,7 @@ jobs:
           CARGO_PROFILE_RELEASE_CODEGEN_UNITS: "1"
 
       - name: Generate build provenance attestations
-        uses: actions/attest-build-provenance@v1
+        uses: actions/attest-build-provenance@v2
         if: ${{ github.event_name != 'pull_request' }}
         with:
           subject-path: |
@@ -100,7 +100,7 @@ jobs:
         run: nix build --fallback --print-build-logs '.#nrr-static-${{ matrix.target }}'
 
       - name: Generate build provenance attestations
-        uses: actions/attest-build-provenance@v1
+        uses: actions/attest-build-provenance@v2
         if: ${{ github.event_name != 'pull_request' }}
         with:
           subject-path: ./result/bin/nrr
