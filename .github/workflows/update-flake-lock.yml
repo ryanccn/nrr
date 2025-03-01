@@ -18,6 +18,8 @@ jobs:
 
       - name: Install Nix
         uses: DeterminateSystems/nix-installer-action@main
+        with:
+          diagnostic-endpoint: ""
 
       - name: Update flake.lock
         uses: DeterminateSystems/update-flake-lock@main

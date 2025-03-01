@@ -40,7 +40,7 @@ nrr provides a better-looking display of package details and the command being r
 
 On top of the standard script runner functionality that runs your scripts in `package.json`, nrr can also execute arbitrary commands in your npm package environments! You can use the `nrr exec` and `nrr x` commands to execute commands, similar to how `npx` or `pnpm exec` works (but faster, of course).
 
-Do note, however, that nrr cannot run commands from remote packages! That feature falls within the purview of package managers, which nrr is not.
+Do note, however, that nrr cannot run commands from remote packages. That feature falls within the purview of package managers, which nrr is not.
 
 > [!TIP]
 >
@@ -56,9 +56,9 @@ nrr has compatibility functionality that patches `npm_execpath` so that tools li
 
 > [!WARNING]
 >
-> This may cause unexpected behavior when `npm_execpath` is used for non-script running purposes, so open an issue if you encounter any bugs.
+> This may cause unexpected behavior when `npm_execpath` is used for non-script running purposes; open an issue if you encounter any bugs.
 
-When running nested scripts with nrr, nrr has specialized behavior that prints extra information while staying minimal and performant:
+When running nested scripts with nrr, nrr has specialized behavior that prints nesting depth information while staying minimal and performant:
 
 ```
 sveltekit-project@0.0.1
@@ -66,6 +66,10 @@ $ run-s lint format:check
 sveltekit-project@0.0.1 lint
 $$ eslint .
 ```
+
+### Completions
+
+nrr provides smart completions for Bash, Elvish, Fish, PowerShell, and Zsh. In addition to basic completions for subcommands and options, nrr also dynamically completes script names when using `nrr` / `nrr run` and executables when using `nrx` / `nrr exec`.
 
 ### Spelling suggestions
 
@@ -99,21 +103,15 @@ nrr supports [cargo-binstall](https://github.com/cargo-bins/cargo-binstall), whi
 cargo binstall nrr
 ```
 
-If you do want to compile from source, install with Cargo directly:
+If you do want to compile from source, install the crate with Cargo directly:
 
 ```sh
 cargo install nrr
 ```
 
-Or if you want to stay on the bleeding edge, install with Cargo from the Git repository:
-
-```sh
-cargo install --git https://github.com/ryanccn/nrr.git
-```
-
 ### GitHub Releases
 
-You can download binaries pre-compiled for Linux, macOS, and Windows from the [latest GitHub Release](https://github.com/ryanccn/nrr/releases/latest). Linux binaries are statically linked to musl; Windows binaries require MSVC.
+You can download pre-compiled binaries for Linux, macOS, and Windows from the [latest GitHub Release](https://github.com/ryanccn/nrr/releases/latest). Linux binaries are statically linked to musl; Windows binaries require MSVC.
 
 ## Usage
 
@@ -123,9 +121,9 @@ $ nrr run dev
 ```
 
 ```console
-$ nrx eslint --help
-$ nrr x eslint --help
-$ nrr exec eslint --help
+$ nrx eslint --version
+$ nrr x eslint --version
+$ nrr exec eslint --version
 ```
 
 ```console
@@ -133,7 +131,26 @@ $ nrr
 $ nrr list
 ```
 
-This section provides an overview of nrr's command-line functionality. For more options and information, run `nrr --help`!
+```bash
+# Bash
+echo "source <(COMPLETE=bash nrr)" >> ~/.bashrc
+
+# Elvish
+echo "eval (E:COMPLETE=elvish nrr | slurp)" >> ~/.elvish/rc.elv
+
+# Fish
+echo "source (COMPLETE=fish nrr | psub)" >> ~/.config/fish/config.fish
+
+# PowerShell
+$env:COMPLETE = "powershell"
+echo "nrr | Out-String | Invoke-Expression" >> $PROFILE
+Remove-Item Env:\COMPLETE
+
+# Zsh
+echo "source <(COMPLETE=zsh nrr)" >> ~/.zshrc
+```
+
+This section only provides an overview of nrr's command-line functionality. For more options and information, run `nrr --help`!
 
 ## License
 

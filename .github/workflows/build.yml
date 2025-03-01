@@ -83,8 +83,13 @@ jobs:
         target:
           - "x86_64-unknown-linux-musl"
           - "aarch64-unknown-linux-musl"
+        include:
+          - target: "x86_64-unknown-linux-musl"
+            runner: ubuntu-24.04
+          - target: "aarch64-unknown-linux-musl"
+            runner: ubuntu-24.04-arm
 
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.runner }}
 
     steps:
       - name: Checkout repository
@@ -92,9 +97,8 @@ jobs:
 
       - name: Install Nix
         uses: DeterminateSystems/nix-installer-action@main
-
-      - name: Setup Nix cache
-        uses: DeterminateSystems/magic-nix-cache-action@main
+        with:
+          diagnostic-endpoint: ""
 
       - name: Build
         run: nix build --fallback --print-build-logs '.#nrr-static-${{ matrix.target }}'

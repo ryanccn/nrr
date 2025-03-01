@@ -4,4 +4,4 @@ column_width  = 120
 
 [[rule]]
 include     = ["tests/**/*.toml"]
-schema.path = "https://raw.githubusercontent.com/assert-rs/trycmd/main/schema.json"
+schema.path = "https://raw.githubusercontent.com/assert-rs/snapbox/main/crates/trycmd/schema.json"

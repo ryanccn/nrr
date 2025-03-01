@@ -4,7 +4,7 @@ use std::{env, path::Path, process::Command};
 use crate::{
     cli::ExecArgs,
     package_json::PackageJson,
-    util::{get_level, itoa},
+    util::{itoa, NRR_LEVEL},
 };
 
 use super::util::make_patched_path;
@@ -12,9 +12,8 @@ use super::util::make_patched_path;
 pub fn exec(package_path: &Path, package_data: &PackageJson, args: &ExecArgs) -> Result<()> {
     let package_folder = package_path.parent().unwrap();
 
-    let mut command_iter = args.command.iter();
-    let mut subproc = Command::new(command_iter.next().unwrap());
-    subproc.current_dir(package_folder).args(command_iter);
+    let mut subproc = Command::new(&args.executable);
+    subproc.current_dir(package_folder).args(&args.args);
 
     if let Some(env_file) = &args.env_file {
         subproc.envs(env_file.iter());
@@ -22,7 +21,7 @@ pub fn exec(package_path: &Path, package_data: &PackageJson, args: &ExecArgs) ->
 
     subproc
         .env("PATH", make_patched_path(package_path)?)
-        .env("__NRR_LEVEL", itoa(get_level() + 1));
+        .env("__NRR_LEVEL", itoa(*NRR_LEVEL + 1));
 
     subproc
         .env("npm_execpath", env::current_exe()?)

@@ -10,7 +10,7 @@ impl EnvFile {
             .map(Self)
     }
 
-    pub fn iter(&self) -> impl Iterator<Item = (&String, &String)> {
-        self.0.iter().map(|(a, b)| (a, b))
+    pub fn iter(&self) -> impl Iterator<Item = (&str, &str)> {
+        self.0.iter().map(|(a, b)| (a.as_str(), b.as_str()))
     }
 }

@@ -1,10 +1,7 @@
 {
   lib,
-  stdenv,
   rustPlatform,
-  darwin,
   nix-filter,
-  pkg-config,
   self,
   enableLTO ? true,
   enableOptimizeSize ? false,
@@ -17,7 +14,7 @@ let
 in
 rustPlatform.buildRustPackage rec {
   pname = passthru.cargoToml.package.name;
-  version = passthru.cargoToml.package.version + "-unstable-${year}-${month}-${day}";
+  version = "${passthru.cargoToml.package.version}-unstable-${year}-${month}-${day}";
 
   strictDeps = true;
 
@@ -34,15 +31,6 @@ rustPlatform.buildRustPackage rec {
   cargoLock = {
     lockFile = ../Cargo.lock;
   };
-
-  buildInputs = lib.optionals stdenv.isDarwin [
-    darwin.apple_sdk.frameworks.CoreFoundation
-    darwin.apple_sdk.frameworks.Security
-    darwin.apple_sdk.frameworks.IOKit
-    darwin.libiconv
-  ];
-
-  nativeBuildInputs = lib.optionals stdenv.isDarwin [ pkg-config ];
 
   env =
     lib.optionalAttrs enableLTO {

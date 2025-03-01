@@ -6,7 +6,7 @@ use owo_colors::{OwoColorize as _, Stream};
 use crate::{
     cli::SharedRunOptions,
     package_json::PackageJson,
-    util::{get_level, itoa},
+    util::{itoa, NRR_LEVEL},
 };
 
 use super::util::{make_patched_path, make_shell_cmd};
@@ -43,7 +43,7 @@ fn single_script(
 
     if script_type == ScriptType::Normal {
         options
-            .extra_args
+            .args
             .iter()
             .map(|f| shlex::try_quote(f))
             .collect::<Result<Vec<_>, _>>()?
@@ -55,7 +55,7 @@ fn single_script(
     }
 
     if !options.silent {
-        let cmd_prefix = script_type.prefix() + &"$".repeat(*get_level());
+        let cmd_prefix = script_type.prefix() + &"$".repeat(*NRR_LEVEL);
 
         eprintln!(
             "{} {}",
@@ -75,7 +75,7 @@ fn single_script(
 
     subproc
         .env("PATH", make_patched_path(package_path)?)
-        .env("__NRR_LEVEL", itoa(get_level() + 1));
+        .env("__NRR_LEVEL", itoa(*NRR_LEVEL + 1));
 
     subproc
         .env("npm_execpath", env::current_exe()?)
@@ -119,7 +119,7 @@ pub fn script(
         eprint!(
             "{}",
             package_data.make_prefix(
-                match get_level() {
+                match *NRR_LEVEL {
                     1 => None,
                     _ => Some(script_name),
                 },

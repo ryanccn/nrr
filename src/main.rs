@@ -4,7 +4,9 @@ mod run;
 mod suggest;
 mod util;
 
-use clap::Parser as _;
+use clap::{CommandFactory as _, Parser as _};
+use clap_complete::CompleteEnv;
+
 use color_eyre::eyre::Result;
 use std::{env, path::PathBuf};
 
@@ -21,11 +23,11 @@ fn main() -> Result<()> {
                 .is_some_and(|f| f == "nrx" || f == "nrx.exe")
         })
     {
-        let cli = NrxCli::parse();
-        cli.execute()?;
+        CompleteEnv::with_factory(|| NrxCli::command().bin_name("nrx")).complete();
+        NrxCli::parse().execute()?;
     } else {
-        let cli = Cli::parse();
-        cli.execute()?;
+        CompleteEnv::with_factory(|| Cli::command()).complete();
+        Cli::parse().execute()?;
     }
 
     Ok(())

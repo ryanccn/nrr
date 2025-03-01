@@ -1,4 +1,5 @@
-use clap::{Args, CommandFactory, Parser, Subcommand};
+use clap::{Args, CommandFactory, Parser, Subcommand, ValueHint};
+use clap_complete::ArgValueCandidates;
 
 use color_eyre::Result;
 use owo_colors::{OwoColorize as _, Stream};
@@ -6,14 +7,14 @@ use std::env;
 
 use self::env_file::EnvFile;
 
+mod complete;
 mod env_file;
 mod exec;
 mod list;
 mod run;
 
-#[derive(Parser, Clone)]
-#[command(author, version, about, long_about = None)]
-#[command(args_conflicts_with_subcommands = true)]
+#[derive(Parser, Clone, Debug)]
+#[clap(version, about, long_about = None, args_conflicts_with_subcommands = true)]
 pub struct Cli {
     #[clap(flatten)]
     root_args: RootArgs,
@@ -22,14 +23,14 @@ pub struct Cli {
     subcommand: Option<Subcommands>,
 }
 
-#[derive(Parser, Clone)]
-#[command(author, version, about, long_about = None)]
+#[derive(Parser, Clone, Debug)]
+#[clap(version, about, long_about = None, args_conflicts_with_subcommands = true)]
 pub struct NrxCli {
     #[clap(flatten)]
     args: ExecArgs,
 }
 
-#[derive(Subcommand, Clone)]
+#[derive(Subcommand, Clone, Debug)]
 enum Subcommands {
     /// Run a script
     #[clap(visible_alias = "run-script")]
@@ -46,7 +47,8 @@ enum Subcommands {
 
 #[derive(Args, Clone, Debug)]
 pub struct RootArgs {
-    /// The name of the script
+    /// The name of the script to run
+    #[clap(add = ArgValueCandidates::new(complete::scripts))]
     pub script: Option<String>,
 
     #[clap(flatten)]
@@ -55,7 +57,8 @@ pub struct RootArgs {
 
 #[derive(Args, Clone, Debug)]
 pub struct RunArgs {
-    /// The name of the script
+    /// The name of the script to run
+    #[clap(add = ArgValueCandidates::new(complete::scripts))]
     pub script: String,
 
     #[clap(flatten)]
@@ -64,9 +67,9 @@ pub struct RunArgs {
 
 #[derive(Args, Clone, Debug)]
 pub struct SharedRunOptions {
-    /// Extra arguments to pass to the script
-    #[clap(allow_hyphen_values = true)]
-    pub extra_args: Vec<String>,
+    /// Arguments to pass to the script
+    #[clap(trailing_var_arg = true, allow_hyphen_values = true)]
+    pub args: Vec<String>,
 
     /// Don't run pre- and post- scripts
     #[arg(short, long, env = "NRR_NO_PRE_POST")]
@@ -77,18 +80,22 @@ pub struct SharedRunOptions {
     pub silent: bool,
 
     /// An environment file to read environment variables from
-    #[clap(short, long, env = "NRR_ENV_FILE", value_parser = EnvFile::from_path)]
+    #[clap(short, long, env = "NRR_ENV_FILE", value_hint = ValueHint::FilePath, value_parser = EnvFile::from_path)]
     pub env_file: Option<EnvFile>,
 }
 
 #[derive(Args, Clone, Debug)]
 pub struct ExecArgs {
-    /// The command to execute
-    #[clap(required = true, allow_hyphen_values = true)]
-    pub command: Vec<String>,
+    /// The name of the executable to run
+    #[clap(add = ArgValueCandidates::new(complete::executables))]
+    pub executable: String,
+
+    /// Arguments to pass to the executable
+    #[clap(trailing_var_arg = true, allow_hyphen_values = true)]
+    pub args: Vec<String>,
 
     /// An environment file to read environment variables from
-    #[clap(short, long, env = "NRR_ENV_FILE", value_parser = EnvFile::from_path)]
+    #[clap(short, long, env = "NRR_ENV_FILE", value_hint = ValueHint::FilePath, value_parser = EnvFile::from_path)]
     pub env_file: Option<EnvFile>,
 }
 
