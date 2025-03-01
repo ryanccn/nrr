@@ -2,6 +2,65 @@
 
 All notable, and not so notable, changes to this project will be documented in this file.
 
+## [0.10.0] - 2025-03-01
+
+### Features
+
+- [`4c49330`](https://github.com/ryanccn/nrr/commit/4c49330fa1ae6289d247dc28fda653d06bac3c44) Dynamic shell completions - Ryan Cao
+
+### Bug Fixes
+
+- [`6542d26`](https://github.com/ryanccn/nrr/commit/6542d26a4f621d2b9cd1a0933b3cacee1a37407b) Improve installer, tweak readme - Ryan Cao
+
+### Miscellaneous
+
+- [`a1ec7e5`](https://github.com/ryanccn/nrr/commit/a1ec7e59c5cd8b989f98722b1cb11e34dcc9f594) (_ci_) Use GitHub App for updating flake.lock - Ryan Cao
+- [`663bb0f`](https://github.com/ryanccn/nrr/commit/663bb0f07489f873214f412de9aa33b197030d53) (_ci_) Fix changelog generation, flake.lock update permissions - Ryan Cao
+- [`6858072`](https://github.com/ryanccn/nrr/commit/6858072eb9bef36ebd558883b102d1e9252bb299) (_nix_) Improve flake, versioning - Ryan Cao
+
+### Dependencies
+
+- [`1f662f6`](https://github.com/ryanccn/nrr/commit/1f662f667acfbe1ea381c18c68efdb11becdea54) Update flake.lock ([#66](https://github.com/ryanccn/nrr/issues/66)) - update-flake-lock[bot]
+- [`7137469`](https://github.com/ryanccn/nrr/commit/7137469aa32bb3a5bc52d028052a86534f53ee7d) Bump serde from 1.0.208 to 1.0.209 ([#68](https://github.com/ryanccn/nrr/issues/68)) - dependabot[bot]
+- [`8d245d5`](https://github.com/ryanccn/nrr/commit/8d245d50de094bfb210b37c0f9eb81e63cf3c320) Update flake.lock ([#67](https://github.com/ryanccn/nrr/issues/67)) - github-actions[bot]
+- [`2858adb`](https://github.com/ryanccn/nrr/commit/2858adb2666f69b5ef3d8c3faecfe99245da038f) Bump trycmd from 0.15.6 to 0.15.7 ([#71](https://github.com/ryanccn/nrr/issues/71)) - dependabot[bot]
+- [`959431c`](https://github.com/ryanccn/nrr/commit/959431ce40b8ea23e608bccf94ea4781fb0955a0) Bump indexmap from 2.4.0 to 2.5.0 ([#70](https://github.com/ryanccn/nrr/issues/70)) - dependabot[bot]
+- [`3fbc5cd`](https://github.com/ryanccn/nrr/commit/3fbc5cd7fc29ad5d11c3d2bdd3cdf6bdc3a39f09) Bump clap from 4.5.16 to 4.5.17 ([#72](https://github.com/ryanccn/nrr/issues/72)) - dependabot[bot]
+- [`67612a5`](https://github.com/ryanccn/nrr/commit/67612a5af2504d34414c8cd987d6b17466775b69) Bump serde from 1.0.209 to 1.0.210 ([#73](https://github.com/ryanccn/nrr/issues/73)) - dependabot[bot]
+- [`30cbc97`](https://github.com/ryanccn/nrr/commit/30cbc9759ac0896257993a3481c859c2c29dd49a) Update flake.lock ([#69](https://github.com/ryanccn/nrr/issues/69)) - github-actions[bot]
+- [`19bdcb5`](https://github.com/ryanccn/nrr/commit/19bdcb57e6535366086cb86dfe850254825a63d4) Bump owo-colors from 4.0.0 to 4.1.0 ([#75](https://github.com/ryanccn/nrr/issues/75)) - dependabot[bot]
+- [`a30318e`](https://github.com/ryanccn/nrr/commit/a30318ebcd6cd74ee1e87edc3c92772db83dd1d4) Update flake.lock ([#74](https://github.com/ryanccn/nrr/issues/74)) - github-actions[bot]
+- [`334dc02`](https://github.com/ryanccn/nrr/commit/334dc02b45609f45bf912c4fd7fe6eaa632e75ea) Bump unicode-width from 0.1.13 to 0.2.0 ([#79](https://github.com/ryanccn/nrr/issues/79)) - dependabot[bot]
+- [`adf2e36`](https://github.com/ryanccn/nrr/commit/adf2e361ba6c585b1bd547569bbb1536814521f7) Bump simd-json from 0.13.10 to 0.14.0 ([#78](https://github.com/ryanccn/nrr/issues/78)) - dependabot[bot]
+- [`0a9522a`](https://github.com/ryanccn/nrr/commit/0a9522a3d737dbab3fc16cc4dafb3ffc67e920d2) Bump clap from 4.5.17 to 4.5.18 ([#77](https://github.com/ryanccn/nrr/issues/77)) - dependabot[bot]
+- [`49a95ca`](https://github.com/ryanccn/nrr/commit/49a95cadebe6811cf848b60ee353869a88043e74) Bump terminal_size from 0.3.0 to 0.4.0 ([#80](https://github.com/ryanccn/nrr/issues/80)) - dependabot[bot]
+- [`f1933fc`](https://github.com/ryanccn/nrr/commit/f1933fc95238be24bd7b785590b0ebdb17d7815b) Update flake.lock ([#76](https://github.com/ryanccn/nrr/issues/76)) - github-actions[bot]
+- [`b6aeca1`](https://github.com/ryanccn/nrr/commit/b6aeca1be221ebcc119e1ff3b76b581ac99fb8e3) Update flake.lock ([#81](https://github.com/ryanccn/nrr/issues/81)) - github-actions[bot]
+- [`ac5a6ea`](https://github.com/ryanccn/nrr/commit/ac5a6eadcf039432ad9dc65237242853b32e2d05) Bump clap from 4.5.18 to 4.5.19 ([#83](https://github.com/ryanccn/nrr/issues/83)) - dependabot[bot]
+- [`f9952f3`](https://github.com/ryanccn/nrr/commit/f9952f3164f71567e1134fcd900a7edf3ecf73c0) Bump indexmap from 2.5.0 to 2.6.0 ([#82](https://github.com/ryanccn/nrr/issues/82)) - dependabot[bot]
+- [`237cde3`](https://github.com/ryanccn/nrr/commit/237cde303821010d57fbc6539c958c278f1bd107) Bump clap from 4.5.19 to 4.5.20 ([#86](https://github.com/ryanccn/nrr/issues/86)) - dependabot[bot]
+- [`754da4e`](https://github.com/ryanccn/nrr/commit/754da4eae72ee804ffb125a100980ba8a771b353) Bump simd-json from 0.14.0 to 0.14.1 ([#85](https://github.com/ryanccn/nrr/issues/85)) - dependabot[bot]
+- [`ccbd16c`](https://github.com/ryanccn/nrr/commit/ccbd16c0f7567923ad33c41e038ab261699577d6) Bump serde from 1.0.210 to 1.0.214 ([#90](https://github.com/ryanccn/nrr/issues/90)) - dependabot[bot]
+- [`38ad11d`](https://github.com/ryanccn/nrr/commit/38ad11d439c15b3151bb87cfd6824181b139332f) Update flake.lock ([#84](https://github.com/ryanccn/nrr/issues/84)) - github-actions[bot]
+- [`d7c23ac`](https://github.com/ryanccn/nrr/commit/d7c23acce6d1919d17756438fd6ea72d11d32ee1) Bump trycmd from 0.15.7 to 0.15.8 ([#89](https://github.com/ryanccn/nrr/issues/89)) - dependabot[bot]
+- [`93500bf`](https://github.com/ryanccn/nrr/commit/93500bfef5e3637985311d12ff00b00416b97714) Bump simd-json from 0.14.1 to 0.14.2 ([#88](https://github.com/ryanccn/nrr/issues/88)) - dependabot[bot]
+- [`db241a7`](https://github.com/ryanccn/nrr/commit/db241a71161570212bed3fd1694bdf1bb1f07363) Update flake.lock ([#91](https://github.com/ryanccn/nrr/issues/91)) - github-actions[bot]
+- [`3cdb586`](https://github.com/ryanccn/nrr/commit/3cdb5861309cd4fc111fef0d38d0032bc925c63c) Bump itoa from 1.0.11 to 1.0.13 ([#96](https://github.com/ryanccn/nrr/issues/96)) - dependabot[bot]
+- [`00842e6`](https://github.com/ryanccn/nrr/commit/00842e634969014f6a943aba0ac399fd6d10f8c4) Bump simd-json from 0.14.2 to 0.14.3 ([#94](https://github.com/ryanccn/nrr/issues/94)) - dependabot[bot]
+- [`3c53048`](https://github.com/ryanccn/nrr/commit/3c53048c4e2df6e45592dccff5d796dca9e5e372) Bump serde from 1.0.214 to 1.0.215 ([#93](https://github.com/ryanccn/nrr/issues/93)) - dependabot[bot]
+- [`e3efbaf`](https://github.com/ryanccn/nrr/commit/e3efbaf985e51fefc940993ee65f6ac3fdddcb8f) Bump clap from 4.5.20 to 4.5.21 ([#95](https://github.com/ryanccn/nrr/issues/95)) - dependabot[bot]
+- [`f4b2337`](https://github.com/ryanccn/nrr/commit/f4b2337c62e64eee05b9d2519807539c57cb9ff0) Bump indexmap from 2.6.0 to 2.7.0 ([#99](https://github.com/ryanccn/nrr/issues/99)) - dependabot[bot]
+- [`7255b00`](https://github.com/ryanccn/nrr/commit/7255b008082770eaa1674cc46bf810e8ca592943) Bump terminal_size from 0.4.0 to 0.4.1 ([#98](https://github.com/ryanccn/nrr/issues/98)) - dependabot[bot]
+- [`6ea08e2`](https://github.com/ryanccn/nrr/commit/6ea08e214093d9d402a9965e4c9816aa1c9edebd) Bump itoa from 1.0.13 to 1.0.14 ([#97](https://github.com/ryanccn/nrr/issues/97)) - dependabot[bot]
+- [`78b818e`](https://github.com/ryanccn/nrr/commit/78b818eb9dd42ad34eab24163057300a3ffa746e) Update flake.lock ([#92](https://github.com/ryanccn/nrr/issues/92)) - github-actions[bot]
+- [`3757cdf`](https://github.com/ryanccn/nrr/commit/3757cdfe15cb606fb3dbbb64de59c3987b251f6c) Bump serde from 1.0.215 to 1.0.216 ([#104](https://github.com/ryanccn/nrr/issues/104)) - dependabot[bot]
+- [`de214ff`](https://github.com/ryanccn/nrr/commit/de214ffd7c65f7399f8d40b56a6fce3a0f6d3303) Bump actions/attest-build-provenance from 1 to 2 ([#101](https://github.com/ryanccn/nrr/issues/101)) - dependabot[bot]
+- [`16d0802`](https://github.com/ryanccn/nrr/commit/16d08021705e6c782fe5c6dbc2e9a12829a62813) Bump clap from 4.5.21 to 4.5.23 ([#102](https://github.com/ryanccn/nrr/issues/102)) - dependabot[bot]
+- [`ff5ac4c`](https://github.com/ryanccn/nrr/commit/ff5ac4c38a3faf11bf86ab9a2623de2eb4d8ff22) Update flake.lock ([#100](https://github.com/ryanccn/nrr/issues/100)) - github-actions[bot]
+- [`1950098`](https://github.com/ryanccn/nrr/commit/1950098a6d1063da946a5fd0a3751d72c78bbfa9) Bump clap from 4.5.23 to 4.5.26 ([#107](https://github.com/ryanccn/nrr/issues/107)) - dependabot[bot]
+- [`17e4bb0`](https://github.com/ryanccn/nrr/commit/17e4bb062a367bfd10b8cbc4bb0794c702cdb9e0) Bump serde from 1.0.216 to 1.0.217 ([#106](https://github.com/ryanccn/nrr/issues/106)) - dependabot[bot]
+- [`19de775`](https://github.com/ryanccn/nrr/commit/19de7750ae2a6e72b927b1ce3e17a673589750e4) Update flake.lock ([#105](https://github.com/ryanccn/nrr/issues/105)) - github-actions[bot]
+
 ## [0.9.5] - 2024-08-19
 
 ### Features
@@ -376,7 +435,8 @@ All notable, and not so notable, changes to this project will be documented in t
 
 - [`1373b97`](https://github.com/ryanccn/nrr/commit/1373b972de7540e9496217b3121455b4eddb83dd) (_ci_) Add cargo release workflow - Ryan Cao
 
-[0.9.5]: https://github.com/ryanccn/nrr/compare/v0.9.4..0.9.5
+[0.10.0]: https://github.com/ryanccn/nrr/compare/v0.9.5..0.10.0
+[0.9.5]: https://github.com/ryanccn/nrr/compare/v0.9.4..v0.9.5
 [0.9.4]: https://github.com/ryanccn/nrr/compare/v0.9.3..v0.9.4
 [0.9.3]: https://github.com/ryanccn/nrr/compare/v0.9.2..v0.9.3
 [0.9.2]: https://github.com/ryanccn/nrr/compare/v0.9.1..v0.9.2
@@ -393,3 +453,4 @@ All notable, and not so notable, changes to this project will be documented in t
 [0.4.0]: https://github.com/ryanccn/nrr/compare/v0.3.1..v0.4.0
 [0.3.1]: https://github.com/ryanccn/nrr/compare/v0.3.0..v0.3.1
 [0.3.0]: https://github.com/ryanccn/nrr/compare/v0.2.0..v0.3.0
+[0.2.0]: https://github.com/ryanccn/nrr/compare/v0.9.5..v0.2.0
