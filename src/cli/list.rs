@@ -5,7 +5,7 @@ use unicode_width::UnicodeWidthStr as _;
 
 use crate::package_json::PackageJson;
 use std::{
-    io::{stdout, Write as _},
+    io::{Write as _, stdout},
     path::PathBuf,
 };
 
@@ -30,7 +30,7 @@ pub fn handle(package_paths: impl Iterator<Item = PathBuf>) -> Result<bool> {
                 .max()
                 .unwrap_or_default();
 
-            let terminal_width = terminal_size().map(|size| size.0 .0 as usize);
+            let terminal_width = terminal_size().map(|size| size.0.0 as usize);
 
             for (name, content) in &package.scripts {
                 write!(

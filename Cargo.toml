@@ -1,8 +1,8 @@
 [package]
 name         = "nrr"
 version      = "0.10.0"
-edition      = "2021"
-rust-version = "1.80"
+edition      = "2024"
+rust-version = "1.85"
 
 description = "Minimal, blazing fast npm scripts runner"
 authors     = ["Ryan Cao <hello@ryanccn.dev>"]

@@ -1,6 +1,6 @@
 use std::sync::{
-    atomic::{AtomicBool, Ordering},
     Arc, LazyLock,
+    atomic::{AtomicBool, Ordering},
 };
 
 static ACCEPT_SIGNALS: LazyLock<Arc<AtomicBool>> =

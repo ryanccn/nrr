@@ -4,7 +4,7 @@ use std::{env, path::Path, process::Command};
 use crate::{
     cli::ExecArgs,
     package_json::PackageJson,
-    util::{itoa, signals, ExitCode, NRR_LEVEL},
+    util::{ExitCode, NRR_LEVEL, itoa, signals},
 };
 
 use super::util::make_patched_path;

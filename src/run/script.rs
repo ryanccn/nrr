@@ -6,7 +6,7 @@ use owo_colors::{OwoColorize as _, Stream};
 use crate::{
     cli::SharedRunOptions,
     package_json::PackageJson,
-    util::{itoa, signals, ExitCode, NRR_LEVEL},
+    util::{ExitCode, NRR_LEVEL, itoa, signals},
 };
 
 use super::util::{make_patched_path, make_shell_cmd};

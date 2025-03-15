@@ -39,7 +39,7 @@ pub fn scripts() -> Vec<CompletionCandidate> {
 
 #[cfg(unix)]
 fn is_executable(path: &Path) -> bool {
-    use nix::unistd::{access, AccessFlags};
+    use nix::unistd::{AccessFlags, access};
     access(path, AccessFlags::X_OK).is_ok()
 }
 
