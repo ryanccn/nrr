@@ -1,5 +1,0 @@
-builds:
-  exclude:
-    - "packages.x86_64-darwin.*"
-  include:
-    - "packages.*.nrr"

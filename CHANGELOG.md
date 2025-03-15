@@ -2,6 +2,17 @@
 
 All notable, and not so notable, changes to this project will be documented in this file.
 
+## [0.10.1] - 2025-03-15
+
+### Features
+
+- [`3cde965`](https://github.com/ryanccn/nrr/commit/3cde965ad9cfdcb50942ab51446cd5cfebe1bd70) (_complete_) Check execute permissions on Unix - Ryan Cao
+- [`1e6b3aa`](https://github.com/ryanccn/nrr/commit/1e6b3aa2ed1acbe243f24799f5c4173859772adf) Improve signal handling and exit behavior - Ryan Cao
+
+### Miscellaneous
+
+- [`3c662a4`](https://github.com/ryanccn/nrr/commit/3c662a4dabb9457e99dba94e153391cd0afd3286) 2024 Edition - Ryan Cao
+
 ## [0.10.0] - 2025-03-01
 
 ### Features
@@ -435,7 +446,8 @@ All notable, and not so notable, changes to this project will be documented in t
 
 - [`1373b97`](https://github.com/ryanccn/nrr/commit/1373b972de7540e9496217b3121455b4eddb83dd) (_ci_) Add cargo release workflow - Ryan Cao
 
-[0.10.0]: https://github.com/ryanccn/nrr/compare/v0.9.5..0.10.0
+[0.10.1]: https://github.com/ryanccn/nrr/compare/v0.10.0..v0.10.1
+[0.10.0]: https://github.com/ryanccn/nrr/compare/v0.9.5..v0.10.0
 [0.9.5]: https://github.com/ryanccn/nrr/compare/v0.9.4..v0.9.5
 [0.9.4]: https://github.com/ryanccn/nrr/compare/v0.9.3..v0.9.4
 [0.9.3]: https://github.com/ryanccn/nrr/compare/v0.9.2..v0.9.3
