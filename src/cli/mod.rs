@@ -6,6 +6,7 @@ use owo_colors::{OwoColorize as _, Stream};
 use std::env;
 
 use self::env_file::EnvFile;
+use crate::util::ExitCode;
 
 mod complete;
 mod env_file;
@@ -124,7 +125,7 @@ impl Cli {
                         "error".if_supports_color(Stream::Stderr, |text| text.red()),
                     );
 
-                    std::process::exit(1);
+                    return Err(ExitCode(1).into());
                 }
             }
 

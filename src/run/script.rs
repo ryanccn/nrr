@@ -6,7 +6,7 @@ use owo_colors::{OwoColorize as _, Stream};
 use crate::{
     cli::SharedRunOptions,
     package_json::PackageJson,
-    util::{itoa, NRR_LEVEL},
+    util::{itoa, signals, ExitCode, NRR_LEVEL},
 };
 
 use super::util::{make_patched_path, make_shell_cmd};
@@ -66,33 +66,35 @@ fn single_script(
         );
     }
 
-    let mut subproc = make_shell_cmd();
-    subproc.current_dir(package_folder).arg(&full_cmd);
+    let mut command = make_shell_cmd();
+    command.current_dir(package_folder).arg(&full_cmd);
 
     if let Some(env_file) = &options.env_file {
-        subproc.envs(env_file.iter());
+        command.envs(env_file.iter());
     }
 
-    subproc
+    command
         .env("PATH", make_patched_path(package_path)?)
         .env("__NRR_LEVEL", itoa(*NRR_LEVEL + 1));
 
-    subproc
+    command
         .env("npm_execpath", env::current_exe()?)
         .env("npm_lifecycle_event", script_name)
         .env("npm_lifecycle_script", &full_cmd);
 
-    subproc.env("npm_package_json", package_path);
+    command.env("npm_package_json", package_path);
 
     if let Some(name) = &package_data.name {
-        subproc.env("npm_package_name", name);
+        command.env("npm_package_name", name);
     }
     if let Some(version) = &package_data.version {
-        subproc.env("npm_package_version", version);
+        command.env("npm_package_version", version);
     }
 
-    let _ = ctrlc::set_handler(|| {});
-    let status = subproc.status()?;
+    signals::ignore();
+    let mut child = command.spawn()?;
+    let status = child.wait()?;
+    signals::restore();
 
     if !status.success() {
         eprintln!(
@@ -102,7 +104,7 @@ fn single_script(
             status.code().unwrap_or(1)
         );
 
-        std::process::exit(status.code().unwrap_or(1));
+        return Err(ExitCode(status.code().unwrap_or(1)).into());
     }
 
     Ok(())

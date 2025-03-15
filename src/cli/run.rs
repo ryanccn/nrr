@@ -2,9 +2,7 @@ use color_eyre::eyre::Result;
 use owo_colors::{OwoColorize as _, Stream};
 use std::path::PathBuf;
 
-use crate::package_json::PackageJson;
-use crate::run;
-use crate::suggest::suggest;
+use crate::{package_json::PackageJson, run, suggest::suggest, util::ExitCode};
 
 use super::RunArgs;
 
@@ -56,7 +54,7 @@ pub fn handle(package_paths: impl Iterator<Item = PathBuf>, args: &RunArgs) -> R
             }
         }
 
-        std::process::exit(1);
+        return Err(ExitCode(1).into());
     }
 
     Ok(())

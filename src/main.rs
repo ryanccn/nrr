@@ -7,13 +7,13 @@ mod util;
 use clap::{CommandFactory as _, Parser as _};
 use clap_complete::CompleteEnv;
 
-use color_eyre::eyre::Result;
-use std::{env, path::PathBuf};
+use std::{env, path::PathBuf, process::ExitCode};
 
 use crate::cli::{Cli, NrxCli};
 
-fn main() -> Result<()> {
+fn main_result() -> color_eyre::Result<()> {
     color_eyre::install()?;
+    util::signals::install()?;
 
     if env::args()
         .next()
@@ -31,4 +31,17 @@ fn main() -> Result<()> {
     }
 
     Ok(())
+}
+
+fn main() -> ExitCode {
+    if let Err(err) = main_result() {
+        if let Some(exit_code) = err.downcast_ref::<util::ExitCode>() {
+            return exit_code.as_std();
+        }
+
+        eprintln!("Error: {err:?}");
+        return ExitCode::FAILURE;
+    }
+
+    ExitCode::SUCCESS
 }

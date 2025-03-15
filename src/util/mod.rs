@@ -1,5 +1,10 @@
 use std::sync::LazyLock;
 
+pub mod exit_code;
+pub mod signals;
+
+pub use exit_code::ExitCode;
+
 #[must_use]
 #[inline]
 pub fn itoa(input: impl itoa::Integer) -> String {
