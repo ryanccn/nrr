@@ -6,6 +6,7 @@ use std::{
     env,
     ffi::OsString,
     fs,
+    path::Path,
 };
 
 use crate::package_json::PackageJson;
@@ -36,6 +37,17 @@ pub fn scripts() -> Vec<CompletionCandidate> {
     scripts_fallible().unwrap_or_default()
 }
 
+#[cfg(unix)]
+fn is_executable(path: &Path) -> bool {
+    use nix::unistd::{access, AccessFlags};
+    access(path, AccessFlags::X_OK).is_ok()
+}
+
+#[cfg(not(unix))]
+fn is_executable(path: &Path) -> bool {
+    true
+}
+
 fn executables_fallible() -> Result<Vec<CompletionCandidate>> {
     let current_dir = env::current_dir()?;
     let node_modules_bin_paths = current_dir
@@ -47,7 +59,9 @@ fn executables_fallible() -> Result<Vec<CompletionCandidate>> {
 
     for path in node_modules_bin_paths {
         for entry in (fs::read_dir(&path)?).flatten() {
-            executables.insert(entry.file_name());
+            if entry.path().is_file() && is_executable(&entry.path()) {
+                executables.insert(entry.file_name());
+            }
         }
     }
 
