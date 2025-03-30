@@ -44,7 +44,7 @@ fn is_executable(path: &Path) -> bool {
 }
 
 #[cfg(not(unix))]
-fn is_executable(path: &Path) -> bool {
+fn is_executable(_path: &Path) -> bool {
     true
 }
 

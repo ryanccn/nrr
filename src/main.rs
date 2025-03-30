@@ -7,7 +7,7 @@ mod util;
 use clap::{CommandFactory as _, Parser as _};
 use clap_complete::CompleteEnv;
 
-use std::{env, path::PathBuf, process::ExitCode};
+use std::{env, path::Path, process::ExitCode};
 
 use crate::cli::{Cli, NrxCli};
 
@@ -15,14 +15,11 @@ fn main_result() -> color_eyre::Result<()> {
     color_eyre::install()?;
     util::signals::install()?;
 
-    if env::args()
-        .next()
-        .and_then(|s| s.parse::<PathBuf>().ok())
-        .is_some_and(|exe| {
-            exe.file_name()
-                .is_some_and(|f| f == "nrx" || f == "nrx.exe")
-        })
-    {
+    if env::args().next().is_some_and(|s| {
+        Path::new(&s)
+            .file_name()
+            .is_some_and(|f| f == "nrx" || f == "nrx.exe")
+    }) {
         CompleteEnv::with_factory(|| NrxCli::command().bin_name("nrx")).complete();
         NrxCli::parse().execute()?;
     } else {

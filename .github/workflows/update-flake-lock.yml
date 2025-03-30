@@ -14,15 +14,15 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # ratchet:actions/checkout@v4
 
       - name: Install Nix
-        uses: DeterminateSystems/nix-installer-action@main
+        uses: DeterminateSystems/nix-installer-action@78d714f6f717f43be9f3f5b867a2ce6ab84db093 # ratchet:DeterminateSystems/nix-installer-action@main
         with:
           diagnostic-endpoint: ""
 
       - name: Update flake.lock
-        uses: DeterminateSystems/update-flake-lock@main
+        uses: DeterminateSystems/update-flake-lock@f31939108047fb86316a3b17fb6808c33f7c0937 # ratchet:DeterminateSystems/update-flake-lock@main
         with:
           pr-title: "build(deps): update flake.lock"
           commit-msg: "build(deps): update flake.lock"

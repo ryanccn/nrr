@@ -1,21 +1,14 @@
 {
   description = "Minimal, blazing fast npm scripts runner";
 
-  nixConfig = {
-    extra-substituters = [ "https://cache.garnix.io" ];
-    extra-trusted-public-keys = [ "cache.garnix.io:CTFPyKSLcx5RMJKfLo5EEPUObbA78b0YQ2DTCJXqr9g=" ];
-  };
-
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
-    nix-filter.url = "github:numtide/nix-filter";
   };
 
   outputs =
     {
       self,
       nixpkgs,
-      nix-filter,
     }:
     let
       inherit (nixpkgs) lib;
@@ -39,8 +32,8 @@
             {
               name,
               command,
-              extraConfig ? { },
-            }:
+              ...
+            }@args:
             pkgs.stdenv.mkDerivation (
               {
                 name = "check-${name}";
@@ -55,29 +48,29 @@
                 dontInstall = true;
                 dontFixup = true;
               }
-              // extraConfig
+              // (removeAttrs args [
+                "name"
+                "command"
+              ])
             );
         in
         {
           nixfmt = mkFlakeCheck {
             name = "nixfmt";
-            command = "nixfmt --check .";
+            command = "find . -name '*.nix' -exec nixfmt --check {} +";
 
-            extraConfig = {
-              nativeBuildInputs = with pkgs; [ nixfmt-rfc-style ];
-            };
+            src = self;
+            nativeBuildInputs = with pkgs; [ nixfmt-rfc-style ];
           };
 
           rustfmt = mkFlakeCheck {
             name = "rustfmt";
             command = "cargo fmt --check";
 
-            extraConfig = {
-              nativeBuildInputs = with pkgs; [
-                cargo
-                rustfmt
-              ];
-            };
+            nativeBuildInputs = with pkgs; [
+              cargo
+              rustfmt
+            ];
           };
 
           clippy = mkFlakeCheck {
@@ -88,18 +81,16 @@
                 | clippy-sarif | tee $out | sarif-fmt
             '';
 
-            extraConfig = {
-              inherit (self.packages.${system}.nrr) cargoDeps;
+            inherit (self.packages.${system}.nrr) cargoDeps;
 
-              nativeBuildInputs = with pkgs; [
-                rustPlatform.cargoSetupHook
-                cargo
-                rustc
-                clippy
-                clippy-sarif
-                sarif-fmt
-              ];
-            };
+            nativeBuildInputs = with pkgs; [
+              rustPlatform.cargoSetupHook
+              cargo
+              rustc
+              clippy
+              clippy-sarif
+              sarif-fmt
+            ];
           };
         }
       );
@@ -118,12 +109,6 @@
 
               git-cliff # changelog generator
               taplo # TOML toolkit
-
-              cargo-audit
-              cargo-bloat
-              cargo-expand
-
-              libiconv
             ];
 
             inputsFrom = [ self.packages.${system}.nrr ];
@@ -149,13 +134,13 @@
       );
 
       legacyPackages = forAllSystems (
-        system: nixpkgsFor.${system}.callPackage ./nix/static.nix { inherit nix-filter self; }
+        system: nixpkgsFor.${system}.callPackage ./nix/static.nix { inherit self; }
       );
 
       formatter = forAllSystems (system: nixpkgsFor.${system}.nixfmt-rfc-style);
 
       overlays.default = _: prev: {
-        nrr = prev.callPackage ./nix/package.nix { inherit nix-filter self; };
+        nrr = prev.callPackage ./nix/package.nix { inherit self; };
       };
     };
 }

@@ -22,15 +22,15 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # ratchet:actions/checkout@v4
 
       - name: Install Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@fcf085fcb4b4b8f63f96906cd713eb52181b5ea4 # ratchet:dtolnay/rust-toolchain@stable
         with:
           toolchain: stable
 
       - name: Setup Rust cache
-        uses: Swatinem/rust-cache@v2
+        uses: Swatinem/rust-cache@9d47c6ad4b02e050fd481d890b2ea34778fd09d6 # ratchet:Swatinem/rust-cache@v2
 
       - name: Publish
         run: cargo publish
@@ -48,16 +48,16 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # ratchet:actions/checkout@v4
         with:
           fetch-depth: 0
 
       - name: Install git-cliff
-        uses: taiki-e/install-action@git-cliff
+        uses: taiki-e/install-action@18cea7cc231ef5a8c5b577e62d90da87c8e48f3e # ratchet:taiki-e/install-action@git-cliff
 
       - name: Download artifacts
         id: download
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # ratchet:actions/download-artifact@v4
         with:
           path: /tmp/artifacts
 

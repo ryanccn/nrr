@@ -1,7 +1,6 @@
 {
   lib,
   rustPlatform,
-  nix-filter,
   self,
   enableLTO ? true,
   enableOptimizeSize ? false,
@@ -12,19 +11,17 @@ let
   month = builtins.substring 4 2 self.lastModifiedDate;
   day = builtins.substring 6 2 self.lastModifiedDate;
 in
-rustPlatform.buildRustPackage rec {
-  pname = passthru.cargoToml.package.name;
-  version = "${passthru.cargoToml.package.version}-unstable-${year}-${month}-${day}";
+rustPlatform.buildRustPackage (finalAttrs: {
+  pname = finalAttrs.passthru.cargoToml.package.name;
+  version = "${finalAttrs.passthru.cargoToml.package.version}-unstable-${year}-${month}-${day}";
 
-  strictDeps = true;
-
-  src = nix-filter.lib.filter {
-    root = self;
-    include = [
-      "src"
-      "tests"
-      "Cargo.lock"
-      "Cargo.toml"
+  src = lib.fileset.toSource {
+    root = ../.;
+    fileset = lib.fileset.unions [
+      ../src
+      ../tests
+      ../Cargo.lock
+      ../Cargo.toml
     ];
   };
 
@@ -56,4 +53,4 @@ rustPlatform.buildRustPackage rec {
     license = licenses.gpl3Only;
     mainProgram = "nrr";
   };
-}
+})
