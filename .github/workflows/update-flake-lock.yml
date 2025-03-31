@@ -22,7 +22,7 @@ jobs:
           diagnostic-endpoint: ""
 
       - name: Update flake.lock
-        uses: DeterminateSystems/update-flake-lock@f31939108047fb86316a3b17fb6808c33f7c0937 # ratchet:DeterminateSystems/update-flake-lock@main
+        uses: DeterminateSystems/update-flake-lock@c319d26b5fd3268b7f95ffed4a9aea5691223f65 # ratchet:DeterminateSystems/update-flake-lock@main
         with:
           pr-title: "build(deps): update flake.lock"
           commit-msg: "build(deps): update flake.lock"
