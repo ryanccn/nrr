@@ -75,9 +75,7 @@ fn single_script(
 
     command
         .env("PATH", make_patched_path(package_path)?)
-        .env("__NRR_LEVEL", itoa(*NRR_LEVEL + 1));
-
-    command
+        .env("__NRR_LEVEL", itoa(*NRR_LEVEL + 1))
         .env("npm_execpath", env::current_exe()?)
         .env("npm_lifecycle_event", script_name)
         .env("npm_lifecycle_script", &full_cmd);

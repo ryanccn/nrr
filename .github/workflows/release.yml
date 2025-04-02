@@ -4,12 +4,17 @@ on:
   push:
     tags: ["v*.*.*"]
 
+permissions:
+  contents: read
+
 jobs:
   build:
     permissions:
       id-token: write
       attestations: write
     uses: ./.github/workflows/build.yml
+    with:
+      disable-cache: true
 
   crates-io:
     name: crates.io
@@ -17,20 +22,16 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    permissions:
-      contents: read
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # ratchet:actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@fcf085fcb4b4b8f63f96906cd713eb52181b5ea4 # ratchet:dtolnay/rust-toolchain@stable
         with:
           toolchain: stable
-
-      - name: Setup Rust cache
-        uses: Swatinem/rust-cache@9d47c6ad4b02e050fd481d890b2ea34778fd09d6 # ratchet:Swatinem/rust-cache@v2
 
       - name: Publish
         run: cargo publish
@@ -51,9 +52,10 @@ jobs:
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # ratchet:actions/checkout@v4
         with:
           fetch-depth: 0
+          persist-credentials: false
 
       - name: Install git-cliff
-        uses: taiki-e/install-action@18cea7cc231ef5a8c5b577e62d90da87c8e48f3e # ratchet:taiki-e/install-action@git-cliff
+        uses: taiki-e/install-action@4f3751e65dd917c16032defda55f75d2928709ed # ratchet:taiki-e/install-action@git-cliff
 
       - name: Download artifacts
         id: download

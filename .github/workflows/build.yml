@@ -6,7 +6,13 @@ on:
   pull_request:
     branches: ["main"]
   workflow_call:
-  workflow_dispatch:
+    inputs:
+      disable-cache:
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
 
 jobs:
   build:
@@ -37,6 +43,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # ratchet:actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@fcf085fcb4b4b8f63f96906cd713eb52181b5ea4 # ratchet:dtolnay/rust-toolchain@stable
@@ -46,9 +54,12 @@ jobs:
 
       - name: Setup Rust cache
         uses: Swatinem/rust-cache@9d47c6ad4b02e050fd481d890b2ea34778fd09d6 # ratchet:Swatinem/rust-cache@v2
+        if: ${{ inputs.disable-cache != true }}
 
       - name: Install cargo-auditable
-        run: cargo install cargo-auditable
+        uses: taiki-e/install-action@575f713d0233afba556737a7b85080563be14186 # ratchet:taiki-e/install-action@v2
+        with:
+          tool: cargo-auditable
 
       - name: Build
         run: cargo auditable build --release --locked --target ${{ matrix.target }}
@@ -94,14 +105,14 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # ratchet:actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - name: Install Nix
-        uses: DeterminateSystems/nix-installer-action@78d714f6f717f43be9f3f5b867a2ce6ab84db093 # ratchet:DeterminateSystems/nix-installer-action@main
-        with:
-          diagnostic-endpoint: ""
+        uses: cachix/install-nix-action@d1ca217b388ee87b2507a9a93bf01368bde7cec2 # ratchet:cachix/install-nix-action@v31
 
       - name: Build
-        run: nix build --fallback --print-build-logs '.#nrr-static-${{ matrix.target }}'
+        run: nix build --print-build-logs '.#nrr-static-${{ matrix.target }}'
 
       - name: Generate build provenance attestations
         uses: actions/attest-build-provenance@c074443f1aee8d4aeeae555aebba3282517141b2 # ratchet:actions/attest-build-provenance@v2

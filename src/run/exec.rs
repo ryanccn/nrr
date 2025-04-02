@@ -10,10 +10,8 @@ use crate::{
 use super::util::make_patched_path;
 
 pub fn exec(package_path: &Path, package_data: &PackageJson, args: &ExecArgs) -> Result<()> {
-    let package_folder = package_path.parent().unwrap();
-
     let mut command = Command::new(&args.executable);
-    command.current_dir(package_folder).args(&args.args);
+    command.args(&args.args);
 
     if let Some(env_file) = &args.env_file {
         command.envs(env_file.iter());
@@ -21,9 +19,7 @@ pub fn exec(package_path: &Path, package_data: &PackageJson, args: &ExecArgs) ->
 
     command
         .env("PATH", make_patched_path(package_path)?)
-        .env("__NRR_LEVEL", itoa(*NRR_LEVEL + 1));
-
-    command
+        .env("__NRR_LEVEL", itoa(*NRR_LEVEL + 1))
         .env("npm_execpath", env::current_exe()?)
         .env("npm_package_json", package_path);
 
