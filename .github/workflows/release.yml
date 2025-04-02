@@ -76,7 +76,7 @@ jobs:
           done
 
       - name: Generate changelog
-        run: git-cliff -l --strip all | tail -n +3 > /tmp/changelog.md
+        run: git-cliff --current --strip all | tail -n +3 > /tmp/changelog.md
 
       - name: Create release
         env:

@@ -2,6 +2,20 @@
 
 All notable, and not so notable, changes to this project will be documented in this file.
 
+## [0.10.2] - 2025-04-02
+
+### Bug Fixes
+
+- [`de17d8e`](https://github.com/ryanccn/nrr/commit/de17d8eae2809145e1487850437c312f44a388ea) (_exec_) Don't set cwd to package root - Ryan Cao
+
+### Miscellaneous
+
+- [`61478a1`](https://github.com/ryanccn/nrr/commit/61478a18f582534d809cfd81706956a2711b6945) Update changelog - Ryan Cao
+
+### Build
+
+- [`1957045`](https://github.com/ryanccn/nrr/commit/1957045dde6c5b3f1feafd4b6e59f43571aed6f0) Nix-filter -> lib.fileset - Ryan Cao
+
 ## [0.10.1] - 2025-03-15
 
 ### Features
@@ -446,6 +460,7 @@ All notable, and not so notable, changes to this project will be documented in t
 
 - [`1373b97`](https://github.com/ryanccn/nrr/commit/1373b972de7540e9496217b3121455b4eddb83dd) (_ci_) Add cargo release workflow - Ryan Cao
 
+[0.10.2]: https://github.com/ryanccn/nrr/compare/v0.10.1..0.10.2
 [0.10.1]: https://github.com/ryanccn/nrr/compare/v0.10.0..v0.10.1
 [0.10.0]: https://github.com/ryanccn/nrr/compare/v0.9.5..v0.10.0
 [0.9.5]: https://github.com/ryanccn/nrr/compare/v0.9.4..v0.9.5
