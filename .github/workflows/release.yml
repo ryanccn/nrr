@@ -10,8 +10,10 @@ permissions:
 jobs:
   build:
     permissions:
+      contents: read
       id-token: write
       attestations: write
+
     uses: ./.github/workflows/build.yml
     with:
       disable-cache: true
