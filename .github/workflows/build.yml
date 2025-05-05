@@ -68,7 +68,7 @@ jobs:
           CARGO_PROFILE_RELEASE_CODEGEN_UNITS: "1"
 
       - name: Generate build provenance attestations
-        uses: actions/attest-build-provenance@c074443f1aee8d4aeeae555aebba3282517141b2 # ratchet:actions/attest-build-provenance@v2
+        uses: actions/attest-build-provenance@db473fddc028af60658334401dc6fa3ffd8669fd # ratchet:actions/attest-build-provenance@v2
         if: ${{ github.event_name != 'pull_request' }}
         with:
           subject-path: |
@@ -115,7 +115,7 @@ jobs:
         run: nix build --print-build-logs '.#nrr-static-${{ matrix.target }}'
 
       - name: Generate build provenance attestations
-        uses: actions/attest-build-provenance@c074443f1aee8d4aeeae555aebba3282517141b2 # ratchet:actions/attest-build-provenance@v2
+        uses: actions/attest-build-provenance@db473fddc028af60658334401dc6fa3ffd8669fd # ratchet:actions/attest-build-provenance@v2
         if: ${{ github.event_name != 'pull_request' }}
         with:
           subject-path: ./result/bin/nrr
