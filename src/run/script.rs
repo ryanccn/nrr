@@ -59,9 +59,8 @@ fn single_script(
 
         eprintln!(
             "{} {}",
-            cmd_prefix
-                .if_supports_color(Stream::Stderr, |text| text.cyan())
-                .if_supports_color(Stream::Stderr, |text| text.dimmed()),
+            cmd_prefix.if_supports_color(Stream::Stderr, |text| text
+                .style(owo_colors::style().cyan().dimmed())),
             full_cmd.if_supports_color(Stream::Stderr, |text| text.dimmed())
         );
     }

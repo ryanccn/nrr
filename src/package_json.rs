@@ -84,8 +84,9 @@ impl PackageJson {
                 version_str.push_str(version);
                 prefix.push_str(
                     &version_str
-                        .if_supports_color(stream, |text| text.magenta())
-                        .if_supports_color(stream, |text| text.dimmed())
+                        .if_supports_color(stream, |text| {
+                            text.style(owo_colors::style().magenta().dimmed())
+                        })
                         .to_string(),
                 );
             }

@@ -16,17 +16,18 @@ nrr initializes and resolves scripts way faster than other package managers and 
 
 <details>
 
-<summary>Benchmark of <code>nrr</code>, <code>npm</code>, <code>yarn</code>, <code>pnpm</code>, <code>node --run</code>, <code>bun</code>, and <code>dum</code> running a simple <code>true</code> script</summary>
+<summary>Benchmark of <code>nrr</code>, <code>npm</code>, <code>yarn</code>, <code>pnpm</code>, <code>node --run</code>, <code>deno</code>, <code>bun</code>, and <code>dum</code> running a simple <code>true</code> script</summary>
 
 | Command              |    Mean [ms] | Min [ms] | Max [ms] |       Relative |
 | :------------------- | -----------: | -------: | -------: | -------------: |
-| **`nrr` v0.9.5**     |    1.4 ± 0.1 |      1.2 |      2.8 |           1.00 |
-| `dum` v0.1.19        |    2.0 ± 0.5 |      1.7 |     20.9 |    1.37 ± 0.37 |
-| `bun` v1.1.26        |    4.4 ± 0.8 |      3.6 |     12.6 |    3.06 ± 0.61 |
-| `node --run` v22.7.0 |    5.6 ± 0.3 |      5.1 |      7.3 |    3.90 ± 0.35 |
-| `npm` v10.8.2        |  178.5 ± 7.4 |    168.6 |    191.0 | 123.22 ± 10.42 |
-| `yarn` v4.4.1        |  310.7 ± 5.3 |    301.7 |    319.8 | 214.52 ± 16.21 |
-| `pnpm` v9.9.0        | 520.9 ± 19.0 |    502.3 |    554.8 | 359.61 ± 29.56 |
+| **`nrr` v0.10.2**    |    1.6 ± 0.1 |      1.4 |      2.5 |           1.00 |
+| `dum` v0.1.20        |    2.0 ± 0.1 |      1.8 |      3.8 |    1.24 ± 0.13 |
+| `bun` v1.2.12        |    4.2 ± 0.5 |      3.9 |     12.3 |    2.70 ± 0.38 |
+| `node --run` v24.0.2 |    6.1 ± 0.4 |      5.4 |     11.2 |    3.86 ± 0.41 |
+| `deno` v2.2.12       |    9.6 ± 0.4 |      8.9 |     12.4 |    6.11 ± 0.53 |
+| `npm` v11.3.0        |  154.6 ± 6.9 |    147.5 |    169.5 |   98.13 ± 8.68 |
+| `yarn` v4.9.1        |  306.1 ± 7.9 |    296.5 |    317.4 | 194.24 ± 15.64 |
+| `pnpm` v10.11.0      | 463.2 ± 18.7 |    440.6 |    495.2 | 293.90 ± 25.38 |
 
 <small>Benchmarks run on an AWS EC2 <code>t4g.micro</code> instance with the command <code>hyperfine --shell=none --warmup=5 --output=pipe --export-markdown=benchmark.md 'npm run dev' -n 'npm' 'yarn run dev' -n 'yarn' 'pnpm run dev' -n 'pnpm' 'node --run dev' -n 'node --run' 'bun run dev' -n 'bun' 'dum run dev' -n 'dum' 'nrr dev' -n 'nrr'</code></small>
 

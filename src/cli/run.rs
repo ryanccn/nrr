@@ -44,9 +44,8 @@ pub fn handle(package_paths: impl Iterator<Item = PathBuf>, args: &RunArgs) -> R
                     "       {} {}{}{}",
                     "Did you mean".if_supports_color(Stream::Stderr, |text| text.dimmed()),
                     "`".if_supports_color(Stream::Stderr, |text| text.dimmed()),
-                    format!("nrr {alternative}")
-                        .if_supports_color(Stream::Stderr, |text| text.cyan())
-                        .if_supports_color(Stream::Stderr, |text| text.dimmed()),
+                    format!("nrr {alternative}").if_supports_color(Stream::Stderr, |text| text
+                        .style(owo_colors::style().cyan().dimmed())),
                     "`?".if_supports_color(Stream::Stderr, |text| text.dimmed())
                 );
 

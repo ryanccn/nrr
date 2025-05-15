@@ -8,7 +8,7 @@ ansi_yellow=""
 ansi_bold=""
 ansi_reset=""
 
-if [ -t 1 ] && command -v tput > /dev/null 2>&1; then
+if [ -t 1 ] && [ -z "${NO_COLOR:-""}" ] && command -v tput > /dev/null 2>&1; then
     ansi_red="$(tput setaf 1 || true)"
     ansi_green="$(tput setaf 2 || true)"
     ansi_yellow="$(tput setaf 3 || true)"

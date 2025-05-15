@@ -11,6 +11,7 @@ All notable, and not so notable, changes to this project will be documented in t
 ### Miscellaneous
 
 - [`61478a1`](https://github.com/ryanccn/nrr/commit/61478a18f582534d809cfd81706956a2711b6945) Update changelog - Ryan Cao
+- [`2897e69`](https://github.com/ryanccn/nrr/commit/2897e6945b26645d746e87da937a1ac762f979a5) (_release_) Add missing permissions for build workflow_call - Ryan Cao
 
 ### Build
 
