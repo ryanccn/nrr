@@ -20,7 +20,7 @@ color-eyre    = { version = "0.6.4", default-features = false }
 dotenvy       = "0.15.7"
 indexmap      = { version = "2.9.0", features = ["serde"] }
 itoa          = "1.0.15"
-owo-colors    = { version = "4.2.0", features = ["supports-colors"] }
+owo-colors    = { version = "4.2.1", features = ["supports-colors"] }
 serde         = { version = "1.0.219", features = ["derive"] }
 shlex         = "1.3.0"
 signal-hook   = "0.3.18"
