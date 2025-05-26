@@ -57,7 +57,7 @@ jobs:
           persist-credentials: false
 
       - name: Install git-cliff
-        uses: taiki-e/install-action@4f3751e65dd917c16032defda55f75d2928709ed # ratchet:taiki-e/install-action@git-cliff
+        uses: taiki-e/install-action@6c6479b49816fcc0975a31af977bdc1f847c2920 # ratchet:taiki-e/install-action@git-cliff
 
       - name: Download artifacts
         id: download
