@@ -22,7 +22,7 @@ jobs:
           persist-credentials: false
 
       - name: Install Nix
-        uses: cachix/install-nix-action@d1ca217b388ee87b2507a9a93bf01368bde7cec2 # ratchet:cachix/install-nix-action@v31
+        uses: cachix/install-nix-action@17fe5fb4a23ad6cbbe47d6b3f359611ad276644c # ratchet:cachix/install-nix-action@v31
 
       - name: Check
         run: nix build --print-build-logs '.#checks.x86_64-linux.clippy'
@@ -43,7 +43,7 @@ jobs:
           persist-credentials: false
 
       - name: Install Nix
-        uses: cachix/install-nix-action@d1ca217b388ee87b2507a9a93bf01368bde7cec2 # ratchet:cachix/install-nix-action@v31
+        uses: cachix/install-nix-action@17fe5fb4a23ad6cbbe47d6b3f359611ad276644c # ratchet:cachix/install-nix-action@v31
 
       - name: Check
         run: nix build --print-build-logs '.#checks.x86_64-linux.rustfmt'
@@ -58,7 +58,7 @@ jobs:
           persist-credentials: false
 
       - name: Install Nix
-        uses: cachix/install-nix-action@d1ca217b388ee87b2507a9a93bf01368bde7cec2 # ratchet:cachix/install-nix-action@v31
+        uses: cachix/install-nix-action@17fe5fb4a23ad6cbbe47d6b3f359611ad276644c # ratchet:cachix/install-nix-action@v31
 
       - name: Check
         run: nix build --print-build-logs '.#checks.x86_64-linux.nixfmt'
