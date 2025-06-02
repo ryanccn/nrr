@@ -14,7 +14,7 @@ keywords   = ["cli", "node", "javascript", "npm", "scripts"]
 
 [dependencies]
 ahash         = "0.8.12"
-clap          = { version = "4.5.38", features = ["derive", "env"] }
+clap          = { version = "4.5.39", features = ["derive", "env"] }
 clap_complete = { version = "4.5.50", features = ["unstable-dynamic"] }
 color-eyre    = { version = "0.6.4", default-features = false }
 dotenvy       = "0.15.7"
