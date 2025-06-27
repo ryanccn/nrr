@@ -93,7 +93,7 @@ nrr is also available in [Nixpkgs](https://github.com/NixOS/nixpkgs) as `nixpkgs
 This installer script works on Linux and macOS and downloads binaries from GitHub Releases, falling back to `cargo install` if a prebuilt binary cannot be found.
 
 ```sh
-curl --proto '=https' --tlsv1.2 https://nrr.ryanccn.dev | sh
+curl --proto '=https' --tlsv1.2 https://raw.githubusercontent.com/ryanccn/nrr/refs/heads/main/install.sh | sh
 ```
 
 ### Cargo

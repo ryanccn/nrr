@@ -2,6 +2,20 @@
 
 All notable, and not so notable, changes to this project will be documented in this file.
 
+## [0.10.3] - 2025-06-27
+
+### Features
+
+- [`eff3a80`](https://github.com/ryanccn/nrr/commit/eff3a80df99f8e77ec5d520857f56254e135ff6c) (_complete_) Filter for executables on windows - Ryan Cao
+
+### Bug Fixes
+
+- [`76f0d10`](https://github.com/ryanccn/nrr/commit/76f0d1097efc76b29b3be3dcc60cd47fb3acbf65) Use `owo_colors::Style`, update benchmarks - Ryan Cao
+
+### Miscellaneous
+
+- [`affba0a`](https://github.com/ryanccn/nrr/commit/affba0a9d9b538988bea42ce239d1723b986c75c) (_ci_) Update pinned actions - Ryan Cao
+
 ## [0.10.2] - 2025-04-02
 
 ### Bug Fixes
@@ -461,6 +475,7 @@ All notable, and not so notable, changes to this project will be documented in t
 
 - [`1373b97`](https://github.com/ryanccn/nrr/commit/1373b972de7540e9496217b3121455b4eddb83dd) (_ci_) Add cargo release workflow - Ryan Cao
 
+[0.10.3]: https://github.com/ryanccn/nrr/compare/v0.10.2..0.10.3
 [0.10.2]: https://github.com/ryanccn/nrr/compare/v0.10.1..v0.10.2
 [0.10.1]: https://github.com/ryanccn/nrr/compare/v0.10.0..v0.10.1
 [0.10.0]: https://github.com/ryanccn/nrr/compare/v0.9.5..v0.10.0
