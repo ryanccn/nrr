@@ -39,12 +39,17 @@ pub fn scripts() -> Vec<CompletionCandidate> {
 
 #[cfg(unix)]
 fn is_executable(path: &Path) -> bool {
-    use nix::unistd::{AccessFlags, access};
-    access(path, AccessFlags::X_OK).is_ok()
+    use rustix::fs::{Access, access};
+    access(path, Access::EXEC_OK).is_ok()
 }
 
-#[cfg(not(unix))]
-fn is_executable(_path: &Path) -> bool {
+#[cfg(windows)]
+fn is_executable(path: &Path) -> bool {
+    winsafe::GetBinaryType(path.to_string_lossy().as_ref()).is_ok()
+}
+
+#[cfg(not(any(unix, windows)))]
+fn is_executable(path: &Path) -> bool {
     true
 }
 
