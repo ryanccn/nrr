@@ -47,17 +47,17 @@ jobs:
           persist-credentials: false
 
       - name: Install Rust toolchain
-        uses: dtolnay/rust-toolchain@fcf085fcb4b4b8f63f96906cd713eb52181b5ea4 # ratchet:dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@4305c38b25d97ef35a8ad1f985ccf2d2242004f2 # ratchet:dtolnay/rust-toolchain@stable
         with:
           toolchain: stable
           target: ${{ matrix.target }}
 
       - name: Setup Rust cache
-        uses: Swatinem/rust-cache@9d47c6ad4b02e050fd481d890b2ea34778fd09d6 # ratchet:Swatinem/rust-cache@v2
+        uses: Swatinem/rust-cache@98c8021b550208e191a6a3145459bfc9fb29c4c0 # ratchet:Swatinem/rust-cache@v2
         if: ${{ inputs.disable-cache != true }}
 
       - name: Install cargo-auditable
-        uses: taiki-e/install-action@575f713d0233afba556737a7b85080563be14186 # ratchet:taiki-e/install-action@v2
+        uses: taiki-e/install-action@2cab843126c0d8cf950bf55f4e9b8413f70f553f # ratchet:taiki-e/install-action@v2
         with:
           tool: cargo-auditable
 
@@ -68,7 +68,7 @@ jobs:
           CARGO_PROFILE_RELEASE_CODEGEN_UNITS: "1"
 
       - name: Generate build provenance attestations
-        uses: actions/attest-build-provenance@c074443f1aee8d4aeeae555aebba3282517141b2 # ratchet:actions/attest-build-provenance@v2
+        uses: actions/attest-build-provenance@e8998f949152b193b063cb0ec769d69d929409be # ratchet:actions/attest-build-provenance@v2
         if: ${{ github.event_name != 'pull_request' }}
         with:
           subject-path: |
@@ -109,13 +109,13 @@ jobs:
           persist-credentials: false
 
       - name: Install Nix
-        uses: cachix/install-nix-action@d1ca217b388ee87b2507a9a93bf01368bde7cec2 # ratchet:cachix/install-nix-action@v31
+        uses: cachix/install-nix-action@f0fe604f8a612776892427721526b4c7cfb23aba # ratchet:cachix/install-nix-action@v31
 
       - name: Build
         run: nix build --print-build-logs '.#nrr-static-${{ matrix.target }}'
 
       - name: Generate build provenance attestations
-        uses: actions/attest-build-provenance@c074443f1aee8d4aeeae555aebba3282517141b2 # ratchet:actions/attest-build-provenance@v2
+        uses: actions/attest-build-provenance@e8998f949152b193b063cb0ec769d69d929409be # ratchet:actions/attest-build-provenance@v2
         if: ${{ github.event_name != 'pull_request' }}
         with:
           subject-path: ./result/bin/nrr

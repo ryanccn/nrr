@@ -22,13 +22,13 @@ jobs:
           persist-credentials: false
 
       - name: Install Nix
-        uses: cachix/install-nix-action@d1ca217b388ee87b2507a9a93bf01368bde7cec2 # ratchet:cachix/install-nix-action@v31
+        uses: cachix/install-nix-action@f0fe604f8a612776892427721526b4c7cfb23aba # ratchet:cachix/install-nix-action@v31
 
       - name: Check
         run: nix build --print-build-logs '.#checks.x86_64-linux.clippy'
 
       - name: Upload analysis results
-        uses: github/codeql-action/upload-sarif@1b549b9259bda1cb5ddde3b41741a82a2d15a841 # ratchet:github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@39edc492dbe16b1465b0cafca41432d857bdb31a # ratchet:github/codeql-action/upload-sarif@v3
         with:
           sarif_file: result
           wait-for-processing: true
@@ -43,7 +43,7 @@ jobs:
           persist-credentials: false
 
       - name: Install Nix
-        uses: cachix/install-nix-action@d1ca217b388ee87b2507a9a93bf01368bde7cec2 # ratchet:cachix/install-nix-action@v31
+        uses: cachix/install-nix-action@f0fe604f8a612776892427721526b4c7cfb23aba # ratchet:cachix/install-nix-action@v31
 
       - name: Check
         run: nix build --print-build-logs '.#checks.x86_64-linux.rustfmt'
@@ -58,7 +58,7 @@ jobs:
           persist-credentials: false
 
       - name: Install Nix
-        uses: cachix/install-nix-action@d1ca217b388ee87b2507a9a93bf01368bde7cec2 # ratchet:cachix/install-nix-action@v31
+        uses: cachix/install-nix-action@f0fe604f8a612776892427721526b4c7cfb23aba # ratchet:cachix/install-nix-action@v31
 
       - name: Check
         run: nix build --print-build-logs '.#checks.x86_64-linux.nixfmt'

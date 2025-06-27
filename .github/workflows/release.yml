@@ -31,7 +31,7 @@ jobs:
           persist-credentials: false
 
       - name: Install Rust toolchain
-        uses: dtolnay/rust-toolchain@fcf085fcb4b4b8f63f96906cd713eb52181b5ea4 # ratchet:dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@4305c38b25d97ef35a8ad1f985ccf2d2242004f2 # ratchet:dtolnay/rust-toolchain@stable
         with:
           toolchain: stable
 
@@ -57,11 +57,11 @@ jobs:
           persist-credentials: false
 
       - name: Install git-cliff
-        uses: taiki-e/install-action@4f3751e65dd917c16032defda55f75d2928709ed # ratchet:taiki-e/install-action@git-cliff
+        uses: taiki-e/install-action@12f73ef86fbb6f2d22a935b45c0d6f19d75bc8be # ratchet:taiki-e/install-action@git-cliff
 
       - name: Download artifacts
         id: download
-        uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # ratchet:actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # ratchet:actions/download-artifact@v4
         with:
           path: /tmp/artifacts
 
