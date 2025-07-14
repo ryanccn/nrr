@@ -36,7 +36,7 @@ rustix = { version = "1.0.7", features = ["fs"] }
 winsafe = { version = "0.0.24", features = ["kernel"] }
 
 [dev-dependencies]
-trycmd = "0.15.9"
+trycmd = "0.15.10"
 
 [lints.clippy]
 all      = { level = "warn", priority = -1 }
