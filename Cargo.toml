@@ -30,7 +30,7 @@ terminal_size = "0.4.2"
 unicode-width = "0.2.1"
 
 [target."cfg(unix)".dependencies]
-rustix = { version = "1.0.7", features = ["fs"] }
+rustix = { version = "1.1.2", features = ["fs"] }
 
 [target."cfg(windows)".dependencies]
 winsafe = { version = "0.0.24", features = ["kernel"] }
