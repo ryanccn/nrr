@@ -57,7 +57,7 @@ jobs:
         if: ${{ inputs.disable-cache != true }}
 
       - name: Install cargo-auditable
-        uses: taiki-e/install-action@2cab843126c0d8cf950bf55f4e9b8413f70f553f # ratchet:taiki-e/install-action@v2
+        uses: taiki-e/install-action@522492a8c115f1b6d4d318581f09638e9442547b # ratchet:taiki-e/install-action@v2
         with:
           tool: cargo-auditable
 
