@@ -109,7 +109,7 @@ jobs:
           persist-credentials: false
 
       - name: Install Nix
-        uses: cachix/install-nix-action@f0fe604f8a612776892427721526b4c7cfb23aba # ratchet:cachix/install-nix-action@v31
+        uses: cachix/install-nix-action@fd24c48048070c1be9acd18c9d369a83f0fe94d7 # ratchet:cachix/install-nix-action@v31
 
       - name: Build
         run: nix build --print-build-logs '.#nrr-static-${{ matrix.target }}'
