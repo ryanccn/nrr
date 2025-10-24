@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2025 Ryan Cao <hello@ryanccn.dev>
+
+SPDX-License-Identifier: GPL-3.0-or-later
+-->
+
 # nrr
 
 [![Crates.io Version](https://img.shields.io/crates/v/nrr?style=flat-square&logo=rust)](https://crates.io/crates/nrr) [![Crates.io Total Downloads](https://img.shields.io/crates/d/nrr?style=flat-square&logo=rust)](https://crates.io/crates/nrr) [![GitHub Actions Build Workflow Status](https://img.shields.io/github/actions/workflow/status/ryanccn/nrr/build.yml?branch=main&event=push&style=flat-square&logo=github)](https://github.com/ryanccn/nrr/actions/workflows/build.yml) [![GitHub Actions Test Workflow Status](https://img.shields.io/github/actions/workflow/status/ryanccn/nrr/test.yml?branch=main&event=push&style=flat-square&logo=github&label=test)](https://github.com/ryanccn/nrr/actions/workflows/test.yml) [![GitHub License](https://img.shields.io/github/license/ryanccn/nrr?style=flat-square&color=blue)](https://github.com/ryanccn/nrr/blob/main/LICENSE)

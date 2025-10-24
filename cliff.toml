@@ -1,5 +1,11 @@
 [changelog]
 header = """
+<!--
+SPDX-FileCopyrightText: 2025 Ryan Cao <hello@ryanccn.dev>
+
+SPDX-License-Identifier: GPL-3.0-or-later
+-->
+
 # Changelog
 
 All notable, and not so notable, changes to this project will be documented in this file.

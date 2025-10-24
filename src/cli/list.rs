@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Ryan Cao <hello@ryanccn.dev>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 use color_eyre::eyre::Result;
 use owo_colors::{OwoColorize as _, Stream};
 use terminal_size::terminal_size;

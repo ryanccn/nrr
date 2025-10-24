@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2025 Ryan Cao <hello@ryanccn.dev>
+
+SPDX-License-Identifier: GPL-3.0-or-later
+-->
+
 # Changelog
 
 All notable, and not so notable, changes to this project will be documented in this file.
@@ -475,7 +481,7 @@ All notable, and not so notable, changes to this project will be documented in t
 
 - [`1373b97`](https://github.com/ryanccn/nrr/commit/1373b972de7540e9496217b3121455b4eddb83dd) (_ci_) Add cargo release workflow - Ryan Cao
 
-[0.10.3]: https://github.com/ryanccn/nrr/compare/v0.10.2..0.10.3
+[0.10.3]: https://github.com/ryanccn/nrr/compare/v0.10.2..v0.10.3
 [0.10.2]: https://github.com/ryanccn/nrr/compare/v0.10.1..v0.10.2
 [0.10.1]: https://github.com/ryanccn/nrr/compare/v0.10.0..v0.10.1
 [0.10.0]: https://github.com/ryanccn/nrr/compare/v0.9.5..v0.10.0

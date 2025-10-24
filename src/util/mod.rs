@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Ryan Cao <hello@ryanccn.dev>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 use std::sync::LazyLock;
 
 pub mod exit_code;

@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2025 Ryan Cao <hello@ryanccn.dev>
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 name: Check
 
 on:
@@ -10,55 +14,52 @@ permissions:
   contents: read
 
 jobs:
-  clippy:
+  collect:
+    runs-on: ubuntu-latest
+    outputs:
+      checks: ${{ steps.checks.outputs.checks }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # ratchet:actions/checkout@v5
+        with:
+          persist-credentials: false
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@fd24c48048070c1be9acd18c9d369a83f0fe94d7 # ratchet:cachix/install-nix-action@v31
+
+      - name: Collect checks
+        id: checks
+        run: |
+          echo "checks=$(nix eval --impure --json --expr 'builtins.attrNames (builtins.getFlake (toString ./.)).checks.${builtins.currentSystem}')" >> "$GITHUB_OUTPUT"
+
+  check:
+    needs: collect
+    strategy:
+      matrix:
+        check: ${{ fromJson(needs.collect.outputs.checks) }}
+      fail-fast: false
+
     runs-on: ubuntu-latest
     permissions:
+      contents: read
       security-events: write
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # ratchet:actions/checkout@v4
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # ratchet:actions/checkout@v5
         with:
           persist-credentials: false
 
       - name: Install Nix
-        uses: cachix/install-nix-action@f0fe604f8a612776892427721526b4c7cfb23aba # ratchet:cachix/install-nix-action@v31
+        uses: cachix/install-nix-action@fd24c48048070c1be9acd18c9d369a83f0fe94d7 # ratchet:cachix/install-nix-action@v31
 
       - name: Check
-        run: nix build --print-build-logs '.#checks.x86_64-linux.clippy'
+        run: nix build --fallback --print-build-logs '.#checks.x86_64-linux.${{ matrix.check }}'
 
-      - name: Upload analysis results
-        uses: github/codeql-action/upload-sarif@39edc492dbe16b1465b0cafca41432d857bdb31a # ratchet:github/codeql-action/upload-sarif@v3
+      - name: Upload Clippy results
+        if: ${{ matrix.check == 'clippy' }}
+        uses: github/codeql-action/upload-sarif@42213152a85ae7569bdb6bec7bcd74cd691bfe41 # ratchet:github/codeql-action/upload-sarif@v3
         with:
           sarif_file: result
           wait-for-processing: true
-
-  rustfmt:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # ratchet:actions/checkout@v4
-        with:
-          persist-credentials: false
-
-      - name: Install Nix
-        uses: cachix/install-nix-action@f0fe604f8a612776892427721526b4c7cfb23aba # ratchet:cachix/install-nix-action@v31
-
-      - name: Check
-        run: nix build --print-build-logs '.#checks.x86_64-linux.rustfmt'
-
-  nixfmt:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # ratchet:actions/checkout@v4
-        with:
-          persist-credentials: false
-
-      - name: Install Nix
-        uses: cachix/install-nix-action@f0fe604f8a612776892427721526b4c7cfb23aba # ratchet:cachix/install-nix-action@v31
-
-      - name: Check
-        run: nix build --print-build-logs '.#checks.x86_64-linux.nixfmt'
