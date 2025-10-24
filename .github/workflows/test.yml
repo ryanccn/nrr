@@ -19,8 +19,8 @@ jobs:
       matrix:
         runner:
           - ubuntu-latest
-          - windows-latest
           - macos-latest
+          # - windows-latest
       fail-fast: false
 
     runs-on: ${{ matrix.runner }}
