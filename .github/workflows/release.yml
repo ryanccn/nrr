@@ -40,7 +40,7 @@ jobs:
           toolchain: stable
 
       - name: Authenticate with crates.io
-        uses: rust-lang/crates-io-auth-action@041cce5b4b821e6b0ebc9c9c38b58cac4e34dcc2 # ratchet:rust-lang/crates-io-auth-action@v1
+        uses: rust-lang/crates-io-auth-action@b7e9a28eded4986ec6b1fa40eeee8f8f165559ec # ratchet:rust-lang/crates-io-auth-action@v1
         id: auth
 
       - name: Publish
@@ -65,7 +65,7 @@ jobs:
           persist-credentials: false
 
       - name: Install git-cliff
-        uses: taiki-e/install-action@dd43f737883340503e99bf3f3436c59549c98b66 # ratchet:taiki-e/install-action@git-cliff
+        uses: taiki-e/install-action@44c6d64aa62cd779e873306675c7a58e86d6d532 # ratchet:taiki-e/install-action@git-cliff
 
       - name: Download artifacts
         id: download
