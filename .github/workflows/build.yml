@@ -46,7 +46,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # ratchet:actions/checkout@v5
+        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # ratchet:actions/checkout@v5
         with:
           persist-credentials: false
 
@@ -61,7 +61,7 @@ jobs:
         if: ${{ inputs.disable-cache != true }}
 
       - name: Install cargo-auditable
-        uses: taiki-e/install-action@1c7b1d35fcc8f6525be0cbdacbf5977079a3f94c # ratchet:taiki-e/install-action@v2
+        uses: taiki-e/install-action@f79fe7514db78f0a7bdba3cb6dd9c1baa7d046d9 # ratchet:taiki-e/install-action@v2
         with:
           tool: cargo-auditable
 
@@ -108,12 +108,12 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # ratchet:actions/checkout@v5
+        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # ratchet:actions/checkout@v5
         with:
           persist-credentials: false
 
       - name: Install Nix
-        uses: cachix/install-nix-action@fd24c48048070c1be9acd18c9d369a83f0fe94d7 # ratchet:cachix/install-nix-action@v31
+        uses: cachix/install-nix-action@0b0e072294b088b73964f1d72dfdac0951439dbd # ratchet:cachix/install-nix-action@v31
 
       - name: Build
         run: nix build --print-build-logs '.#nrr-static-${{ matrix.target }}'
