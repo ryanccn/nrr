@@ -18,11 +18,11 @@ keywords   = ["cli", "node", "javascript", "npm", "scripts"]
 
 [dependencies]
 ahash         = "0.8.12"
-clap          = { version = "4.5.50", features = ["derive", "env"] }
-clap_complete = { version = "4.5.59", features = ["unstable-dynamic"] }
+clap          = { version = "4.5.53", features = ["derive", "env"] }
+clap_complete = { version = "4.5.61", features = ["unstable-dynamic"] }
 color-eyre    = { version = "0.6.5", default-features = false }
 dotenvy       = "0.15.7"
-indexmap      = { version = "2.12.0", features = ["serde"] }
+indexmap      = { version = "2.12.1", features = ["serde"] }
 itoa          = "1.0.15"
 owo-colors    = { version = "4.2.3", features = ["supports-colors"] }
 serde         = { version = "1.0.228", features = ["derive"] }
@@ -40,7 +40,7 @@ rustix = { version = "1.1.2", features = ["fs"] }
 winsafe = { version = "0.0.24", features = ["kernel"] }
 
 [dev-dependencies]
-trycmd = "0.15.10"
+trycmd = "0.15.11"
 
 [lints.clippy]
 all      = { level = "warn", priority = -1 }
