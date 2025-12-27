@@ -30,7 +30,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # ratchet:actions/checkout@v5
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # ratchet:actions/checkout@v5
         with:
           persist-credentials: false
 
@@ -40,7 +40,7 @@ jobs:
           toolchain: stable
 
       - name: Authenticate with crates.io
-        uses: rust-lang/crates-io-auth-action@041cce5b4b821e6b0ebc9c9c38b58cac4e34dcc2 # ratchet:rust-lang/crates-io-auth-action@v1
+        uses: rust-lang/crates-io-auth-action@b7e9a28eded4986ec6b1fa40eeee8f8f165559ec # ratchet:rust-lang/crates-io-auth-action@v1
         id: auth
 
       - name: Publish
@@ -59,17 +59,17 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # ratchet:actions/checkout@v5
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # ratchet:actions/checkout@v5
         with:
           fetch-depth: 0
           persist-credentials: false
 
       - name: Install git-cliff
-        uses: taiki-e/install-action@dd43f737883340503e99bf3f3436c59549c98b66 # ratchet:taiki-e/install-action@git-cliff
+        uses: taiki-e/install-action@3d30e7d625f7c928dccd48823053b03bb2f6ed05 # ratchet:taiki-e/install-action@git-cliff
 
       - name: Download artifacts
         id: download
-        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # ratchet:actions/download-artifact@v5
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # ratchet:actions/download-artifact@v5
         with:
           path: /tmp/artifacts
 
