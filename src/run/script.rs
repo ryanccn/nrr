@@ -46,16 +46,15 @@ fn single_script(
     let mut full_cmd = script_cmd.to_owned();
 
     if script_type == ScriptType::Normal {
-        options
+        for arg in options
             .args
             .iter()
             .map(|f| shlex::try_quote(f))
             .collect::<Result<Vec<_>, _>>()?
-            .into_iter()
-            .for_each(|arg| {
-                full_cmd.push(' ');
-                full_cmd.push_str(arg.as_ref());
-            });
+        {
+            full_cmd.push(' ');
+            full_cmd.push_str(arg.as_ref());
+        }
     }
 
     if !options.silent {
@@ -69,8 +68,8 @@ fn single_script(
         );
     }
 
-    let mut command = make_shell_cmd();
-    command.current_dir(package_folder).arg(&full_cmd);
+    let mut command = make_shell_cmd(&full_cmd);
+    command.current_dir(package_folder);
 
     if let Some(env_file) = &options.env_file {
         command.envs(env_file.iter());

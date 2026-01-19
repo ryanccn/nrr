@@ -31,16 +31,16 @@ pub fn make_patched_path(package_path: &Path) -> Result<OsString> {
 
 #[cfg(unix)]
 #[inline]
-pub fn make_shell_cmd() -> Command {
+pub fn make_shell_cmd(command: &str) -> Command {
     let mut cmd = Command::new("/bin/sh");
-    cmd.arg("-c");
+    cmd.arg("-c").arg(command);
     cmd
 }
 
 #[cfg(windows)]
 #[inline]
-pub fn make_shell_cmd() -> Command {
+pub fn make_shell_cmd(command: &str) -> Command {
     let mut cmd = Command::new("cmd.exe");
-    cmd.args(["/d", "/s", "/c"]);
+    cmd.args(["/d", "/s", "/c"]).arg(command);
     cmd
 }

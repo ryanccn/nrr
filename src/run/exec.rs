@@ -3,19 +3,28 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 use color_eyre::Result;
-use std::{env, path::Path, process::Command};
+use std::{env, path::Path};
 
 use crate::{
     cli::ExecArgs,
     package_json::PackageJson,
+    run::util::make_shell_cmd,
     util::{ExitCode, NRR_LEVEL, itoa, signals},
 };
 
 use super::util::make_patched_path;
 
 pub fn exec(package_path: &Path, package_data: &PackageJson, args: &ExecArgs) -> Result<()> {
-    let mut command = Command::new(&args.executable);
-    command.args(&args.args);
+    let mut shell_script = vec![args.executable.as_str()];
+    shell_script.extend(args.args.iter().map(|i| i.as_str()));
+
+    let mut command = make_shell_cmd(
+        &shell_script
+            .into_iter()
+            .map(|f| shlex::try_quote(f))
+            .collect::<Result<Vec<_>, _>>()?
+            .join(" "),
+    );
 
     if let Some(env_file) = &args.env_file {
         command.envs(env_file.iter());
