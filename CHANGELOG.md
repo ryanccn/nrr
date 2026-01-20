@@ -8,6 +8,32 @@ SPDX-License-Identifier: GPL-3.0-or-later
 
 All notable, and not so notable, changes to this project will be documented in this file.
 
+## [0.10.4] - 2026-01-20
+
+### Bug Fixes
+
+- [`6ccd338`](https://github.com/ryanccn/nrr/commit/6ccd338b88b8578afd090d3d3de4233e47a64662) (_exec_) Pass commands through shell - Ryan Cao
+- [`fbaff97`](https://github.com/ryanccn/nrr/commit/fbaff97aaf2c7c93cd6fcf441372e9e454db9b97) (_tests_) Force LF line endings - Ryan Cao
+- [`80e8076`](https://github.com/ryanccn/nrr/commit/80e80762474ad3b24ffff03e3d16cbba5d780118) (_exec_) Don't quote arguments on Windows - Ryan Cao
+
+### Refactor
+
+- [`a52d342`](https://github.com/ryanccn/nrr/commit/a52d342e2224a5beae53757ba7292b772267afc3) Ferrix, trusted publishing, REUSE - Ryan Cao
+
+### Miscellaneous
+
+- [`f69cf5b`](https://github.com/ryanccn/nrr/commit/f69cf5b67391f114af681159c625cbcd9888cff6) (_ci_) Disable tests on windows (spurious failures) - Ryan Cao
+- [`eccb451`](https://github.com/ryanccn/nrr/commit/eccb45189051f3cbbf87519d13b19139047556ef) Reenable tests on Windows - Ryan Cao
+
+### Dependencies
+
+- [`bf62b97`](https://github.com/ryanccn/nrr/commit/bf62b975d08b19ac0566b51df36ff2aba0b335ef) Bump the github-actions group with 4 updates ([#212](https://github.com/ryanccn/nrr/issues/212)) - dependabot[bot]
+- [`b090904`](https://github.com/ryanccn/nrr/commit/b0909049917db8604e682c8a4dc5789bd1334a8e) Bump the cargo-minor-patch group across 1 directory with 5 updates ([#221](https://github.com/ryanccn/nrr/issues/221)) - dependabot[bot]
+- [`6fd663d`](https://github.com/ryanccn/nrr/commit/6fd663df418bd7be680c440cdeb04cb1d9d52132) Bump the github-actions group across 1 directory with 9 updates ([#222](https://github.com/ryanccn/nrr/issues/222)) - dependabot[bot]
+- [`eca77ba`](https://github.com/ryanccn/nrr/commit/eca77ba8e47e30126d6e456b895244f0c1789b49) Bump signal-hook from 0.3.18 to 0.4.1 ([#224](https://github.com/ryanccn/nrr/issues/224)) - dependabot[bot]
+- [`7e7a012`](https://github.com/ryanccn/nrr/commit/7e7a01231c1fa686cac07ce67659f42ae28598eb) Bump the cargo-minor-patch group with 2 updates ([#223](https://github.com/ryanccn/nrr/issues/223)) - dependabot[bot]
+- [`f5b8070`](https://github.com/ryanccn/nrr/commit/f5b807066359743b00cce19943cda4e1a2950941) Bump clap_complete ([#226](https://github.com/ryanccn/nrr/issues/226)) - dependabot[bot]
+
 ## [0.10.3] - 2025-06-27
 
 ### Features
@@ -481,6 +507,7 @@ All notable, and not so notable, changes to this project will be documented in t
 
 - [`1373b97`](https://github.com/ryanccn/nrr/commit/1373b972de7540e9496217b3121455b4eddb83dd) (_ci_) Add cargo release workflow - Ryan Cao
 
+[0.10.4]: https://github.com/ryanccn/nrr/compare/v0.10.3..v0.10.4
 [0.10.3]: https://github.com/ryanccn/nrr/compare/v0.10.2..v0.10.3
 [0.10.2]: https://github.com/ryanccn/nrr/compare/v0.10.1..v0.10.2
 [0.10.1]: https://github.com/ryanccn/nrr/compare/v0.10.0..v0.10.1
@@ -502,4 +529,4 @@ All notable, and not so notable, changes to this project will be documented in t
 [0.4.0]: https://github.com/ryanccn/nrr/compare/v0.3.1..v0.4.0
 [0.3.1]: https://github.com/ryanccn/nrr/compare/v0.3.0..v0.3.1
 [0.3.0]: https://github.com/ryanccn/nrr/compare/v0.2.0..v0.3.0
-[0.2.0]: https://github.com/ryanccn/nrr/compare/v0.9.5..v0.2.0
+[0.2.0]: https://github.com/ryanccn/nrr/compare/v0.10.3..v0.2.0
