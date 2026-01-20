@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-args    = ["exec", "-e", ".env", "cmd", "/c", "echo:%__NRR_ENV_CANARY%"]
+args    = ["exec", "-e", ".env", "echo", "%__NRR_ENV_CANARY%"]
 fs.base = "env_file.in"
 
 stdout = """

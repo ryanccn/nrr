@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-args    = ["exec", "cmd", "/c", "echo success"]
+args    = ["exec", "echo", "success"]
 fs.base = "basic.in"
 
 stdout = """

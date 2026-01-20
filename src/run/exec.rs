@@ -19,11 +19,14 @@ pub fn exec(package_path: &Path, package_data: &PackageJson, args: &ExecArgs) ->
     shell_script.extend(args.args.iter().map(|i| i.as_str()));
 
     let mut command = make_shell_cmd(
+        #[cfg(unix)]
         &shell_script
             .into_iter()
             .map(|f| shlex::try_quote(f))
             .collect::<Result<Vec<_>, _>>()?
             .join(" "),
+        #[cfg(windows)]
+        &shell_script.join(" "),
     );
 
     if let Some(env_file) = &args.env_file {
