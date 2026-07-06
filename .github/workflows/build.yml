@@ -46,7 +46,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # ratchet:actions/checkout@v6
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # ratchet:actions/checkout@v7.0.0
         with:
           persist-credentials: false
 
@@ -61,7 +61,7 @@ jobs:
         if: ${{ inputs.disable-cache != true }}
 
       - name: Install cargo-auditable
-        uses: taiki-e/install-action@59012be0884e296ca2da49b530610e72c49039ad # ratchet:taiki-e/install-action@v2
+        uses: taiki-e/install-action@4684b8405694ae9dd42c9f39ba901a70ae83f4a3 # ratchet:taiki-e/install-action@v2
         with:
           tool: cargo-auditable
 
@@ -72,7 +72,7 @@ jobs:
           CARGO_PROFILE_RELEASE_CODEGEN_UNITS: "1"
 
       - name: Generate build provenance attestations
-        uses: actions/attest-build-provenance@a2bbfa25375fe432b6a289bc6b6cd05ecd0c4c32 # ratchet:actions/attest-build-provenance@v3
+        uses: actions/attest-build-provenance@0f67c3f4856b2e3261c31976d6725780e5e4c373 # ratchet:actions/attest-build-provenance@v3
         if: ${{ github.event_name != 'pull_request' }}
         with:
           subject-path: |
@@ -108,7 +108,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # ratchet:actions/checkout@v6
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # ratchet:actions/checkout@v7.0.0
         with:
           persist-credentials: false
 
@@ -119,7 +119,7 @@ jobs:
         run: nix build --print-build-logs '.#nrr-static-${{ matrix.target }}'
 
       - name: Generate build provenance attestations
-        uses: actions/attest-build-provenance@a2bbfa25375fe432b6a289bc6b6cd05ecd0c4c32 # ratchet:actions/attest-build-provenance@v3
+        uses: actions/attest-build-provenance@0f67c3f4856b2e3261c31976d6725780e5e4c373 # ratchet:actions/attest-build-provenance@v3
         if: ${{ github.event_name != 'pull_request' }}
         with:
           subject-path: ./result/bin/nrr
