@@ -37,7 +37,7 @@ pub fn handle(package_paths: impl Iterator<Item = PathBuf>, args: &RunArgs) -> R
         eprintln!(
             "{}  No script found with name {}.",
             "error".if_supports_color(Stream::Stderr, |text| text.red()),
-            &args
+            args
                 .script
                 .if_supports_color(Stream::Stderr, |text| text.bold()),
         );

@@ -27,7 +27,7 @@ fn scripts_fallible() -> Result<Vec<CompletionCandidate>> {
 
     for path in package_paths.into_iter().rev() {
         if let Some(package) = PackageJson::from_path_safe(&path) {
-            scripts.extend(package.scripts.into_iter());
+            scripts.extend(package.scripts);
         }
     }
 

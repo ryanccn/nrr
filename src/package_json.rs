@@ -33,10 +33,10 @@ impl PackageJsonFromPathError {
                 eprintln!(
                     "{}   {} could not be parsed: {}",
                     "warn".if_supports_color(Stream::Stderr, |text| text.yellow()),
-                    &package_path
+                    package_path
                         .to_string_lossy()
                         .if_supports_color(Stream::Stderr, |text| text.bold()),
-                    &err,
+                    err,
                 );
             }
 
@@ -44,10 +44,10 @@ impl PackageJsonFromPathError {
                 eprintln!(
                     "{}   {} could not be read: {}",
                     "warn".if_supports_color(Stream::Stderr, |text| text.yellow()),
-                    &package_path
+                    package_path
                         .to_string_lossy()
                         .if_supports_color(Stream::Stderr, |text| text.bold()),
-                    &err,
+                    err,
                 );
             }
         }
