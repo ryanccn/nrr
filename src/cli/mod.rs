@@ -29,7 +29,14 @@ pub struct Cli {
 }
 
 #[derive(Parser, Clone, Debug)]
-#[clap(version, about, long_about = None, args_conflicts_with_subcommands = true)]
+#[clap(
+    version,
+    about,
+    long_about = None,
+    args_conflicts_with_subcommands = true,
+    disable_help_flag = true,
+    disable_version_flag = true
+)]
 pub struct NrxCli {
     #[clap(flatten)]
     args: ExecArgs,
@@ -42,7 +49,7 @@ enum Subcommands {
     Run(RunArgs),
 
     /// Execute a command
-    #[clap(visible_alias = "x")]
+    #[clap(visible_alias = "x", disable_help_flag = true)]
     Exec(ExecArgs),
 
     /// List available scripts
@@ -98,10 +105,6 @@ pub struct ExecArgs {
     /// Arguments to pass to the executable
     #[clap(trailing_var_arg = true, allow_hyphen_values = true)]
     pub args: Vec<String>,
-
-    /// An environment file to read environment variables from
-    #[clap(short, long, env = "NRR_ENV_FILE", value_hint = ValueHint::FilePath, value_parser = EnvFile::from_path)]
-    pub env_file: Option<EnvFile>,
 }
 
 impl Cli {

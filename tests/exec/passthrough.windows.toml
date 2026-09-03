@@ -2,10 +2,10 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-args    = ["exec", "-e", ".env", "printenv", "__NRR_ENV_CANARY"]
-fs.base = "env_file.in"
+args    = ["exec", "echo", "--help"]
+fs.base = "passthrough.in"
 
 stdout = """
-1
+--help
 """
 stderr = ""

@@ -29,10 +29,6 @@ pub fn exec(package_path: &Path, package_data: &PackageJson, args: &ExecArgs) ->
         &shell_script.join(" "),
     );
 
-    if let Some(env_file) = &args.env_file {
-        command.envs(env_file.iter());
-    }
-
     command
         .env("PATH", make_patched_path(package_path)?)
         .env("__NRR_LEVEL", itoa(*NRR_LEVEL + 1))
