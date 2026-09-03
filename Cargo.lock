@@ -498,7 +498,7 @@ checksum = "61807f77802ff30975e01f4f071c8ba10c022052f98b3294119f3e615d13e5be"
 
 [[package]]
 name = "nrr"
-version = "0.10.4"
+version = "0.11.0"
 dependencies = [
  "ahash",
  "clap",

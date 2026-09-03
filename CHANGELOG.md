@@ -8,6 +8,29 @@ SPDX-License-Identifier: GPL-3.0-or-later
 
 All notable, and not so notable, changes to this project will be documented in this file.
 
+## [0.11.0] - 2026-09-03
+
+### Bug Fixes
+
+- [`e9f76b3`](https://github.com/ryanccn/nrr/commit/e9f76b38c48cf89873cb1a60c435725a9a734419) Install completions in Nix package - Ryan Cao
+- [`daa8ca9`](https://github.com/ryanccn/nrr/commit/daa8ca97dde68a556e57a368167c6b17ce3314e9) Update flake to match upstream changes - Ryan Cao
+- [`931546a`](https://github.com/ryanccn/nrr/commit/931546acc21f3efc2939ec62045b9a7c052febb5) Disable help and version flags for exec - Ryan Cao
+
+### Miscellaneous
+
+- [`b44dc4b`](https://github.com/ryanccn/nrr/commit/b44dc4b087fdd4bec9f1349589ebad9711a513af) Overwrite test output - Ryan Cao
+
+### Dependencies
+
+- [`7200d08`](https://github.com/ryanccn/nrr/commit/7200d0806b7bd9d04224e2beb28b04920a34f465) Bump the github-actions group across 1 directory with 3 updates ([#233](https://github.com/ryanccn/nrr/issues/233)) - dependabot[bot]
+- [`dd0b424`](https://github.com/ryanccn/nrr/commit/dd0b424ca2886af99987b2195a3abc419b859eb9) Bump the github-actions group across 1 directory with 9 updates ([#245](https://github.com/ryanccn/nrr/issues/245)) - dependabot[bot]
+- [`95ce5cc`](https://github.com/ryanccn/nrr/commit/95ce5cc92f22c618c596135e7003cb486b79b817) Bump trycmd from 0.15.11 to 1.0.0 ([#248](https://github.com/ryanccn/nrr/issues/248)) - dependabot[bot]
+- [`56633df`](https://github.com/ryanccn/nrr/commit/56633dfe06d5b7bebf856dc4bbfdf7d483f29136) Bump the cargo-minor-patch group with 8 updates ([#247](https://github.com/ryanccn/nrr/issues/247)) - dependabot[bot]
+- [`7c918c9`](https://github.com/ryanccn/nrr/commit/7c918c9e6baf529cfc812378b3602f83ed7e67b0) Bump the github-actions group with 4 updates ([#249](https://github.com/ryanccn/nrr/issues/249)) - dependabot[bot]
+- [`3f1b56e`](https://github.com/ryanccn/nrr/commit/3f1b56e0f7d2f9ed4df5f671052fc242002c6b96) Bump the cargo-minor-patch group with 3 updates ([#250](https://github.com/ryanccn/nrr/issues/250)) - dependabot[bot]
+- [`b88530a`](https://github.com/ryanccn/nrr/commit/b88530a70f940bb9431ec2a1779fbd401d6d62d8) Bump shlex from 1.3.0 to 2.0.1 ([#251](https://github.com/ryanccn/nrr/issues/251)) - dependabot[bot]
+- [`d01b4fb`](https://github.com/ryanccn/nrr/commit/d01b4fb0fc83bab2c2096b19f169134d263eccb8) Bump the github-actions group across 1 directory with 4 updates ([#253](https://github.com/ryanccn/nrr/issues/253)) - dependabot[bot]
+
 ## [0.10.4] - 2026-01-20
 
 ### Bug Fixes
@@ -15,6 +38,7 @@ All notable, and not so notable, changes to this project will be documented in t
 - [`6ccd338`](https://github.com/ryanccn/nrr/commit/6ccd338b88b8578afd090d3d3de4233e47a64662) (_exec_) Pass commands through shell - Ryan Cao
 - [`fbaff97`](https://github.com/ryanccn/nrr/commit/fbaff97aaf2c7c93cd6fcf441372e9e454db9b97) (_tests_) Force LF line endings - Ryan Cao
 - [`80e8076`](https://github.com/ryanccn/nrr/commit/80e80762474ad3b24ffff03e3d16cbba5d780118) (_exec_) Don't quote arguments on Windows - Ryan Cao
+- [`95da4a5`](https://github.com/ryanccn/nrr/commit/95da4a5d5e445f85d9bbaa2e68c652823236a491) (_ci_) Add `id-token` permission to crates.io release job - Ryan Cao
 
 ### Refactor
 
@@ -507,6 +531,7 @@ All notable, and not so notable, changes to this project will be documented in t
 
 - [`1373b97`](https://github.com/ryanccn/nrr/commit/1373b972de7540e9496217b3121455b4eddb83dd) (_ci_) Add cargo release workflow - Ryan Cao
 
+[0.11.0]: https://github.com/ryanccn/nrr/compare/v0.10.4..0.11.0
 [0.10.4]: https://github.com/ryanccn/nrr/compare/v0.10.3..v0.10.4
 [0.10.3]: https://github.com/ryanccn/nrr/compare/v0.10.2..v0.10.3
 [0.10.2]: https://github.com/ryanccn/nrr/compare/v0.10.1..v0.10.2
@@ -529,4 +554,4 @@ All notable, and not so notable, changes to this project will be documented in t
 [0.4.0]: https://github.com/ryanccn/nrr/compare/v0.3.1..v0.4.0
 [0.3.1]: https://github.com/ryanccn/nrr/compare/v0.3.0..v0.3.1
 [0.3.0]: https://github.com/ryanccn/nrr/compare/v0.2.0..v0.3.0
-[0.2.0]: https://github.com/ryanccn/nrr/compare/v0.10.3..v0.2.0
+[0.2.0]: https://github.com/ryanccn/nrr/compare/v0.10.4..v0.2.0
