@@ -11,9 +11,9 @@ Usage: nrr [OPTIONS] [SCRIPT] [ARGS]...
        nrr <COMMAND>
 
 Commands:
-  run   Run a script [aliases: run-script]
-  exec  Execute a command [aliases: x]
-  list  List available scripts [aliases: ls]
+  run   Run a script [alias: run-script]
+  exec  Execute a command [alias: x]
+  list  List available scripts [alias: ls]
   help  Print this message or the help of the given subcommand(s)
 
 Arguments:
