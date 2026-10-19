@@ -61,7 +61,7 @@ jobs:
         if: ${{ inputs.disable-cache != true }}
 
       - name: Install cargo-auditable
-        uses: taiki-e/install-action@9534c84618278caac52cb373bb164ed464dbd8af # ratchet:taiki-e/install-action@v2
+        uses: taiki-e/install-action@8cca0918f8471c33515202b73f56ab27f2bed283 # ratchet:taiki-e/install-action@v2
         with:
           tool: cargo-auditable
 
@@ -80,7 +80,7 @@ jobs:
             ./target/${{ matrix.target }}/release/nrr.exe
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # ratchet:actions/upload-artifact@v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # ratchet:actions/upload-artifact@v7.0.2
         with:
           if-no-files-found: "error"
           name: nrr-${{ matrix.target }}
@@ -113,7 +113,7 @@ jobs:
           persist-credentials: false
 
       - name: Install Nix
-        uses: cachix/install-nix-action@13d8dd58da0234aa297dedd986986ccb8e7f3e24 # ratchet:cachix/install-nix-action@v31
+        uses: cachix/install-nix-action@448cde739abec1eaf0646249e3d25bb8d9bc7702 # ratchet:cachix/install-nix-action@v31
 
       - name: Build
         run: nix build --print-build-logs '.#nrr-static-${{ matrix.target }}'
@@ -125,7 +125,7 @@ jobs:
           subject-path: ./result/bin/nrr
 
       - name: Upload artifact
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # ratchet:actions/upload-artifact@v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # ratchet:actions/upload-artifact@v7.0.2
         with:
           if-no-files-found: "error"
           name: nrr-${{ matrix.target }}
